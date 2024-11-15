@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String Mobile;
+  const HomeScreen({Key? key, required this.Mobile}) : super(key: key);
 
   @override
   HomeScreenState createState() => HomeScreenState();
@@ -21,7 +22,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const Drawerscreen(),
+      drawer: Drawerscreen(Mobile: widget.Mobile),
       body: Stack(
         children: [
           Positioned.fill(

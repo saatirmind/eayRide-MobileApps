@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:easyride/Screen/otpscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 
 class PhoneNumberScreen extends StatefulWidget {
   @override
@@ -12,34 +15,6 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   final Uri _url = Uri.parse('https://www.emrkl.com/');
   String countryCode = '+60';
   TextEditingController phoneController = TextEditingController();
-
-  void sendOtp() {
-    String phoneNumber = phoneController.text;
-    if (phoneNumber.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Please enter your phone number.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-    } else {
-      print('OTP sent to: $countryCode $phoneNumber');
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                OtpScreen(phoneNumber: '$countryCode $phoneNumber')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +33,6 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                 height: 300,
               ),
               SizedBox(height: 20),
-
               Row(
                 children: [
                   CountryCodePicker(
@@ -75,9 +49,15 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                     child: TextField(
                       controller: phoneController,
                       keyboardType: TextInputType.phone,
+                      maxLength: 10,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                      ],
                       decoration: InputDecoration(
                         hintText: 'Enter your phone number',
                         border: UnderlineInputBorder(),
+                        counterText: '',
                       ),
                     ),
                   ),
@@ -90,7 +70,6 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 20),
-
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.black,
@@ -112,7 +91,6 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 30),
-              // Terms and FAQ
               TextButton(
                 onPressed: () async {
                   if (!await launchUrl(_url)) {
@@ -144,5 +122,71 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> sendOtp() async {
+    String phoneNumber = phoneController.text;
+
+    if (phoneNumber.isEmpty || phoneNumber.length != 10) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Please enter a valid 10-digit phone number.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    final url = Uri.parse('https://easyride.saatirmind.com.my/api/v1/send-otp');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'mobile': phoneNumber,
+        'mobile_code': countryCode,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      final verCode = responseData['data']['ver_code'];
+      final userId = responseData['data']['id'];
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(responseData['message'][0]),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      print("Verification code: $verCode");
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OtpScreen(
+            phoneNumber: '$countryCode $phoneNumber',
+            userId: userId.toString(),
+            Verification_code: verCode.toString(),
+            mobile: '$phoneNumber',
+            mobile_code: '$countryCode',
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to send OTP. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

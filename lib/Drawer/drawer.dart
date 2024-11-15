@@ -1,10 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easyride/DrawerWidget/updateprofile.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Drawerscreen extends StatelessWidget {
+  final String Mobile;
   const Drawerscreen({
     super.key,
+    required this.Mobile,
   });
 
   @override
@@ -21,40 +24,51 @@ class Drawerscreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.yellow,
                 ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.add_circle_outline,
-                      color: Colors.black,
-                      size: 30,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          'Update Profile',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          '+60 1172205654',
-                          style: TextStyle(color: Colors.black, fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ],
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfileScreen(Mobile: Mobile)),
+                    );
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.add_circle_outline,
+                        color: Colors.black,
+                        size: 30,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            'Update Profile',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            Mobile,
+                            style: TextStyle(color: Colors.black, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
             ListTile(
               leading: Icon(Icons.map_outlined, color: Colors.black),
               title: Text('Main'.tr(), style: TextStyle(color: Colors.black)),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+              },
             ),
             ListTile(
               leading: Icon(Icons.wallet, color: Colors.black),
