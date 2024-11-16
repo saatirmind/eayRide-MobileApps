@@ -1,13 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easyride/DrawerWidget/Logoutfunction.dart';
 import 'package:easyride/DrawerWidget/updateprofile.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Drawerscreen extends StatelessWidget {
   final String Mobile;
+  final String Token;
   const Drawerscreen({
     super.key,
     required this.Mobile,
+    required this.Token,
   });
 
   @override
@@ -101,7 +104,9 @@ class Drawerscreen extends StatelessWidget {
               leading: Icon(Icons.logout, color: Colors.black),
               title:
                   Text('Log Out'.tr(), style: TextStyle(color: Colors.black)),
-              onTap: () {},
+              onTap: () {
+                logout(context);
+              },
             ),
             SpacerWidget(),
             ListTile(

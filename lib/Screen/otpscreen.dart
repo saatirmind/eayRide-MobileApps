@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:easyride/Screen/homescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:easyride/Screen/homescreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;
@@ -11,14 +12,14 @@ class OtpScreen extends StatefulWidget {
   final String mobile_code;
   final String Verification_code;
 
-  const OtpScreen(
-      {Key? key,
-      required this.phoneNumber,
-      required this.userId,
-      required this.mobile,
-      required this.mobile_code,
-      required this.Verification_code})
-      : super(key: key);
+  const OtpScreen({
+    Key? key,
+    required this.phoneNumber,
+    required this.userId,
+    required this.mobile,
+    required this.mobile_code,
+    required this.Verification_code,
+  }) : super(key: key);
 
   @override
   _OtpScreenState createState() => _OtpScreenState();
@@ -27,28 +28,34 @@ class OtpScreen extends StatefulWidget {
 class _OtpScreenState extends State<OtpScreen> {
   final List<TextEditingController> _otpControllers =
       List.generate(6, (_) => TextEditingController());
+  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
   Timer? _timer;
-  int _start = 60;
+  int _start = 15;
   bool _canResend = false;
   String _resendOtp = '';
+  bool _isSubmitEnabled = false;
+  String? token;
 
-  void _onFieldSubmitted(int index) {
-    if (index < 5) {
-      FocusScope.of(context).nextFocus();
-    } else {
-      String otp = _otpControllers.map((controller) => controller.text).join();
-      if (otp.length == 6) {
-        verifyOtp(otp, widget.userId);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please enter a valid 6-digit OTP.')),
-        );
-      }
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _otpControllers) {
+      controller.dispose();
     }
+    for (var focusNode in _focusNodes) {
+      focusNode.dispose();
+    }
+    _timer?.cancel();
+    super.dispose();
   }
 
   void startTimer() {
-    _start = 25;
+    _start = 20;
     _canResend = false;
     _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
       if (_start > 0) {
@@ -64,25 +71,48 @@ class _OtpScreenState extends State<OtpScreen> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    startTimer();
+  void _onFieldChanged(String value, int index) {
+    _updateSubmitButtonState();
+
+    if (value.isEmpty && index > 0) {
+      _focusNodes[index].unfocus();
+      _focusNodes[index - 1].requestFocus();
+    } else if (value.isNotEmpty && index < 5) {
+      _focusNodes[index].unfocus();
+      _focusNodes[index + 1].requestFocus();
+    } else if (index == 5 && value.isNotEmpty) {
+      _focusNodes[index].unfocus();
+    } else if (value.isEmpty && index < 5) {
+      _focusNodes[index].unfocus();
+      if (index > 0) {
+        _focusNodes[index - 1].requestFocus();
+      }
+    }
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+  void _updateSubmitButtonState() {
+    bool allFieldsFilled =
+        _otpControllers.every((controller) => controller.text.isNotEmpty);
+    setState(() {
+      _isSubmitEnabled = allFieldsFilled;
+    });
   }
 
-  Future<void> verifyOtp(String otp, String userId) async {
+  Future<void> _verifyOtp(SharedPreferences prefs) async {
+    String otp = _otpControllers.map((controller) => controller.text).join();
+    if (otp.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid 6-digit OTP.')),
+      );
+      return;
+    }
+
     final url = Uri.parse('https://easyride.saatirmind.com.my/api/v1/login');
     try {
       final response = await http.post(
         url,
         body: {
-          'user_id': userId,
+          'user_id': widget.userId,
           'otp': otp,
         },
       );
@@ -90,37 +120,105 @@ class _OtpScreenState extends State<OtpScreen> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         if (responseData['status'] == true) {
-          final token = responseData['data']['token'];
+          setState(() {
+            token = responseData['data']['token'];
+          });
           print('Login Successful! Token: $token');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content: Text('User Successfully Logged In'),
-                backgroundColor: Colors.green),
+              content: Text('User Successfully Logged In'),
+              backgroundColor: Colors.green,
+            ),
           );
+
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', token!);
+          await prefs.setString('mobile', widget.mobile);
+
           navigateToHomeScreen();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('OTP verification failed.')),
+            SnackBar(
+              content: Text('OTP verification failed.'),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error occurred. Please try again.')),
+          SnackBar(
+            content: Text('Invalid OTP. Please type valid OTP.'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred: $e')),
+        SnackBar(
+          content: Text('An error occurred: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
 
   void navigateToHomeScreen() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-          builder: (context) => HomeScreen(Mobile: widget.phoneNumber)),
-    );
+    if (token != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(
+            Mobile: widget.phoneNumber,
+            Token: token!,
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Token is null. Unable to navigate.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> resendOtp() async {
+    final url = Uri.parse('https://easyride.saatirmind.com.my/api/v1/send-otp');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'mobile': widget.mobile,
+          'mobile_code': widget.mobile_code,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final verCode = responseData['data']['ver_code'];
+        setState(() {
+          _resendOtp = verCode.toString();
+        });
+        startTimer();
+        print("Resend OTP: $verCode");
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to resend OTP. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -164,15 +262,12 @@ class _OtpScreenState extends State<OtpScreen> {
                     width: 40,
                     child: TextField(
                       controller: _otpControllers[index],
+                      focusNode: _focusNodes[index],
                       keyboardType: TextInputType.number,
                       maxLength: 1,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(counterText: ''),
-                      onChanged: (value) {
-                        if (value.length == 1) {
-                          _onFieldSubmitted(index);
-                        }
-                      },
+                      onChanged: (value) => _onFieldChanged(value, index),
                     ),
                   );
                 }),
@@ -188,65 +283,31 @@ class _OtpScreenState extends State<OtpScreen> {
                   onPressed: resendOtp,
                   child: Text('Resend OTP'),
                 ),
-              //const SizedBox(height: 200),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 35),
-              //   child: ElevatedButton(
-              //     style: ElevatedButton.styleFrom(
-              //       foregroundColor: Colors.black,
-              //       backgroundColor: Colors.yellow,
-              //       padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-              //       minimumSize: Size(250, 40),
-              //     ),
-              //     onPressed: () {
-              //       String otp = _otpControllers
-              //           .map((controller) => controller.text)
-              //           .join();
-              //       if (otp.length == 6) {
-              //         verifyOtp(otp, widget.userId);
-              //       } else {
-              //         ScaffoldMessenger.of(context).showSnackBar(
-              //           SnackBar(
-              //               content: Text('Please enter a valid 6-digit OTP.')),
-              //         );
-              //       }
-              //     },
-              //     child: const Text('Submit'),
-              //   ),
-              // ),
-              // const SizedBox(height: 20),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.yellow,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 30.0),
+                      ),
+                      onPressed: _isSubmitEnabled
+                          ? () async {
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              _verifyOtp(prefs);
+                            }
+                          : null,
+                      child: Text('Submit'),
+                    )),
+              )
             ],
           ),
         ),
       ),
     );
-  }
-
-  Future<void> resendOtp() async {
-    final url = Uri.parse('https://easyride.saatirmind.com.my/api/v1/send-otp');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'mobile': widget.mobile,
-        'mobile_code': widget.mobile_code,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      final verCode = responseData['data']['ver_code'];
-      setState(() {
-        _resendOtp = verCode.toString();
-      });
-      startTimer();
-      print("Resend OTP: $verCode");
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('Failed to resend OTP. Please try again.'),
-            backgroundColor: Colors.red),
-      );
-    }
   }
 }

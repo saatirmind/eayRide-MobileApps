@@ -132,7 +132,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Error'),
-          content: Text('Please enter a valid 10-digit phone number.'),
+          content: Text('Please enter a valid mobile number.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),

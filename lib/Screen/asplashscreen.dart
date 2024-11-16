@@ -1,6 +1,8 @@
+import 'package:easyride/Screen/homescreen.dart';
 import 'package:easyride/Screen/phonescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Asplashscreen extends StatefulWidget {
   Asplashscreen({super.key});
@@ -84,12 +86,7 @@ class _AsplashscreenState extends State<Asplashscreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.yellow,
               ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => PhoneNumberScreen()),
-                );
-              },
+              onPressed: () => _checkUserLoggedIn(),
               child: const Text(
                 "START",
                 style: TextStyle(
@@ -105,4 +102,24 @@ class _AsplashscreenState extends State<Asplashscreen> {
   }
 
   static CarouselController() {}
+
+  Future<void> _checkUserLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? mobile = prefs.getString('mobile');
+
+    if (token != null && mobile != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(Mobile: mobile, Token: token),
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => PhoneNumberScreen()),
+      );
+    }
+  }
 }

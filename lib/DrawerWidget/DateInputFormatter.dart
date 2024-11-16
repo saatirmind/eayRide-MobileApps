@@ -43,6 +43,7 @@ class Datascreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Mobile: ${data['mobile']}'),
+            Text('Email:${data['email']}'),
             Text('Date of Birth: ${data['dob']}'),
             Text('Given Name: ${data['givenName']}'),
             Text('Family Name: ${data['familyName']}'),

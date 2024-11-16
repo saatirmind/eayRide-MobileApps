@@ -50,6 +50,7 @@ dependencies:
   easy_localization: ^3.0.7
   shared_preferences: ^2.3.3
   http: ^1.2.2
+  geolocator: ^13.0.2
 flutter_native_splash:   
 
 dev_dependencies:

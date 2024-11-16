@@ -6,30 +6,66 @@ import 'package:easyride/HomeScreenWidget/Cityselector.dart';
 import 'package:easyride/HomeScreenWidget/FloatingButtons.dart';
 import 'package:easyride/HomeScreenWidget/PromotionsBanner.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   final String Mobile;
-  const HomeScreen({Key? key, required this.Mobile}) : super(key: key);
+  final String Token;
+  const HomeScreen({Key? key, required this.Mobile, required this.Token})
+      : super(key: key);
 
   @override
   HomeScreenState createState() => HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final GlobalKey<GooglemapState> _googleMapKey = GlobalKey();
+  String _currentCityName = "Current Location";
+  LatLng? _currentPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _requestLocationPermission(context);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _requestLocationPermission(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_currentPosition == null) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
-      drawer: Drawerscreen(Mobile: widget.Mobile),
+      drawer: Drawerscreen(Mobile: widget.Mobile, Token: widget.Token),
       body: Stack(
         children: [
           Positioned.fill(
-              child: Googlemap(
-            key: _googleMapKey,
-            cityPosition: _cityPositions[_currentCityIndex],
-          )),
+            child: Googlemap(
+              key: _googleMapKey,
+              cityPosition: _currentCityIndex == -1
+                  ? _currentPosition ?? LatLng(0, 0)
+                  : _cityPositions[_currentCityIndex],
+            ),
+          ),
           Positioned(
             top: 50,
             left: 0,
@@ -41,7 +77,9 @@ class HomeScreenState extends State<HomeScreen> {
             left: 0,
             right: 0,
             child: CitySelector(
-              cityName: _cities[_currentCityIndex].tr(),
+              cityName: _currentCityIndex == -1
+                  ? _currentCityName
+                  : _cities[_currentCityIndex].tr(),
               onBackPressed: () => _changeCity(-1),
               onForwardPressed: () => _changeCity(1),
             ),
@@ -52,6 +90,9 @@ class HomeScreenState extends State<HomeScreen> {
             child: FloatingButtons(
               onMyLocationPressed: () {
                 _googleMapKey.currentState?.goToCurrentLocation();
+                setState(() {
+                  _currentCityIndex = -1;
+                });
               },
             ),
           ),
@@ -95,7 +136,74 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  int _currentCityIndex = 0;
+  Future<void> _requestLocationPermission(BuildContext context) async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      _showLocationDialog(context);
+      return;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+    setState(() {
+      _currentPosition = currentLatLng;
+      _currentCityName = "Your Location";
+      _googleMapKey.currentState?.moveToPosition(currentLatLng);
+    });
+  }
+
+  void _changeCity(int direction) {
+    setState(() {
+      _currentCityIndex = (_currentCityIndex + direction) % _cities.length;
+      if (_currentCityIndex < 0) {
+        _currentCityIndex = _cities.length - 1;
+      }
+      _googleMapKey.currentState
+          ?.moveToPosition(_cityPositions[_currentCityIndex]);
+    });
+  }
+
+  void _showLocationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Enable Location Services"),
+          content: Text(
+              "Location services are disabled. Please enable them to use the app."),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await Geolocator.openLocationSettings();
+              },
+              child: Text("Open Settings"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  int _currentCityIndex = -1;
   final List<String> _cities = [
     "Kuala Lumpur, Malaysia",
     "New York City",
@@ -112,15 +220,4 @@ class HomeScreenState extends State<HomeScreen> {
     LatLng(35.6895, 139.6917),
     LatLng(27.4924, 77.6737),
   ];
-
-  void _changeCity(int direction) {
-    setState(() {
-      _currentCityIndex = (_currentCityIndex + direction) % _cities.length;
-      if (_currentCityIndex < 0) {
-        _currentCityIndex = _cities.length - 1;
-      }
-      _googleMapKey.currentState
-          ?.moveToPosition(_cityPositions[_currentCityIndex]);
-    });
-  }
 }

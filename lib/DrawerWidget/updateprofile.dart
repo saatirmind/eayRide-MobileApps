@@ -16,6 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _dobController = TextEditingController();
   final _givenNameController = TextEditingController();
   final _familyNameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _nationalityController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -56,6 +57,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 8),
                 Text(
                   'Please make sure to fill up all of the information below to start riding our motorbikes. The information is necessary for insurance purposes.',
+                ),
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Enter Email',
+                    prefixIcon: Icon(Icons.email),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    String pattern = r'^[a-zA-Z0-9._%+-]+@gmail\.com$';
+                    RegExp regExp = RegExp(pattern);
+
+                    if (!regExp.hasMatch(value)) {
+                      return 'Please enter a valid Gmail address';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 16),
                 Text('Phone Number'),
@@ -243,6 +264,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final data = {
       'mobile': widget.Mobile,
       'dob': _dobController.text,
+      'email': _emailController.text,
       'givenName': _givenNameController.text,
       'familyName': _familyNameController.text,
       'nationality': _nationalityController.text,
