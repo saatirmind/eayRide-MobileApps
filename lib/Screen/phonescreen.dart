@@ -12,6 +12,7 @@ class PhoneNumberScreen extends StatefulWidget {
 }
 
 class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
+  bool _isLoading = false;
   final Uri _url = Uri.parse('https://www.emrkl.com/');
   String countryCode = '+60';
   TextEditingController phoneController = TextEditingController();
@@ -70,18 +71,38 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  backgroundColor: Colors.yellow,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  minimumSize: Size(200, 50),
-                ),
-                onPressed: sendOtp,
-                child: Text(
-                  'NEXT',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.yellow,
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    minimumSize: Size(200, 50),
+                  ),
+                  onPressed: () async {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    await sendOtp();
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  },
+                  child: _isLoading
+                      ? SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                            strokeWidth: 2.0,
+                          ),
+                        )
+                      : Text(
+                          'NEXT',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
                 ),
               ),
               SizedBox(height: 10),
@@ -167,7 +188,10 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       );
 
       print("Verification code: $verCode");
-
+      await Future.delayed(Duration(seconds: 2));
+      setState(() {
+        _isLoading = false;
+      });
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -181,6 +205,9 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         ),
       );
     } else {
+      setState(() {
+        _isLoading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to send OTP. Please try again.'),

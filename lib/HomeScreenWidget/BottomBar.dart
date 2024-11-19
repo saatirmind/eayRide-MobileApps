@@ -1,4 +1,4 @@
-import 'package:easyride/Payment.dart/cardscreen.dart';
+import 'package:easyride/Payment/cardscreen.dart';
 import 'package:easyride/Screen/Qrscannerscreen.dart';
 import 'package:flutter/material.dart';
 

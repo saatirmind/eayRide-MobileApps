@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easyride/DrawerWidget/Logoutfunction.dart';
 import 'package:easyride/DrawerWidget/updateprofile.dart';
+import 'package:easyride/DrawerWidget/walletpage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -39,9 +40,9 @@ class Drawerscreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Icon(
-                        Icons.add_circle_outline,
+                        Icons.account_circle,
                         color: Colors.black,
-                        size: 30,
+                        size: 40,
                       ),
                       SizedBox(
                         width: 10,
@@ -76,7 +77,12 @@ class Drawerscreen extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.wallet, color: Colors.black),
               title: Text('Wallet'.tr(), style: TextStyle(color: Colors.black)),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => WalletPage()),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.local_offer_outlined, color: Colors.black),

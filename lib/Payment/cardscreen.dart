@@ -1,4 +1,4 @@
-import 'package:easyride/Payment.dart/nextscreen.dart';
+import 'package:easyride/Payment/nextscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

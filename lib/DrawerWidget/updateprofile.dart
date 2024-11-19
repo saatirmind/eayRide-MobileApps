@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:easyride/DrawerWidget/DateInputFormatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String Mobile;
@@ -18,6 +22,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _familyNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _nationalityController = TextEditingController();
+  final _emergencyController = TextEditingController();
+  final _emergencyrelationController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -26,7 +32,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _givenNameController.dispose();
     _familyNameController.dispose();
     _nationalityController.dispose();
+    _emergencyController.dispose();
+    _emergencyrelationController.dispose();
+    _emailController.dispose();
     super.dispose();
+  }
+
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
   }
 
   @override
@@ -64,6 +78,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: 'Enter Email',
                     prefixIcon: Icon(Icons.email),
+                    suffix: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Text(
+                        '*',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -83,12 +108,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 1),
                 Text(widget.Mobile),
                 SizedBox(height: 16),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: _emergencyController,
+                  decoration: InputDecoration(
+                    labelText: 'Emergency Number',
+                    suffix: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Text(
+                        '(Optional)',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: _givenNameController,
                         decoration: InputDecoration(
+                          suffix: Padding(
+                            padding: const EdgeInsets.only(top: 15),
+                            child: Text(
+                              '*',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                           labelText: 'Given Name',
                         ),
                         validator: (value) {
@@ -104,6 +159,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: TextFormField(
                         controller: _familyNameController,
                         decoration: InputDecoration(
+                          suffix: Padding(
+                            padding: const EdgeInsets.only(top: 15),
+                            child: Text(
+                              '*',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                           labelText: 'Family Name',
                         ),
                         validator: (value) {
@@ -118,8 +184,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(height: 16),
                 TextFormField(
+                  controller: _emergencyrelationController,
+                  decoration: InputDecoration(
+                    suffix: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Text(
+                        '(Optional)',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    labelText: 'Emergency Relation',
+                  ),
+                ),
+                SizedBox(height: 16),
+                TextFormField(
                   controller: _dobController,
                   decoration: InputDecoration(
+                    suffix: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Text(
+                        '*',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                     labelText: 'Date of Birth',
                     hintText: 'DD/MM/YYYY',
                   ),
@@ -133,6 +228,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 TextFormField(
                   controller: _nationalityController,
                   decoration: InputDecoration(
+                    suffix: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Text(
+                        '*',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                     labelText: 'Nationality',
                   ),
                   validator: (value) {
@@ -256,26 +362,118 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return null;
   }
 
-  void _submitData() {
+  // void _submitData() {
+  //   if (!_formKey.currentState!.validate()) {
+  //     return;
+  //   }
+
+  //   final data = {
+  //     'mobile': widget.Mobile,
+  //     'dob': _dobController.text,
+  //     'email': _emailController.text,
+  //     'givenName': _givenNameController.text,
+  //     'familyName': _familyNameController.text,
+  //     'nationality': _nationalityController.text,
+  //     'promotionalEmails': promotionalEmails,
+  //   };
+
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => Datascreen(data: data),
+  //     ),
+  //   );
+  // }
+  Future<void> _submitData() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    final data = {
-      'mobile': widget.Mobile,
-      'dob': _dobController.text,
-      'email': _emailController.text,
-      'givenName': _givenNameController.text,
-      'familyName': _familyNameController.text,
-      'nationality': _nationalityController.text,
-      'promotionalEmails': promotionalEmails,
-    };
+    String dob;
+    try {
+      final parsedDate = DateFormat('dd/MM/yyyy').parse(_dobController.text);
+      dob = DateFormat('yyyy-MM-dd').format(parsedDate);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Invalid date format. Please check your input.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Datascreen(data: data),
-      ),
-    );
+    final token = await getToken();
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Token is missing. Please log in again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final String apiUrl = 'https://easyride.saatirmind.com.my/api/v1/update';
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'email': _emailController.text,
+          'given_name': _givenNameController.text,
+          'dob': dob,
+          'token': token,
+          'nationality': _nationalityController.text,
+          'family_name': _familyNameController.text,
+          'emergency_contact': _emergencyController.text,
+          'emergency_relation': _emergencyrelationController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['status'] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Profile updated successfully!'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
+            ),
+          );
+
+          Future.delayed(Duration(seconds: 2), () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DataScreen(data: data),
+              ),
+            );
+          });
+          print('Profile Update Successful: ${data['message']}');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${data['message']}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          print('Error: ${data['message']}');
+        }
+      } else {
+        print('Server Error: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Server error. Please try again later.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (error) {
+      print('Error occurred: $error');
+    }
   }
 }

@@ -32,6 +32,7 @@ class _OtpScreenState extends State<OtpScreen> {
   Timer? _timer;
   int _start = 15;
   bool _canResend = false;
+  bool _isLoading = false;
   String _resendOtp = '';
   bool _isSubmitEnabled = false;
   String? token;
@@ -133,10 +134,13 @@ class _OtpScreenState extends State<OtpScreen> {
 
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token!);
-          await prefs.setString('mobile', widget.mobile);
+          await prefs.setString('mobile', widget.phoneNumber);
 
           navigateToHomeScreen();
         } else {
+          setState(() {
+            _isLoading = false;
+          });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('OTP verification failed.'),
@@ -145,6 +149,9 @@ class _OtpScreenState extends State<OtpScreen> {
           );
         }
       } else {
+        setState(() {
+          _isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Invalid OTP. Please type valid OTP.'),
@@ -153,6 +160,9 @@ class _OtpScreenState extends State<OtpScreen> {
         );
       }
     } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('An error occurred: $e'),
@@ -162,8 +172,12 @@ class _OtpScreenState extends State<OtpScreen> {
     }
   }
 
-  void navigateToHomeScreen() {
+  Future<void> navigateToHomeScreen() async {
     if (token != null) {
+      await Future.delayed(Duration(seconds: 2));
+      setState(() {
+        _isLoading = false;
+      });
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -174,6 +188,9 @@ class _OtpScreenState extends State<OtpScreen> {
         ),
       );
     } else {
+      setState(() {
+        _isLoading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Token is null. Unable to navigate.'),
@@ -204,6 +221,9 @@ class _OtpScreenState extends State<OtpScreen> {
         startTimer();
         print("Resend OTP: $verCode");
       } else {
+        setState(() {
+          _isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to resend OTP. Please try again.'),
@@ -212,6 +232,9 @@ class _OtpScreenState extends State<OtpScreen> {
         );
       }
     } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('An error occurred: $e'),
@@ -287,23 +310,37 @@ class _OtpScreenState extends State<OtpScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.yellow,
-                        padding: EdgeInsets.symmetric(
-                            vertical: 15.0, horizontal: 30.0),
-                      ),
-                      onPressed: _isSubmitEnabled
-                          ? () async {
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              _verifyOtp(prefs);
-                            }
-                          : null,
-                      child: Text('Submit'),
-                    )),
-              )
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.yellow,
+                      padding: EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 30.0),
+                    ),
+                    onPressed: _isSubmitEnabled && !_isLoading
+                        ? () async {
+                            setState(() {
+                              _isLoading = true;
+                            });
+
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await _verifyOtp(prefs);
+                          }
+                        : null,
+                    child: _isLoading
+                        ? SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                              strokeWidth: 2.0,
+                            ),
+                          )
+                        : Text('Submit'),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
