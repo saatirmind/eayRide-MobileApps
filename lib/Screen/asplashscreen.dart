@@ -107,12 +107,14 @@ class _AsplashscreenState extends State<Asplashscreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? mobile = prefs.getString('mobile');
+    String? firstname = prefs.getString('firstname');
 
-    if (token != null && mobile != null) {
+    if (token != null && mobile != null && firstname != null) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => HomeScreen(Mobile: mobile, Token: token),
+          builder: (context) =>
+              HomeScreen(Mobile: mobile, Token: token, Firstname: firstname),
         ),
       );
     } else {

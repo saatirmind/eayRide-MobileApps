@@ -36,6 +36,16 @@ class _OtpScreenState extends State<OtpScreen> {
   String _resendOtp = '';
   bool _isSubmitEnabled = false;
   String? token;
+  String? firstname;
+  String? fullname;
+  String? email;
+  //String? given_name;
+  String? family_name;
+  String? dateofbirth;
+  String? nationality;
+  String? emergency_contact;
+  String? emergency_relation;
+  String? registered_date;
 
   @override
   void initState() {
@@ -123,6 +133,17 @@ class _OtpScreenState extends State<OtpScreen> {
         if (responseData['status'] == true) {
           setState(() {
             token = responseData['data']['token'];
+            firstname = responseData['data']['firstname'] ?? 'Update Profile';
+            email = responseData['data']['email'] ?? '';
+
+            family_name = responseData['data']['family_name'] ?? '';
+            fullname = responseData['data']['fullname'] ?? '';
+            dateofbirth = responseData['data']['dateofbirth'] ?? '';
+            registered_date = responseData['data']['registered_date'];
+            nationality = responseData['data']['nationality'] ?? '';
+            emergency_contact = responseData['data']['emergency_contact'] ?? '';
+            emergency_relation =
+                responseData['data']['emergency_relation'] ?? '';
           });
           print('Login Successful! Token: $token');
           ScaffoldMessenger.of(context).showSnackBar(
@@ -134,6 +155,15 @@ class _OtpScreenState extends State<OtpScreen> {
 
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token!);
+          await prefs.setString('firstname', firstname!);
+          await prefs.setString('email', email!);
+          await prefs.setString('fullname', fullname!);
+          await prefs.setString('family_name', family_name!);
+          await prefs.setString('dateofbirth', dateofbirth!);
+          await prefs.setString('registered_date', registered_date!);
+          await prefs.setString('nationality', nationality!);
+          await prefs.setString('emergency_contact', emergency_contact!);
+          await prefs.setString('emergency_relation', emergency_relation!);
           await prefs.setString('mobile', widget.phoneNumber);
 
           navigateToHomeScreen();
@@ -184,6 +214,7 @@ class _OtpScreenState extends State<OtpScreen> {
           builder: (context) => HomeScreen(
             Mobile: widget.phoneNumber,
             Token: token!,
+            Firstname: firstname!,
           ),
         ),
       );
@@ -247,102 +278,100 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          color: Theme.of(context).primaryColor,
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (_resendOtp.isEmpty)
-                Center(
-                  child: Text(
-                    'OTP: ${widget.Verification_code}',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                )
-              else
-                Center(
-                  child: Text(
-                    'Resend OTP: $_resendOtp',
-                    style: TextStyle(color: Colors.green),
-                  ),
-                ),
-              SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
+      body: Container(
+        color: Theme.of(context).primaryColor,
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_resendOtp.isEmpty)
+              Center(
                 child: Text(
-                  'Enter the 6 digit code sent to ${widget.phoneNumber}',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                  'OTP: ${widget.Verification_code}',
+                  style: TextStyle(color: Colors.red),
+                ),
+              )
+            else
+              Center(
+                child: Text(
+                  'Resend OTP: $_resendOtp',
+                  style: TextStyle(color: Colors.green),
                 ),
               ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(6, (index) {
-                  return SizedBox(
-                    width: 40,
-                    child: TextField(
-                      controller: _otpControllers[index],
-                      focusNode: _focusNodes[index],
-                      keyboardType: TextInputType.number,
-                      maxLength: 1,
-                      textAlign: TextAlign.center,
-                      decoration: InputDecoration(counterText: ''),
-                      onChanged: (value) => _onFieldChanged(value, index),
-                    ),
-                  );
-                }),
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Text(
+                'Enter the 6 digit code sent to ${widget.phoneNumber}',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 20),
-              Text(
-                'Resend OTP in: $_start seconds',
-                style: TextStyle(fontSize: 14, color: Colors.black),
-              ),
-              const SizedBox(height: 10),
-              if (_canResend)
-                TextButton(
-                  onPressed: resendOtp,
-                  child: Text('Resend OTP'),
-                ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.yellow,
-                      padding: EdgeInsets.symmetric(
-                          vertical: 15.0, horizontal: 30.0),
-                    ),
-                    onPressed: _isSubmitEnabled && !_isLoading
-                        ? () async {
-                            setState(() {
-                              _isLoading = true;
-                            });
-
-                            SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            await _verifyOtp(prefs);
-                          }
-                        : null,
-                    child: _isLoading
-                        ? SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.black,
-                              strokeWidth: 2.0,
-                            ),
-                          )
-                        : Text('Submit'),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(6, (index) {
+                return SizedBox(
+                  width: 40,
+                  child: TextField(
+                    controller: _otpControllers[index],
+                    focusNode: _focusNodes[index],
+                    keyboardType: TextInputType.number,
+                    maxLength: 1,
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(counterText: ''),
+                    onChanged: (value) => _onFieldChanged(value, index),
                   ),
+                );
+              }),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Resend OTP in: $_start seconds',
+              style: TextStyle(fontSize: 14, color: Colors.black),
+            ),
+            const SizedBox(height: 10),
+            if (_canResend)
+              TextButton(
+                onPressed: resendOtp,
+                child: Text('Resend OTP'),
+              ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.yellow,
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
+                  ),
+                  onPressed: _isSubmitEnabled && !_isLoading
+                      ? () async {
+                          setState(() {
+                            _isLoading = true;
+                          });
+
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          await _verifyOtp(prefs);
+                        }
+                      : null,
+                  child: _isLoading
+                      ? SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                            strokeWidth: 2.0,
+                          ),
+                        )
+                      : Text('Submit'),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

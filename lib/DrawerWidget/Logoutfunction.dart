@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> logout(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
+  print('Retrieved Token: $token');
 
   if (token == null) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -23,10 +24,7 @@ Future<void> logout(BuildContext context) async {
   try {
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'token': token,
-      }),
+      headers: {'Content-Type': 'application/json', 'token': 'Bearer $token'},
     );
 
     if (response.statusCode == 200) {
@@ -38,9 +36,8 @@ Future<void> logout(BuildContext context) async {
             backgroundColor: Colors.green,
           ),
         );
-
-        await prefs.remove('token');
-
+        await prefs.clear();
+        print("All SharedPreferences data cleared successfully!");
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => PhoneNumberScreen()),

@@ -9,7 +9,9 @@ import 'package:intl/intl.dart';
 class ProfileScreen extends StatefulWidget {
   final String Mobile;
 
-  const ProfileScreen({super.key, required this.Mobile});
+  final String Token;
+
+  const ProfileScreen({super.key, required this.Mobile, required this.Token});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -24,6 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _nationalityController = TextEditingController();
   final _emergencyController = TextEditingController();
   final _emergencyrelationController = TextEditingController();
+  String _registered_date = '';
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -34,6 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _nationalityController.dispose();
     _emergencyController.dispose();
     _emergencyrelationController.dispose();
+
     _emailController.dispose();
     super.dispose();
   }
@@ -73,6 +77,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   'Please make sure to fill up all of the information below to start riding our motorbikes. The information is necessary for insurance purposes.',
                 ),
                 SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Phone Number',
+                          style: TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Registered Date',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(widget.Mobile),
+                      ),
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          _registered_date,
+                          style: TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
@@ -104,106 +151,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                 ),
                 SizedBox(height: 16),
-                Text('Phone Number'),
-                SizedBox(height: 1),
-                Text(widget.Mobile),
-                SizedBox(height: 16),
                 TextFormField(
-                  keyboardType: TextInputType.number,
-                  controller: _emergencyController,
+                  controller: _givenNameController,
                   decoration: InputDecoration(
-                    labelText: 'Emergency Number',
+                    prefixIcon: Icon(Icons.person),
                     suffix: Padding(
                       padding: const EdgeInsets.only(top: 15),
                       child: Text(
-                        '(Optional)',
+                        '*',
                         style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
+                    labelText: 'Given Name',
                   ),
-                ),
-                SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _givenNameController,
-                        decoration: InputDecoration(
-                          suffix: Padding(
-                            padding: const EdgeInsets.only(top: 15),
-                            child: Text(
-                              '*',
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          labelText: 'Given Name',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your given name';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _familyNameController,
-                        decoration: InputDecoration(
-                          suffix: Padding(
-                            padding: const EdgeInsets.only(top: 15),
-                            child: Text(
-                              '*',
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          labelText: 'Family Name',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your family name';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your Given name';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 16),
                 TextFormField(
-                  controller: _emergencyrelationController,
+                  controller: _familyNameController,
                   decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.edit),
                     suffix: Padding(
                       padding: const EdgeInsets.only(top: 15),
                       child: Text(
-                        '(Optional)',
+                        '*',
                         style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    labelText: 'Emergency Relation',
+                    labelText: 'Family Name',
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your Family name';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 16),
                 TextFormField(
                   controller: _dobController,
                   decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.calendar_today),
                     suffix: Padding(
                       padding: const EdgeInsets.only(top: 15),
                       child: Text(
@@ -216,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     labelText: 'Date of Birth',
-                    hintText: 'DD/MM/YYYY',
+                    hintText: 'DD-MM-YYYY',
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [
@@ -228,6 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 TextFormField(
                   controller: _nationalityController,
                   decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.public),
                     suffix: Padding(
                       padding: const EdgeInsets.only(top: 15),
                       child: Text(
@@ -247,6 +249,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     }
                     return null;
                   },
+                ),
+                SizedBox(height: 16),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: _emergencyController,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.phone),
+                    labelText: 'Emergency Number',
+                    suffix: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Text(
+                        '(Optional)',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: _emergencyrelationController,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.group),
+                    suffix: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Text(
+                        '(Optional)',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    labelText: 'Emergency Relation',
+                  ),
                 ),
                 SizedBox(height: 16),
                 Container(
@@ -312,15 +353,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(height: 16),
                 Center(
-                  child: ElevatedButton(
-                    onPressed: _submitData,
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      backgroundColor: Colors.yellow,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _submitData,
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.yellow,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 15),
+                        ),
+                        child: Text('SUBMIT'),
+                      ),
                     ),
-                    child: Text('SUBMIT'),
                   ),
                 ),
               ],
@@ -336,9 +383,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return 'Please enter your Date of Birth';
     }
 
-    final dateParts = value.split('/');
+    final dateParts = value.split('-');
     if (dateParts.length != 3) {
-      return 'Please enter in DD/MM/YYYY format';
+      return 'Please enter in DD-MM-YYYY format';
     }
 
     final day = int.tryParse(dateParts[0]);
@@ -362,37 +409,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return null;
   }
 
-  // void _submitData() {
-  //   if (!_formKey.currentState!.validate()) {
-  //     return;
-  //   }
-
-  //   final data = {
-  //     'mobile': widget.Mobile,
-  //     'dob': _dobController.text,
-  //     'email': _emailController.text,
-  //     'givenName': _givenNameController.text,
-  //     'familyName': _familyNameController.text,
-  //     'nationality': _nationalityController.text,
-  //     'promotionalEmails': promotionalEmails,
-  //   };
-
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => Datascreen(data: data),
-  //     ),
-  //   );
-  // }
   Future<void> _submitData() async {
     if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              "All required fields must be filled with valid information, including name, dob, and other details. Please correct any errors to proceed."),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+        ),
+      );
       return;
     }
 
     String dob;
     try {
-      final parsedDate = DateFormat('dd/MM/yyyy').parse(_dobController.text);
+      final parsedDate = DateFormat('dd-MM-yyyy').parse(_dobController.text);
       dob = DateFormat('yyyy-MM-dd').format(parsedDate);
+      print('Formatted DOB: $dob');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -404,6 +438,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     final token = await getToken();
+    print('Token retrieved: $token');
     if (token == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -421,12 +456,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
         },
         body: jsonEncode({
           'email': _emailController.text,
           'given_name': _givenNameController.text,
           'dob': dob,
-          'token': token,
           'nationality': _nationalityController.text,
           'family_name': _familyNameController.text,
           'emergency_contact': _emergencyController.text,
@@ -444,12 +479,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               duration: Duration(seconds: 2),
             ),
           );
+          await saveUserDataToPreferences();
 
-          Future.delayed(Duration(seconds: 2), () {
+          Future.delayed(Duration(seconds: 3), () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DataScreen(data: data),
+                builder: (context) => DataScreen(
+                  data: data,
+                  Token: widget.Token,
+                  Mobile: widget.Mobile,
+                ),
               ),
             );
           });
@@ -467,13 +507,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
         print('Server Error: ${response.statusCode}');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Server error. Please try again later.'),
+            content: Text(
+                'This User name or email is already in use. Please choose a different name.'),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ),
         );
       }
     } catch (error) {
       print('Error occurred: $error');
     }
+  }
+
+  Future<void> saveUserDataToPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('email', _emailController.text);
+
+    await prefs.setString('family_name', _familyNameController.text);
+
+    await prefs.setString('nationality', _nationalityController.text);
+    await prefs.setString('emergency_contact', _emergencyController.text);
+    await prefs.setString(
+        'emergency_relation', _emergencyrelationController.text);
+
+    print("User data saved to SharedPreferences successfully!");
+  }
+
+  Future<void> loadUserDataFromPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    _emailController.text = prefs.getString('email') ?? '';
+    _givenNameController.text = prefs.getString('fullname') ?? '';
+    _familyNameController.text = prefs.getString('family_name') ?? '';
+    _dobController.text = prefs.getString('dateofbirth') ?? '';
+    _nationalityController.text = prefs.getString('nationality') ?? '';
+    _emergencyController.text = prefs.getString('emergency_contact') ?? '';
+    _emergencyrelationController.text =
+        prefs.getString('emergency_relation') ?? '';
+
+    print("User data loaded from SharedPreferences!");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserDataFromPreferences();
   }
 }

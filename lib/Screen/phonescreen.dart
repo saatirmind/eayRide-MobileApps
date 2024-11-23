@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:easyride/Screen/otpscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
@@ -12,134 +13,201 @@ class PhoneNumberScreen extends StatefulWidget {
 }
 
 class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
+  String appVersion = 'Loading...';
+  final FocusNode phoneFocusNode = FocusNode();
   bool _isLoading = false;
   final Uri _url = Uri.parse('https://www.emrkl.com/');
   String countryCode = '+60';
   TextEditingController phoneController = TextEditingController();
+  TextEditingController fullnameController = TextEditingController();
+  TextEditingController passportController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    phoneController.addListener(() {
+      if (phoneController.text.length == 15) {
+        FocusScope.of(context).unfocus();
+      }
+    });
+    fetchAppVersion();
+  }
+
+  Future<void> fetchAppVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      appVersion = 'Version: ${packageInfo.version}';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).primaryColor,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/splash.png',
-                width: 250,
-                height: 300,
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  CountryCodePicker(
-                    onChanged: (code) {
-                      setState(() {
-                        countryCode = code.dialCode!;
-                      });
-                    },
-                    initialSelection: 'MY',
-                    showFlag: true,
-                    favorite: ['+60', 'MY'],
-                  ),
-                  Expanded(
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/splash.png',
+              width: 200,
+              height: 200,
+            ),
+            SizedBox(height: 20),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 30),
+                  child: Icon(Icons.person),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 58),
                     child: TextField(
-                      controller: phoneController,
-                      keyboardType: TextInputType.phone,
-                      maxLength: 10,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(10),
-                      ],
+                      controller: fullnameController,
                       decoration: InputDecoration(
-                        hintText: 'Enter your phone number',
+                        hintText: 'Full Name(as per Pasport or ID Card)',
                         border: UnderlineInputBorder(),
                         counterText: '',
                       ),
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Text(
-                "Enter your phone number without '0'. By continuing, you agree to our Terms of Service.",
-                style: TextStyle(fontSize: 14),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.yellow,
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    minimumSize: Size(200, 50),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 30),
+                  child: Icon(Icons.description),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 58),
+                    child: TextField(
+                      controller: passportController,
+                      decoration: InputDecoration(
+                        hintText: 'Passport/NRIC Number',
+                        border: UnderlineInputBorder(),
+                        counterText: '',
+                      ),
+                    ),
                   ),
-                  onPressed: () async {
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                CountryCodePicker(
+                  onChanged: (code) {
                     setState(() {
-                      _isLoading = true;
-                    });
-                    await sendOtp();
-                    setState(() {
-                      _isLoading = false;
+                      countryCode = code.dialCode!;
                     });
                   },
-                  child: _isLoading
-                      ? SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.black,
-                            strokeWidth: 2.0,
-                          ),
-                        )
-                      : Text(
-                          'NEXT',
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
+                  initialSelection: 'MY',
+                  showFlag: true,
+                  favorite: ['+60', 'MY'],
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: phoneController,
+                    keyboardType: TextInputType.phone,
+                    maxLength: 15,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(15),
+                    ],
+                    decoration: InputDecoration(
+                      hintText: 'Enter your mobile number',
+                      border: UnderlineInputBorder(),
+                      counterText: '',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Text(
+              "Enter your phone number without '0'. By continuing, you agree to our Terms of Service.",
+              style: TextStyle(fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.yellow,
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  minimumSize: Size(200, 50),
+                ),
+                onPressed: () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  await sendOtp();
+                  setState(() {
+                    _isLoading = false;
+                  });
+                },
+                child: _isLoading
+                    ? SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
+                          strokeWidth: 2.0,
                         ),
-                ),
+                      )
+                    : Text(
+                        'NEXT',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
               ),
-              SizedBox(height: 10),
-              Text(
-                '6 digit code will be sent to your phone in a few seconds.',
-                style: TextStyle(fontSize: 14),
+            ),
+            SizedBox(height: 10),
+            Text(
+              '6 digit code will be sent to your phone in a few seconds.',
+              style: TextStyle(fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 30),
+            TextButton(
+              onPressed: () async {
+                if (!await launchUrl(_url)) {
+                  throw 'Could not launch $_url';
+                }
+              },
+              child: RichText(
                 textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 30),
-              TextButton(
-                onPressed: () async {
-                  if (!await launchUrl(_url)) {
-                    throw 'Could not launch $_url';
-                  }
-                },
-                child: Text(
-                  'TERMS OF SERVICE',
+                text: TextSpan(
+                  text: 'TERMS OF SERVICE\n',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Colors.blue,
+                    fontSize: 16,
                   ),
+                  children: [
+                    TextSpan(
+                      text: 'FAQ',
+                      style: TextStyle(
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              TextButton(
-                onPressed: () async {
-                  if (!await launchUrl(_url)) {
-                    throw 'Could not launch $_url';
-                  }
-                },
-                child: Text(
-                  'FAQ',
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              appVersion,
+              style: TextStyle(fontSize: 15, color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
@@ -148,7 +216,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   Future<void> sendOtp() async {
     String phoneNumber = phoneController.text;
 
-    if (phoneNumber.isEmpty || phoneNumber.length != 10) {
+    if (phoneNumber.isEmpty || phoneNumber.length < 9) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -196,7 +264,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => OtpScreen(
-            phoneNumber: '$countryCode $phoneNumber',
+            phoneNumber: '$countryCode-$phoneNumber',
             userId: userId.toString(),
             Verification_code: verCode.toString(),
             mobile: '$phoneNumber',

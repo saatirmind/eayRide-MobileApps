@@ -52,6 +52,7 @@ dependencies:
   http: ^1.2.2
   geolocator: ^13.0.2
   jwt_decoder: ^2.0.1
+  package_info_plus: ^8.1.1
 flutter_native_splash:   
 
 dev_dependencies:

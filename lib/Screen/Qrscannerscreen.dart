@@ -29,7 +29,6 @@ class QRScannerScreenState extends State<QRScannerScreen> {
       setState(() {
         isCameraAvailable = true;
       });
-      _disableFlashOnStart();
     } else {
       setState(() {
         isCameraAvailable = false;
@@ -43,12 +42,6 @@ class QRScannerScreenState extends State<QRScannerScreen> {
     }
   }
 
-  void _disableFlashOnStart() {
-    if (controller != null) {
-      controller?.toggleFlash();
-    }
-  }
-
   @override
   void dispose() {
     controller?.dispose();
@@ -58,7 +51,6 @@ class QRScannerScreenState extends State<QRScannerScreen> {
   void _onQRScan(String result) {
     setState(() {
       qrText = result;
-      controller?.toggleFlash();
     });
   }
 
@@ -98,21 +90,10 @@ class QRScannerScreenState extends State<QRScannerScreen> {
             key: qrKey,
             onQRViewCreated: (QRViewController qrController) {
               controller = qrController;
-              _disableFlashOnStart();
               controller?.scannedDataStream.listen(
                 (scanData) {
-                  try {
-                    if (scanData.code != null) {
-                      _onQRScan(scanData.code!);
-                    }
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('QR scanning failed. Please try again.'),
-                        backgroundColor: Colors.red,
-                        duration: Duration(seconds: 3),
-                      ),
-                    );
+                  if (scanData.code != null) {
+                    _onQRScan(scanData.code!);
                   }
                 },
               );

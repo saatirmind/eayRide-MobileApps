@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Drawerscreen extends StatelessWidget {
+  final String Firstname;
   final String Mobile;
   final String Token;
   const Drawerscreen({
     super.key,
     required this.Mobile,
     required this.Token,
+    required this.Firstname,
   });
 
   @override
@@ -33,7 +35,10 @@ class Drawerscreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ProfileScreen(Mobile: Mobile)),
+                          builder: (context) => ProfileScreen(
+                                Mobile: Mobile,
+                                Token: Token,
+                              )),
                     );
                   },
                   child: Row(
@@ -50,7 +55,7 @@ class Drawerscreen extends StatelessWidget {
                       Column(
                         children: [
                           Text(
-                            'Update Profile',
+                            Firstname,
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
