@@ -24,7 +24,10 @@ Future<void> logout(BuildContext context) async {
   try {
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json', 'token': 'Bearer $token'},
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'token': token}),
     );
 
     if (response.statusCode == 200) {

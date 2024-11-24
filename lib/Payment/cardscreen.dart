@@ -13,6 +13,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
   final TextEditingController _expiryDateController = TextEditingController();
   final TextEditingController _cvvController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -113,36 +114,68 @@ class _AddCardScreenState extends State<AddCardScreen> {
               Center(
                 child: SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.yellow,
-                      padding: EdgeInsets.symmetric(
-                          vertical: 15.0, horizontal: 30.0),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NextScreen(
-                              cardNumber: _cardNumberController.text,
-                              expiryDate: _expiryDateController.text,
-                              cvv: _cvvController.text,
-                              fullName: _nameController.text,
+                  child: _isLoading
+                      ? Container(
+                          width: double.infinity,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.yellow,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                              strokeWidth: 4.0,
                             ),
                           ),
-                        );
-                      }
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.credit_card, color: Colors.black),
-                        SizedBox(width: 5),
-                        Text("ADD", style: TextStyle(color: Colors.black)),
-                      ],
-                    ),
-                  ),
+                        )
+                      : InkWell(
+                          onTap: () async {
+                            if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                _isLoading = true;
+                              });
+
+                              await Future.delayed(Duration(seconds: 2));
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NextScreen(
+                                    cardNumber: _cardNumberController.text,
+                                    expiryDate: _expiryDateController.text,
+                                    cvv: _cvvController.text,
+                                    fullName: _nameController.text,
+                                  ),
+                                ),
+                              );
+
+                              setState(() {
+                                _isLoading = false;
+                              });
+                            }
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.yellow,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.credit_card, color: Colors.black),
+                                SizedBox(width: 5),
+                                Text(
+                                  "ADD",
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 16),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                 ),
               ),
               SizedBox(height: 20),

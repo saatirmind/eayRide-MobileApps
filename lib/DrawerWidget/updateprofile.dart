@@ -456,9 +456,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
         },
         body: jsonEncode({
+          'token': token,
           'email': _emailController.text,
           'given_name': _givenNameController.text,
           'dob': dob,

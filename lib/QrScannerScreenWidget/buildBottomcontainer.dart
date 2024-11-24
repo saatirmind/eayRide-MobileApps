@@ -13,6 +13,7 @@ class BuildBottomContainer extends StatefulWidget {
 
 class _BuildBottomContainerState extends State<BuildBottomContainer> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,6 @@ class _BuildBottomContainerState extends State<BuildBottomContainer> {
 
     double containerPadding = screenWidth * 0.04;
     double imageHeight = screenHeight * 0.1;
-    double buttonPadding = screenWidth * 0.1;
 
     return Container(
       padding: EdgeInsets.all(containerPadding),
@@ -51,35 +51,73 @@ class _BuildBottomContainerState extends State<BuildBottomContainer> {
             MyCardTextField(
               qrText: widget.qrText,
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState?.validate() ?? false) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddCardScreen(),
-                      ));
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please enter a valid QR Code!')),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.yellow,
-                foregroundColor: Colors.black,
-                padding: EdgeInsets.symmetric(
-                    horizontal: buttonPadding, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Text(
-                'SUBMIT',
-                style: TextStyle(
-                    fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold),
-              ),
-            ),
+            _isLoading
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Container(
+                      width: double.infinity,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.yellow,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
+                          strokeWidth: 4.0,
+                        ),
+                      ),
+                    ),
+                  )
+                : InkWell(
+                    onTap: () async {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        setState(() {
+                          _isLoading = true;
+                        });
+
+                        await Future.delayed(Duration(seconds: 2));
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddCardScreen(),
+                          ),
+                        );
+
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter a valid QR Code!'),
+                          ),
+                        );
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.yellow,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'SUBMIT',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.04,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),

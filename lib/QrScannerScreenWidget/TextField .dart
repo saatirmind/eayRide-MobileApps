@@ -13,7 +13,7 @@ class _MyCardTextFieldState extends State<MyCardTextField> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 105,
+      height: 125,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Card(
@@ -23,35 +23,33 @@ class _MyCardTextFieldState extends State<MyCardTextField> {
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Flexible(
-              child: TextFormField(
-                controller: TextEditingController(text: widget.qrText),
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                textAlign: TextAlign.start,
-                maxLines: 1,
-                decoration: InputDecoration(
-                  hintText: 'Enter Code Here',
-                  hintStyle: TextStyle(color: Colors.grey.shade600),
-                  prefixIcon: Icon(Icons.text_fields),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                ),
-                readOnly: false,
-                scrollPadding: EdgeInsets.all(0),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'This field cannot be empty';
-                  }
-                  return null;
-                },
+            child: TextFormField(
+              controller: TextEditingController(text: widget.qrText),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                overflow: TextOverflow.ellipsis,
               ),
+              textAlign: TextAlign.start,
+              maxLines: 1,
+              decoration: InputDecoration(
+                hintText: 'Enter Code Here',
+                hintStyle: TextStyle(color: Colors.grey.shade600),
+                prefixIcon: Icon(Icons.text_fields),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.grey.shade100,
+              ),
+              readOnly: false,
+              scrollPadding: EdgeInsets.all(0),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'This field cannot be empty';
+                }
+                return null;
+              },
             ),
           ),
         ),
