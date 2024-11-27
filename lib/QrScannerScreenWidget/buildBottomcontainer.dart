@@ -75,6 +75,13 @@ class _BuildBottomContainerState extends State<BuildBottomContainer> {
                         setState(() {
                           _isLoading = true;
                         });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text('vehicle details fatched successfully'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
 
                         await Future.delayed(Duration(seconds: 2));
 

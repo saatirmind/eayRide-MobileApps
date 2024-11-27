@@ -72,18 +72,18 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                       child: TextFormField(
                         controller: fullnameController,
                         decoration: InputDecoration(
-                          hintText: 'Full Name (as per Passport or ID Card)',
+                          hintText: 'Full Name (Passport or ID Card)',
                           border: UnderlineInputBorder(),
                           counterText: '',
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Full Name is required';
-                          } else if (value.length < 3) {
-                            return 'Full Name must be at least 3 characters';
-                          }
-                          return null;
-                        },
+                        // validator: (value) {
+                        //   if (value == null || value.isEmpty) {
+                        //     return 'Full Name is required';
+                        //   } else if (value.length < 3) {
+                        //     return 'Full Name must be at least 3 characters';
+                        //   }
+                        //   return null;
+                        // },
                       ),
                     ),
                   ),
@@ -105,14 +105,14 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                           border: UnderlineInputBorder(),
                           counterText: '',
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Passport/NRIC Number is required';
-                          } else if (value.length < 5) {
-                            return 'Passport/NRIC Number must be at least 5 characters';
-                          }
-                          return null;
-                        },
+                        // validator: (value) {
+                        //   if (value == null || value.isEmpty) {
+                        //     return 'Passport/NRIC Number is required';
+                        //   } else if (value.length < 5) {
+                        //     return 'Passport/NRIC Number must be at least 5 characters';
+                        //   }
+                        //   return null;
+                        // },
                       ),
                     ),
                   ),
@@ -144,14 +144,14 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                         border: UnderlineInputBorder(),
                         counterText: '',
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Phone number is required';
-                        } else if (value.length < 9) {
-                          return 'Phone number must be at least 9 digits';
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return 'Phone number is required';
+                      //   } else if (value.length < 2) {
+                      //     return 'Phone number must be at least 2 digits';
+                      //   }
+                      //   return null;
+                      // },
                     ),
                   ),
                 ],
@@ -256,7 +256,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   Future<void> sendOtp() async {
     String phoneNumber = phoneController.text;
 
-    if (phoneNumber.isEmpty || phoneNumber.length < 9) {
+    if (phoneNumber.isEmpty || phoneNumber.length < 2) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -280,8 +280,8 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       body: jsonEncode({
         'mobile': phoneNumber,
         'mobile_code': countryCode,
-        'fullname': fullnameController.text,
-        'passport_or_nric_no': passportController.text,
+        //'fullname': fullnameController.text,
+        // 'passport_or_nric_no': passportController.text,
       }),
     );
 

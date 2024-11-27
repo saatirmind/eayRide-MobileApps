@@ -1,6 +1,7 @@
 import 'package:easyride/Payment/nextscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddCardScreen extends StatefulWidget {
   @override
@@ -14,6 +15,14 @@ class _AddCardScreenState extends State<AddCardScreen> {
   final TextEditingController _cvvController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   bool _isLoading = false;
+  @override
+  void dispose() {
+    _cardNumberController.dispose();
+    _expiryDateController.dispose();
+    _cvvController.dispose();
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,19 +144,21 @@ class _AddCardScreenState extends State<AddCardScreen> {
                               setState(() {
                                 _isLoading = true;
                               });
+                              await saveCardToSharedPreferences();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Add card successfully!'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
 
                               await Future.delayed(Duration(seconds: 2));
 
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => NextScreen(
-                                    cardNumber: _cardNumberController.text,
-                                    expiryDate: _expiryDateController.text,
-                                    cvv: _cvvController.text,
-                                    fullName: _nameController.text,
-                                  ),
-                                ),
+                                    builder: (context) =>
+                                        PaymentMethodScreen()),
                               );
 
                               setState(() {
@@ -190,6 +201,33 @@ class _AddCardScreenState extends State<AddCardScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> saveCardToSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('card_number', _cardNumberController.text);
+    prefs.setString('expiry_date', _expiryDateController.text);
+    prefs.setString('cvv', _cvvController.text);
+    prefs.setString('name_on_card', _nameController.text);
+
+    String fullCardNumber = _cardNumberController.text;
+    String lastFourDigits = fullCardNumber.substring(fullCardNumber.length - 4);
+
+    Map<String, String> cardDetails = {
+      "cardNumber": lastFourDigits,
+      "expiryDate": _expiryDateController.text,
+      "name": _nameController.text,
+    };
+
+    String cardDetailsString = cardDetails.toString();
+
+    await prefs.setString('savedCard', cardDetailsString);
+
+    print("Card details saved to SharedPreferences: $cardDetailsString");
+    _cardNumberController.clear();
+    _expiryDateController.clear();
+    _cvvController.clear();
+    _nameController.clear();
   }
 }
 

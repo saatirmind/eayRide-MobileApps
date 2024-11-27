@@ -41,9 +41,15 @@ class CitySelector extends StatelessWidget {
                               icon: Icon(Icons.arrow_back_ios),
                               onPressed: onBackPressed,
                             ))))),
-            Text(
-              cityName,
-              style: TextStyle(fontSize: 18),
+            Expanded(
+              flex: 2,
+              child: Text(
+                cityName,
+                style: TextStyle(fontSize: 18),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
             ),
             Expanded(
                 child: Align(

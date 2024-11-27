@@ -14,12 +14,13 @@ class HomeScreen extends StatefulWidget {
   final String Firstname;
   final String Mobile;
   final String Token;
-  const HomeScreen(
-      {Key? key,
-      required this.Mobile,
-      required this.Token,
-      required this.Firstname})
-      : super(key: key);
+
+  const HomeScreen({
+    Key? key,
+    required this.Mobile,
+    required this.Token,
+    required this.Firstname,
+  }) : super(key: key);
 
   @override
   HomeScreenState createState() => HomeScreenState();
@@ -27,33 +28,45 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final GlobalKey<GooglemapState> _googleMapKey = GlobalKey();
-  String _currentCityName = "Current Location";
+  String _currentCityName = '';
   LatLng? _currentPosition;
-  String loadingText = "Please wait Loading";
-  int dotCount = 0;
-  Timer? _timer;
+
+  int _currentCityIndex = -1;
+
+  final List<String> _cities = [
+    "Bukit Bintang Walk",
+    "Ceylonz Suites, Persiaran Raja Chulan",
+    "Scarletz Suites, Jalan Yap Kwan Seng",
+    "Central Market",
+    "The Colony by Infinitum, Chow Kit",
+    "The Mansion, Brickfields",
+    "Batu Caves",
+    "Thean Hou Temple, Persiaran Endah"
+  ];
+
+  final List<LatLng> _cityPositions = [
+    LatLng(3.1460887463338447, 101.71770362698292),
+    LatLng(3.150236, 101.705465),
+    LatLng(3.159932, 101.712492),
+    LatLng(3.142896, 101.695771),
+    LatLng(3.162606, 101.695721),
+    LatLng(3.134852, 101.685504),
+    LatLng(3.235014, 101.683455),
+    LatLng(3.121977, 101.687094),
+  ];
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _startLoadingAnimation();
+    _currentPosition = LatLng(3.1390, 101.6869);
+    _currentCityName = "Kaula Lumpur, Malaysia";
     _requestLocationPermission(context);
-  }
-
-  void _startLoadingAnimation() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        dotCount = (dotCount + 1) % 4;
-        loadingText = "Please wait, fetching location" + "." * dotCount;
-      });
-    });
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _timer?.cancel();
     super.dispose();
   }
 
@@ -66,103 +79,12 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    if (_currentPosition == null) {
-      return Scaffold(
-        drawer: Drawerscreen(
-            Mobile: widget.Mobile,
-            Token: widget.Token,
-            Firstname: widget.Firstname),
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: Center(
-                child: SizedBox(
-                  width: 200,
-                  child: Text(
-                    loadingText,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 50,
-              left: 0,
-              right: 0,
-              child: PromotionsBanner(),
-            ),
-            Positioned(
-              top: 150,
-              left: 0,
-              right: 0,
-              child: CitySelector(
-                cityName: _currentCityIndex == -1
-                    ? _currentCityName
-                    : _cities[_currentCityIndex].tr(),
-                onBackPressed: () => _changeCity(-1),
-                onForwardPressed: () => _changeCity(1),
-              ),
-            ),
-            Positioned(
-              right: 10,
-              bottom: 200,
-              child: FloatingButtons(
-                onMyLocationPressed: () {
-                  _googleMapKey.currentState?.goToCurrentLocation();
-                  setState(() {
-                    _currentCityIndex = -1;
-                  });
-                },
-              ),
-            ),
-            Positioned(
-              bottom: 30,
-              left: 0,
-              right: 0,
-              child: BottomBar(),
-            ),
-            Positioned(
-              top: 390,
-              left: -30,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(60),
-                  color: Colors.white,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Builder(
-                    builder: (BuildContext context) {
-                      return InkWell(
-                        onTap: () => Scaffold.of(context).openDrawer(),
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.yellow,
-                          child: Icon(
-                            Icons.menu,
-                            color: Colors.black,
-                            size: 30,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
     return Scaffold(
       drawer: Drawerscreen(
-          Mobile: widget.Mobile,
-          Token: widget.Token,
-          Firstname: widget.Firstname),
+        Mobile: widget.Mobile,
+        Token: widget.Token,
+        Firstname: widget.Firstname,
+      ),
       body: Stack(
         children: [
           Positioned.fill(
@@ -171,6 +93,8 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               cityPosition: _currentCityIndex == -1
                   ? _currentPosition ?? LatLng(0, 0)
                   : _cityPositions[_currentCityIndex],
+              cities: _cities,
+              cityPositions: _cityPositions,
             ),
           ),
           Positioned(
@@ -251,9 +175,11 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
         return;
       }
     }
@@ -309,22 +235,4 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       },
     );
   }
-
-  int _currentCityIndex = -1;
-  final List<String> _cities = [
-    "Kuala Lumpur, Malaysia",
-    "New York City",
-    "Delhi, India",
-    "London, UK",
-    "Tokyo, Japan",
-    "Mathura, India"
-  ];
-  final List<LatLng> _cityPositions = [
-    LatLng(3.1390, 101.6869),
-    LatLng(40.7128, -74.0060),
-    LatLng(28.6139, 77.2090),
-    LatLng(51.5074, -0.1278),
-    LatLng(35.6895, 139.6917),
-    LatLng(27.4924, 77.6737),
-  ];
 }
