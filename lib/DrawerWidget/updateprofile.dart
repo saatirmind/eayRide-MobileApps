@@ -1,17 +1,22 @@
 import 'dart:convert';
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:http/http.dart' as http;
 import 'package:easyride/DrawerWidget/DateInputFormatter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String Mobile;
+  final String registered_date;
 
   final String Token;
 
-  const ProfileScreen({super.key, required this.Mobile, required this.Token});
+  const ProfileScreen(
+      {super.key,
+      required this.Mobile,
+      required this.Token,
+      required this.registered_date});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -26,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _nationalityController = TextEditingController();
   final _emergencyController = TextEditingController();
   final _emergencyrelationController = TextEditingController();
-  String _registered_date = '';
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -111,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          _registered_date,
+                          widget.registered_date,
                           style: TextStyle(
                               color: Colors.green, fontWeight: FontWeight.w500),
                         ),
@@ -360,10 +365,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: ElevatedButton(
                         onPressed: _submitData,
                         style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.yellow,
+                          foregroundColor: EasyrideColors.buttontextColor,
+                          backgroundColor: EasyrideColors.buttonColor,
                           padding: EdgeInsets.symmetric(
                               horizontal: 50, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
                         ),
                         child: Text('SUBMIT'),
                       ),
@@ -449,16 +456,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
 
-    final String apiUrl = 'https://easyride.saatirmind.com.my/api/v1/update';
+    final String apiUrl = AppApi.Updateprofile;
 
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
+          'token': token,
         },
         body: jsonEncode({
-          'token': token,
           'email': _emailController.text,
           'given_name': _givenNameController.text,
           'dob': dob,
@@ -486,10 +493,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) => DataScreen(
-                  data: data,
-                  Token: widget.Token,
-                  Mobile: widget.Mobile,
-                ),
+                    data: data,
+                    Token: widget.Token,
+                    Mobile: widget.Mobile,
+                    registered_date: widget.registered_date),
               ),
             );
           });

@@ -1,3 +1,4 @@
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:flutter/material.dart';
 
 class Cameraframe extends StatelessWidget {
@@ -11,9 +12,7 @@ class Cameraframe extends StatelessWidget {
           child: Container(
             height: 50,
             width: 5,
-            decoration: BoxDecoration(
-              color: Colors.yellow,
-            ),
+            decoration: BoxDecoration(color: EasyrideColors.Scannerframe),
           ),
         ),
         Positioned(
@@ -22,9 +21,7 @@ class Cameraframe extends StatelessWidget {
           child: Container(
             height: 5,
             width: 50,
-            decoration: BoxDecoration(
-              color: Colors.yellow,
-            ),
+            decoration: BoxDecoration(color: EasyrideColors.Scannerframe),
           ),
         ),
         Positioned(
@@ -33,9 +30,7 @@ class Cameraframe extends StatelessWidget {
           child: Container(
             height: 50,
             width: 5,
-            decoration: BoxDecoration(
-              color: Colors.yellow,
-            ),
+            decoration: BoxDecoration(color: EasyrideColors.Scannerframe),
           ),
         ),
         Positioned(
@@ -44,9 +39,7 @@ class Cameraframe extends StatelessWidget {
           child: Container(
             height: 5,
             width: 50,
-            decoration: BoxDecoration(
-              color: Colors.yellow,
-            ),
+            decoration: BoxDecoration(color: EasyrideColors.Scannerframe),
           ),
         ),
         Positioned(
@@ -55,9 +48,7 @@ class Cameraframe extends StatelessWidget {
           child: Container(
             height: 50,
             width: 5,
-            decoration: BoxDecoration(
-              color: Colors.yellow,
-            ),
+            decoration: BoxDecoration(color: EasyrideColors.Scannerframe),
           ),
         ),
         Positioned(
@@ -66,9 +57,7 @@ class Cameraframe extends StatelessWidget {
           child: Container(
             height: 5,
             width: 50,
-            decoration: BoxDecoration(
-              color: Colors.yellow,
-            ),
+            decoration: BoxDecoration(color: EasyrideColors.Scannerframe),
           ),
         ),
         Positioned(
@@ -77,9 +66,7 @@ class Cameraframe extends StatelessWidget {
           child: Container(
             height: 50,
             width: 5,
-            decoration: BoxDecoration(
-              color: Colors.yellow,
-            ),
+            decoration: BoxDecoration(color: EasyrideColors.Scannerframe),
           ),
         ),
         Positioned(
@@ -88,9 +75,7 @@ class Cameraframe extends StatelessWidget {
           child: Container(
             height: 5,
             width: 50,
-            decoration: BoxDecoration(
-              color: Colors.yellow,
-            ),
+            decoration: BoxDecoration(color: EasyrideColors.Scannerframe),
           ),
         ),
       ],

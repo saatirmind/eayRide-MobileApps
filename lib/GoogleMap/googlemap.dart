@@ -107,7 +107,9 @@ class GooglemapState extends State<Googlemap> {
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
-      onMapCreated: _onMapCreated,
+      onMapCreated: (GoogleMapController controller) {
+        _mapController = controller;
+      },
       initialCameraPosition: CameraPosition(
         target: widget.cityPosition,
         zoom: 10.0,
@@ -116,7 +118,6 @@ class GooglemapState extends State<Googlemap> {
         if (_defaultLocationMarker != null) _defaultLocationMarker!,
         ..._cityMarkers,
         if (_currentLocationMarker != null) _currentLocationMarker!,
-        ..._cityMarkers
       },
       myLocationEnabled: true,
       myLocationButtonEnabled: false,

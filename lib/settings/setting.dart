@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/settings/customlanguagetile.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,15 +49,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
           },
         ),
       ),
-      body: Column(
-        children: [
-          CustomLanguageTile(
-            selectedLanguage: _selectedLanguage,
-            onLanguageChanged: (value) {
-              _changeLanguage(value);
-            },
-          ),
-        ],
+      body: Container(
+        color: EasyrideColors.buttonColor,
+        child: Column(
+          children: [
+            Card(
+              color: EasyrideColors.buttontextColor,
+              elevation: 5,
+              child: CustomLanguageTile(
+                selectedLanguage: _selectedLanguage,
+                onLanguageChanged: (value) {
+                  _changeLanguage(value);
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

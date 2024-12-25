@@ -56,9 +56,15 @@ Future<void> logout(BuildContext context) async {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to connect to the server.'),
-          backgroundColor: Colors.red,
+          content: Text('Logged out successfully.'),
+          backgroundColor: Colors.green,
         ),
+      );
+      await prefs.clear();
+      print("All SharedPreferences data cleared successfully!");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => PhoneNumberScreen()),
       );
     }
   } catch (e) {

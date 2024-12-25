@@ -1,6 +1,7 @@
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/Payment/cardscreen.dart';
-import 'package:easyride/Placelist/placelist.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentMethodScreen extends StatefulWidget {
   const PaymentMethodScreen({Key? key}) : super(key: key);
@@ -10,10 +11,27 @@ class PaymentMethodScreen extends StatefulWidget {
 }
 
 class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
-  List<Map<String, String>> savedCards = [
-    {'type': 'Visa', 'lastFour': '9629'},
-    {'type': 'Touch n Go', 'lastFour': '****'},
-  ];
+  String? lastFourDigits;
+  List<Map<String, String>> savedCards = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadCardDetails();
+  }
+
+  Future<void> loadCardDetails() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? lastDigits = prefs.getString('lastFourDigits');
+
+    setState(() {
+      lastFourDigits = lastDigits ?? '****';
+      savedCards = [
+        {'type': 'Visa', 'lastFour': lastFourDigits!},
+        {'type': 'Touch n Go', 'lastFour': '****'},
+      ];
+    });
+  }
 
   int selectedIndex = 0;
 
@@ -31,10 +49,14 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Payment Method"),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Column(
         children: [
-          // Top content
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: const Text(
@@ -79,7 +101,6 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
               ),
             ],
           ),
-          // Card List
           Expanded(
             child: ListView.builder(
               itemCount: savedCards.length,
@@ -127,7 +148,6 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
               },
             ),
           ),
-          // Bottom Button
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
@@ -135,7 +155,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
               height: 60.0,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: EasyrideColors.buttonColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -146,12 +166,11 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
                       )
                     : const Text(
-                        "Start to Ride",
+                        "Pay to Ride",
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: EasyrideColors.buttontextColor),
                       ),
               ),
             ),
@@ -167,18 +186,27 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     setState(() {
       _isLoading = true;
     });
+    await Future.delayed(Duration(seconds: 2));
 
-    await Future.delayed(const Duration(seconds: 3));
+    setState(() {
+      _isLoading = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Payment successfully!... Start Ride'),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    await Future.delayed(const Duration(seconds: 2));
 
     setState(() {
       _isLoading = false;
     });
 
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (context) => Placelist(),
-      ),
+      MaterialPageRoute(builder: (context) => PaymentMethodScreen()),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/Payment/nextscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -128,7 +129,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                           width: double.infinity,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: Colors.yellow,
+                            color: EasyrideColors.buttonColor,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Center(
@@ -144,15 +145,21 @@ class _AddCardScreenState extends State<AddCardScreen> {
                               setState(() {
                                 _isLoading = true;
                               });
+                              await Future.delayed(Duration(seconds: 2));
+
+                              setState(() {
+                                _isLoading = false;
+                              });
+
                               await saveCardToSharedPreferences();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Add card successfully!'),
-                                  backgroundColor: Colors.green,
-                                ),
+                                    content: Text('Add card successfully!'),
+                                    backgroundColor:
+                                        EasyrideColors.successSnak),
                               );
 
-                              await Future.delayed(Duration(seconds: 2));
+                              await Future.delayed(Duration(seconds: 3));
 
                               Navigator.push(
                                 context,
@@ -170,7 +177,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                             width: double.infinity,
                             height: 50,
                             decoration: BoxDecoration(
-                              color: Colors.yellow,
+                              color: EasyrideColors.buttonColor,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -181,7 +188,8 @@ class _AddCardScreenState extends State<AddCardScreen> {
                                 Text(
                                   "ADD",
                                   style: TextStyle(
-                                      color: Colors.black, fontSize: 16),
+                                      color: EasyrideColors.buttontextColor,
+                                      fontSize: 16),
                                 ),
                               ],
                             ),
@@ -205,29 +213,20 @@ class _AddCardScreenState extends State<AddCardScreen> {
 
   Future<void> saveCardToSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('card_number', _cardNumberController.text);
-    prefs.setString('expiry_date', _expiryDateController.text);
-    prefs.setString('cvv', _cvvController.text);
-    prefs.setString('name_on_card', _nameController.text);
-
-    String fullCardNumber = _cardNumberController.text;
-    String lastFourDigits = fullCardNumber.substring(fullCardNumber.length - 4);
-
-    Map<String, String> cardDetails = {
-      "cardNumber": lastFourDigits,
-      "expiryDate": _expiryDateController.text,
-      "name": _nameController.text,
-    };
-
-    String cardDetailsString = cardDetails.toString();
-
-    await prefs.setString('savedCard', cardDetailsString);
-
-    print("Card details saved to SharedPreferences: $cardDetailsString");
-    _cardNumberController.clear();
-    _expiryDateController.clear();
-    _cvvController.clear();
-    _nameController.clear();
+    String cardNumber = _cardNumberController.text.replaceAll(" ", "");
+    String expiryDate = _expiryDateController.text;
+    String cvv = _cvvController.text;
+    String nameOnCard = _nameController.text;
+    await prefs.setString('cardNumber', cardNumber);
+    await prefs.setString('expiryDate', expiryDate);
+    await prefs.setString('cvv', cvv);
+    await prefs.setString('nameOnCard', nameOnCard);
+    if (cardNumber.length >= 4) {
+      String lastFourDigits = cardNumber.substring(cardNumber.length - 4);
+      await prefs.setString('lastFourDigits', lastFourDigits);
+    } else {
+      print("Invalid card number");
+    }
   }
 }
 

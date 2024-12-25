@@ -1,3 +1,4 @@
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -43,12 +44,12 @@ class _IconButtonWidgetState extends State<IconButtonWidget> {
   Widget _buildIconButton(IconData icon) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.yellow,
+        color: EasyrideColors.buttonColor,
         shape: BoxShape.circle,
       ),
       child: IconButton(
         icon: Icon(icon),
-        color: Colors.black,
+        color: EasyrideColors.buttontextColor,
         iconSize: 40,
         onPressed: () {
           if (icon == Icons.flash_on) {

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:easyride/Screen/homescreen.dart';
@@ -30,7 +31,7 @@ class _OtpScreenState extends State<OtpScreen> {
       List.generate(6, (_) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
   Timer? _timer;
-  int _start = 15;
+  int _start = 60;
   bool _canResend = false;
   bool _isLoading = false;
   String _resendOtp = '';
@@ -66,7 +67,7 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   void startTimer() {
-    _start = 20;
+    _start = 60;
     _canResend = false;
     _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
       if (_start > 0) {
@@ -118,7 +119,7 @@ class _OtpScreenState extends State<OtpScreen> {
       return;
     }
 
-    final url = Uri.parse('https://easyride.saatirmind.com.my/api/v1/login');
+    final url = Uri.parse(AppApi.login);
     try {
       final response = await http.post(
         url,
@@ -146,12 +147,6 @@ class _OtpScreenState extends State<OtpScreen> {
                 responseData['data']['emergency_relation'] ?? '';
           });
           print('Login Successful! Token: $token');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('User Successfully Logged In'),
-              backgroundColor: Colors.green,
-            ),
-          );
 
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token!);
@@ -174,7 +169,7 @@ class _OtpScreenState extends State<OtpScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('OTP verification failed.'),
-              backgroundColor: Colors.red,
+              backgroundColor: EasyrideColors.Alertsank,
             ),
           );
         }
@@ -185,7 +180,7 @@ class _OtpScreenState extends State<OtpScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Invalid OTP. Please type valid OTP.'),
-            backgroundColor: Colors.red,
+            backgroundColor: EasyrideColors.Alertsank,
           ),
         );
       }
@@ -196,18 +191,28 @@ class _OtpScreenState extends State<OtpScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('An error occurred: $e'),
-          backgroundColor: Colors.red,
+          backgroundColor: EasyrideColors.Alertsank,
         ),
       );
     }
   }
 
   Future<void> navigateToHomeScreen() async {
+    await Future.delayed(Duration(seconds: 2));
     if (token != null) {
-      await Future.delayed(Duration(seconds: 2));
       setState(() {
         _isLoading = false;
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('User Successfully Logged In'),
+          backgroundColor: EasyrideColors.successSnak,
+          duration: (Duration(seconds: 2)),
+        ),
+      );
+
+      await Future.delayed(Duration(seconds: 2));
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -215,6 +220,7 @@ class _OtpScreenState extends State<OtpScreen> {
             Mobile: widget.phoneNumber,
             Token: token!,
             Firstname: firstname!,
+            registered_date: registered_date!,
           ),
         ),
       );
@@ -225,14 +231,14 @@ class _OtpScreenState extends State<OtpScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Token is null. Unable to navigate.'),
-          backgroundColor: Colors.red,
+          backgroundColor: EasyrideColors.Alertsank,
         ),
       );
     }
   }
 
   Future<void> resendOtp() async {
-    final url = Uri.parse('https://easyride.saatirmind.com.my/api/v1/send-otp');
+    final url = Uri.parse(AppApi.sendOtp);
     try {
       final response = await http.post(
         url,
@@ -258,7 +264,7 @@ class _OtpScreenState extends State<OtpScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to resend OTP. Please try again.'),
-            backgroundColor: Colors.red,
+            backgroundColor: EasyrideColors.Alertsank,
           ),
         );
       }
@@ -269,7 +275,7 @@ class _OtpScreenState extends State<OtpScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('An error occurred: $e'),
-          backgroundColor: Colors.red,
+          backgroundColor: EasyrideColors.Alertsank,
         ),
       );
     }
@@ -278,8 +284,9 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: EasyrideColors.background,
       body: Container(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).scaffoldBackgroundColor,
         height: MediaQuery.of(context).size.height,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -319,8 +326,29 @@ class _OtpScreenState extends State<OtpScreen> {
                     keyboardType: TextInputType.number,
                     maxLength: 1,
                     textAlign: TextAlign.center,
-                    decoration: InputDecoration(counterText: ''),
-                    onChanged: (value) => _onFieldChanged(value, index),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    decoration: InputDecoration(
+                      counterText: '',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue, width: 2),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      _onFieldChanged(value, index);
+                      if (value.isNotEmpty && index < 5) {
+                        FocusScope.of(context)
+                            .requestFocus(_focusNodes[index + 1]);
+                      } else if (value.isEmpty && index > 0) {
+                        FocusScope.of(context)
+                            .requestFocus(_focusNodes[index - 1]);
+                      }
+                    },
                   ),
                 );
               }),
@@ -343,9 +371,12 @@ class _OtpScreenState extends State<OtpScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.yellow,
+                    backgroundColor: EasyrideColors.buttonColor,
                     padding:
-                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
+                        EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   onPressed: _isSubmitEnabled && !_isLoading
                       ? () async {
@@ -364,13 +395,18 @@ class _OtpScreenState extends State<OtpScreen> {
                           width: 20,
                           child: CircularProgressIndicator(
                             color: Colors.black,
-                            strokeWidth: 2.0,
+                            strokeWidth: 3.0,
                           ),
                         )
-                      : Text('Submit'),
+                      : Text(
+                          'Submit',
+                          style: TextStyle(
+                            color: EasyrideColors.buttontextColor,
+                          ),
+                        ),
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),

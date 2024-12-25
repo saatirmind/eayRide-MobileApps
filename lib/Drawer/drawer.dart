@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/DrawerWidget/Logoutfunction.dart';
 import 'package:easyride/DrawerWidget/updateprofile.dart';
 import 'package:easyride/DrawerWidget/walletpage.dart';
+import 'package:easyride/Screen/homescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -9,144 +11,205 @@ class Drawerscreen extends StatelessWidget {
   final String Firstname;
   final String Mobile;
   final String Token;
+  final String registered_date;
+
   const Drawerscreen({
     super.key,
     required this.Mobile,
     required this.Token,
     required this.Firstname,
+    required this.registered_date,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: Container(
-        color: Colors.yellow,
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            Container(
-              height: 150,
-              child: DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.yellow,
-                ),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ProfileScreen(
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, true);
+        return false;
+      },
+      child: Drawer(
+        child: Container(
+          color: EasyrideColors.Drawerbackground,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              Container(
+                height: 150,
+                child: DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: EasyrideColors.Drawerheaderbackground,
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfileScreen(
                                 Mobile: Mobile,
                                 Token: Token,
-                              )),
-                    );
-                  },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.account_circle,
-                        color: Colors.black,
-                        size: 40,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            Firstname,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            Mobile,
-                            style: TextStyle(color: Colors.black, fontSize: 16),
-                          ),
-                        ],
-                      ),
-                    ],
+                                registered_date: registered_date)),
+                      );
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.account_circle,
+                          color: EasyrideColors.Drawerheadertext,
+                          size: 40,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              Firstname,
+                              style: TextStyle(
+                                  color: EasyrideColors.Drawerheadertext,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              Mobile,
+                              style: TextStyle(
+                                  color: EasyrideColors.Drawerheadertext,
+                                  fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.map_outlined, color: Colors.black),
-              title: Text('Main'.tr(), style: TextStyle(color: Colors.black)),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.wallet, color: Colors.black),
-              title: Text('Wallet'.tr(), style: TextStyle(color: Colors.black)),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => WalletPage()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_offer_outlined, color: Colors.black),
-              title: Text('Promotions'.tr(),
-                  style: TextStyle(color: Colors.black)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.redeem, color: Colors.black),
-              title: Text('Redeem'.tr(), style: TextStyle(color: Colors.black)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.history, color: Colors.black),
-              title:
-                  Text('History'.tr(), style: TextStyle(color: Colors.black)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.help_outline, color: Colors.black),
-              title: Text('Help'.tr(), style: TextStyle(color: Colors.black)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.logout, color: Colors.black),
-              title:
-                  Text('Log Out'.tr(), style: TextStyle(color: Colors.black)),
-              onTap: () {
-                logout(context);
-              },
-            ),
-            SpacerWidget(),
-            ListTile(
-              title: Center(
-                child: Text(
-                  'Follow Us'.tr(),
-                  style: TextStyle(color: Colors.black, fontSize: 18),
+              ListTile(
+                leading: Icon(
+                  Icons.map_outlined,
+                  color: EasyrideColors.Drawericon,
+                ),
+                title: Text('Main'.tr(),
+                    style: TextStyle(
+                      color: EasyrideColors.Drawertext,
+                    )),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.wallet,
+                  color: EasyrideColors.Drawericon,
+                ),
+                title: Text('Wallet'.tr(),
+                    style: TextStyle(
+                      color: EasyrideColors.Drawertext,
+                    )),
+                onTap: () async {
+                  bool? isUpdated = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => WalletPage()),
+                  );
+                  if (isUpdated == true) {
+                    HomeScreen.homeScreenKey.currentState?.Wallethistoryapi();
+                  }
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.local_offer_outlined,
+                  color: EasyrideColors.Drawericon,
+                ),
+                title: Text('Promotions'.tr(),
+                    style: TextStyle(
+                      color: EasyrideColors.Drawertext,
+                    )),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.redeem,
+                  color: EasyrideColors.Drawericon,
+                ),
+                title: Text('Redeem'.tr(),
+                    style: TextStyle(
+                      color: EasyrideColors.Drawertext,
+                    )),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.history,
+                  color: EasyrideColors.Drawericon,
+                ),
+                title: Text('History'.tr(),
+                    style: TextStyle(
+                      color: EasyrideColors.Drawertext,
+                    )),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.help_outline,
+                  color: EasyrideColors.Drawericon,
+                ),
+                title: Text('Help'.tr(),
+                    style: TextStyle(
+                      color: EasyrideColors.Drawertext,
+                    )),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.logout,
+                  color: EasyrideColors.Drawericon,
+                ),
+                title: Text('Log Out'.tr(),
+                    style: TextStyle(color: EasyrideColors.Drawertext)),
+                onTap: () {
+                  logout(context);
+                },
+              ),
+              SpacerWidget(),
+              ListTile(
+                title: Center(
+                  child: Text(
+                    'Follow Us'.tr(),
+                    style: TextStyle(
+                        color: EasyrideColors.Drawertext, fontSize: 18),
+                  ),
                 ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                  icon: Icon(FontAwesomeIcons.facebook, color: Colors.black),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(FontAwesomeIcons.instagram, color: Colors.black),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(FontAwesomeIcons.globe, color: Colors.black),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      FontAwesomeIcons.facebook,
+                      color: EasyrideColors.Drawericon,
+                    ),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      FontAwesomeIcons.instagram,
+                      color: EasyrideColors.Drawericon,
+                    ),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      FontAwesomeIcons.globe,
+                      color: EasyrideColors.Drawericon,
+                    ),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

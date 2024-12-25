@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:flutter/material.dart';
 
 class CustomLanguageTile extends StatelessWidget {
@@ -16,12 +17,19 @@ class CustomLanguageTile extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Select Language'.tr()),
+          backgroundColor: EasyrideColors.buttonColor,
+          title: Text(
+            'Select Language'.tr(),
+            style: TextStyle(color: EasyrideColors.buttontextColor),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text('English'.tr()),
+                title: Text(
+                  'English'.tr(),
+                  style: TextStyle(color: EasyrideColors.buttontextColor),
+                ),
                 leading: Radio(
                   value: 'en',
                   groupValue: selectedLanguage,
@@ -32,7 +40,10 @@ class CustomLanguageTile extends StatelessWidget {
                 ),
               ),
               ListTile(
-                title: Text('Hindi'.tr()),
+                title: Text(
+                  'Hindi'.tr(),
+                  style: TextStyle(color: EasyrideColors.buttontextColor),
+                ),
                 leading: Radio(
                   value: 'hi',
                   groupValue: selectedLanguage,

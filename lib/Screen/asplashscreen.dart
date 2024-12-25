@@ -1,3 +1,4 @@
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/Screen/homescreen.dart';
 import 'package:easyride/Screen/phonescreen.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class _AsplashscreenState extends State<Asplashscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: EasyrideColors.background,
       body: Stack(
         children: [
           InkWell(
@@ -84,13 +86,13 @@ class _AsplashscreenState extends State<Asplashscreen> {
             right: 21,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.yellow,
+                backgroundColor: EasyrideColors.buttonColor,
               ),
               onPressed: () => _checkUserLoggedIn(),
               child: const Text(
                 "START",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: EasyrideColors.buttontextColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -108,13 +110,20 @@ class _AsplashscreenState extends State<Asplashscreen> {
     String? token = prefs.getString('token');
     String? mobile = prefs.getString('mobile');
     String? firstname = prefs.getString('firstname');
+    String? registered_date = prefs.getString('registered_date');
 
-    if (token != null && mobile != null && firstname != null) {
+    if (token != null &&
+        mobile != null &&
+        firstname != null &&
+        registered_date != null) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              HomeScreen(Mobile: mobile, Token: token, Firstname: firstname),
+          builder: (context) => HomeScreen(
+              Mobile: mobile,
+              Token: token,
+              Firstname: firstname,
+              registered_date: registered_date),
         ),
       );
     } else {

@@ -6,6 +6,8 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class QRScannerScreen extends StatefulWidget {
+  final String? finalPrice;
+  const QRScannerScreen({Key? key, this.finalPrice}) : super(key: key);
   @override
   QRScannerScreenState createState() => QRScannerScreenState();
 }
@@ -64,18 +66,12 @@ class QRScannerScreenState extends State<QRScannerScreen> {
           'SCAN QR',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 15,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
-        elevation: 0,
       ),
       body: isCameraAvailable ? _buildQRView() : _buildPermissionDenied(),
     );
@@ -126,7 +122,8 @@ class QRScannerScreenState extends State<QRScannerScreen> {
         Align(
           alignment: Alignment.bottomCenter,
           child: BuildBottomContainer(
-            qrText: qrText,
+            initialQRText: qrText,
+            finalPrice: widget.finalPrice ?? '',
           ),
         ),
       ],

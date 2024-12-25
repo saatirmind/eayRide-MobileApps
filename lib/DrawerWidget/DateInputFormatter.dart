@@ -1,3 +1,4 @@
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/Screen/homescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,8 +33,13 @@ class DataScreen extends StatelessWidget {
   final Map<String, dynamic> data;
   final String Mobile;
   final String Token;
+  final String registered_date;
 
-  DataScreen({required this.data, required this.Mobile, required this.Token});
+  DataScreen(
+      {required this.data,
+      required this.Mobile,
+      required this.Token,
+      required this.registered_date});
 
   Future<void> saveData(String key, String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -158,7 +164,7 @@ class DataScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               decoration: BoxDecoration(
-                color: Colors.yellow,
+                color: EasyrideColors.buttonColor,
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: GestureDetector(
@@ -170,10 +176,10 @@ class DataScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => HomeScreen(
-                        Mobile: Mobile,
-                        Token: Token,
-                        Firstname: firstname ?? "N/A",
-                      ),
+                          Mobile: Mobile,
+                          Token: Token,
+                          Firstname: firstname ?? "N/A",
+                          registered_date: registered_date),
                     ),
                   );
                 },
@@ -187,7 +193,7 @@ class DataScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: EasyrideColors.buttontextColor,
                       ),
                     ),
                   ],

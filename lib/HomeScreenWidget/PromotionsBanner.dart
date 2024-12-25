@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:flutter/material.dart';
 
 class PromotionsBanner extends StatefulWidget {
@@ -43,8 +44,9 @@ class _PromotionsBannerState extends State<PromotionsBanner> {
           ),
           items: [
             _buildBannerItem(
-                "Don't forget to check out our promotions page to save more on your rides!"
-                    .tr()),
+              "Don't forget to check out our promotions page to save more on your rides!"
+                  .tr(),
+            ),
             _buildBannerItem("Flat 50% off on first ride!".tr()),
             _buildBannerItem(
                 "Please check the Appstore for the Latest updates!".tr()),
@@ -75,7 +77,7 @@ class _PromotionsBannerState extends State<PromotionsBanner> {
 
   Widget _buildBannerItem(String text) {
     return Container(
-      color: Colors.yellow,
+      color: EasyrideColors.buttonColor,
       child: Row(
         children: [
           Padding(
@@ -92,7 +94,13 @@ class _PromotionsBannerState extends State<PromotionsBanner> {
                 )),
           ),
           SizedBox(width: 10),
-          Expanded(child: Text(text)),
+          Expanded(
+              child: Text(
+            text,
+            style: TextStyle(
+              color: EasyrideColors.Pramotionbannertext,
+            ),
+          )),
         ],
       ),
     );

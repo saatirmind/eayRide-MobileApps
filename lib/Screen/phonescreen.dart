@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/Screen/otpscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -44,10 +45,10 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: EasyrideColors.background,
       resizeToAvoidBottomInset: false,
-      backgroundColor: Theme.of(context).primaryColor,
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -157,56 +158,59 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                 ],
               ),
               SizedBox(height: 10),
-              Text(
-                "Enter your phone number without '0'. By continuing, you agree to our Terms of Service.",
-                style: TextStyle(fontSize: 14),
-                textAlign: TextAlign.center,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: Text(
+                  "Enter your phone number without '0'. By continuing, you agree to our Terms of Service.",
+                  style: TextStyle(fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
               ),
               SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: _isLoading
-                    ? Container(
-                        decoration: BoxDecoration(
-                          color: Colors.yellow,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        height: 50,
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator(
-                          color: Colors.black,
-                          strokeWidth: 4.0,
-                        ),
-                      )
-                    : InkWell(
-                        onTap: () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() {
-                              _isLoading = true;
-                            });
-                            await sendOtp();
-                            setState(() {
-                              _isLoading = false;
-                            });
-                          }
-                        },
-                        borderRadius: BorderRadius.circular(8),
-                        child: Container(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: _isLoading
+                      ? Container(
                           decoration: BoxDecoration(
-                            color: Colors.yellow,
+                            color: EasyrideColors.buttonColor,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           height: 50,
                           alignment: Alignment.center,
-                          child: Text(
-                            'NEXT',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                            strokeWidth: 4.0,
+                          ),
+                        )
+                      : InkWell(
+                          onTap: () async {
+                            if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              await sendOtp();
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: EasyrideColors.buttonColor,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            height: 50,
+                            alignment: Alignment.center,
+                            child: Text(
+                              'NEXT',
+                              style: TextStyle(
+                                color: EasyrideColors.buttontextColor,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                ),
               ),
               SizedBox(height: 10),
               Text(
@@ -242,7 +246,8 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
               ),
               SizedBox(height: 16),
               Text(
-                appVersion,
+                'Version: 1.0.7',
+                //appVersion,
                 style: TextStyle(fontSize: 15, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
@@ -255,8 +260,12 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
 
   Future<void> sendOtp() async {
     String phoneNumber = phoneController.text;
+    FocusScope.of(context).unfocus();
 
     if (phoneNumber.isEmpty || phoneNumber.length < 2) {
+      setState(() {
+        _isLoading = false;
+      });
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -273,7 +282,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       return;
     }
 
-    final url = Uri.parse('https://easyride.saatirmind.com.my/api/v1/send-otp');
+    final url = Uri.parse(AppApi.sendOtp);
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -289,19 +298,21 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       final responseData = jsonDecode(response.body);
       final verCode = responseData['data']['ver_code'];
       final userId = responseData['data']['id'];
+      await Future.delayed(Duration(seconds: 2));
+      setState(() {
+        _isLoading = false;
+      });
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(responseData['message'][0]),
-          backgroundColor: Colors.green,
+          backgroundColor: EasyrideColors.successSnak,
         ),
       );
 
       print("Verification code: $verCode");
       await Future.delayed(Duration(seconds: 2));
-      setState(() {
-        _isLoading = false;
-      });
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -322,7 +333,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to send OTP. Please try again.'),
-          backgroundColor: Colors.red,
+          backgroundColor: EasyrideColors.Alertsank,
         ),
       );
     }
