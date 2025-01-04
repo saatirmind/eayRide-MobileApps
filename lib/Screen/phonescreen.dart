@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/Screen/otpscreen.dart';
 import 'package:flutter/material.dart';
@@ -57,8 +58,8 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
             children: [
               Image.asset(
                 'assets/splash.png',
-                width: 200,
-                height: 200,
+                width: MediaQuery.of(context).size.width * 1,
+                height: MediaQuery.of(context).size.height * 0.3,
               ),
               SizedBox(height: 20),
               Row(
@@ -73,18 +74,19 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                       child: TextFormField(
                         controller: fullnameController,
                         decoration: InputDecoration(
-                          hintText: 'Full Name (Passport or ID Card)',
+                          hintText: 'Full Name (Passport or ID Card)'.tr(),
                           border: UnderlineInputBorder(),
                           counterText: '',
                         ),
-                        // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return 'Full Name is required';
-                        //   } else if (value.length < 3) {
-                        //     return 'Full Name must be at least 3 characters';
-                        //   }
-                        //   return null;
-                        // },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Full Name is required'.tr();
+                          } else if (value.length < 3) {
+                            return 'Full Name must be at least 3 characters'
+                                .tr();
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ),
@@ -102,18 +104,19 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                       child: TextFormField(
                         controller: passportController,
                         decoration: InputDecoration(
-                          hintText: 'Passport/NRIC Number',
+                          hintText: 'Passport/NRIC Number'.tr(),
                           border: UnderlineInputBorder(),
                           counterText: '',
                         ),
-                        // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return 'Passport/NRIC Number is required';
-                        //   } else if (value.length < 5) {
-                        //     return 'Passport/NRIC Number must be at least 5 characters';
-                        //   }
-                        //   return null;
-                        // },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Passport/NRIC Number is required'.tr();
+                          } else if (value.length < 5) {
+                            return 'Passport/NRIC Number must be at least 5 characters'
+                                .tr();
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ),
@@ -141,18 +144,18 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                         LengthLimitingTextInputFormatter(15),
                       ],
                       decoration: InputDecoration(
-                        hintText: 'Enter your mobile number',
+                        hintText: 'Enter your mobile number'.tr(),
                         border: UnderlineInputBorder(),
                         counterText: '',
                       ),
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return 'Phone number is required';
-                      //   } else if (value.length < 2) {
-                      //     return 'Phone number must be at least 2 digits';
-                      //   }
-                      //   return null;
-                      // },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Phone number is required'.tr();
+                        } else if (value.length < 2) {
+                          return 'Phone number must be at least 2 digits'.tr();
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ],
@@ -161,7 +164,8 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18),
                 child: Text(
-                  "Enter your phone number without '0'. By continuing, you agree to our Terms of Service.",
+                  "Enter your phone number without '0'. By continuing, you agree to our Terms of Service."
+                      .tr(),
                   style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
@@ -180,7 +184,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                           height: 50,
                           alignment: Alignment.center,
                           child: CircularProgressIndicator(
-                            color: Colors.black,
+                            color: Colors.white,
                             strokeWidth: 4.0,
                           ),
                         )
@@ -202,7 +206,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                             height: 50,
                             alignment: Alignment.center,
                             child: Text(
-                              'NEXT',
+                              'NEXT'.tr(),
                               style: TextStyle(
                                 color: EasyrideColors.buttontextColor,
                                 fontWeight: FontWeight.bold,
@@ -214,7 +218,8 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
               ),
               SizedBox(height: 10),
               Text(
-                '6 digit code will be sent to your phone in a few seconds.',
+                '6 digit code will be sent to your phone in a few seconds.'
+                    .tr(),
                 style: TextStyle(fontSize: 14),
                 textAlign: TextAlign.center,
               ),
@@ -246,7 +251,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
               ),
               SizedBox(height: 16),
               Text(
-                'Version: 1.0.7',
+                'Version: 1.0.9',
                 //appVersion,
                 style: TextStyle(fontSize: 15, color: Colors.grey),
                 textAlign: TextAlign.center,
@@ -270,11 +275,11 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Error'),
-          content: Text('Please enter a valid mobile number.'),
+          content: Text('Please enter a valid mobile number.'.tr()),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
+              child: Text('OK'.tr()),
             ),
           ],
         ),
@@ -289,11 +294,11 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       body: jsonEncode({
         'mobile': phoneNumber,
         'mobile_code': countryCode,
-        //'fullname': fullnameController.text,
-        // 'passport_or_nric_no': passportController.text,
+        'fullname': fullnameController.text,
+        'passport_or_nric_no': passportController.text,
       }),
     );
-
+    final responseData = jsonDecode(response.body);
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       final verCode = responseData['data']['ver_code'];
@@ -330,9 +335,15 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         _isLoading = false;
       });
 
+      String errorMessage = "An unknown error occurred.";
+      if (responseData.containsKey('message') &&
+          responseData['message'] is List) {
+        errorMessage = responseData['message'][0];
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to send OTP. Please try again.'),
+          content: Text(errorMessage),
           backgroundColor: EasyrideColors.Alertsank,
         ),
       );

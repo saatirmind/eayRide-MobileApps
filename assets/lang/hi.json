@@ -22,5 +22,27 @@
     "History": "इतिहास",
     "Help": "मदद",
     "Log Out": "लॉग आउट",
-    "Follow Us": "हमारा अनुसरण करें"
-}
+    "Follow Us": "हमारा अनुसरण करें",
+    
+        "START": "शुरू करें",
+        "Enter your phone number without '0'. By continuing, you agree to our Terms of Service.": "'0' के बिना अपना फोन नंबर दर्ज करें। जारी रखने पर, आप हमारी सेवा शर्तों से सहमत होते हैं।",
+        "Enter your mobile number": "अपना मोबाइल नंबर दर्ज करें",
+        "Full Name is required": "पूरा नाम आवश्यक है",
+        "Full Name (Passport or ID Card)": "पूरा नाम (पासपोर्ट या पहचान पत्र)",
+        "Full Name must be at least 3 characters": "पूरा नाम कम से कम 3 अक्षरों का होना चाहिए",
+        "Passport/NRIC Number": "पासपोर्ट/एनआरआईसी नंबर",
+        "Passport/NRIC Number is required": "पासपोर्ट/एनआरआईसी नंबर आवश्यक है",
+        "Passport/NRIC Number must be at least 5 characters": "पासपोर्ट/एनआरआईसी नंबर कम से कम 5 अक्षरों का होना चाहिए",
+        "Phone number is required": "फोन नंबर आवश्यक है",
+        "Phone number must be at least 2 digits": "फोन नंबर कम से कम 2 अंकों का होना चाहिए",
+        "NEXT": "आगे बढ़ें",
+        "6 digit code will be sent to your phone in a few seconds.": "कुछ ही सेकंड में आपके फोन पर 6 अंकों का कोड भेजा जाएगा।",
+        "Please enter a valid mobile number.": "कृपया एक मान्य मोबाइल नंबर दर्ज करें।",
+        "OK": "ठीक है",
+        "Please enter a valid 6-digit OTP.": "कृपया एक मान्य 6-अंकीय ओटीपी दर्ज करें।",
+        "User Successfully Logged In": "उपयोगकर्ता सफलतापूर्वक लॉग इन हो गया",
+        "enter_code": "{phoneNumber} पर भेजा गया 6 अंकों का कोड दर्ज करें",
+        "Resend OTP": "ओटीपी पुनः भेजें",
+        "Submit": "जमा करें","Choose Language": "भाषा चुनें"
+      }
+      

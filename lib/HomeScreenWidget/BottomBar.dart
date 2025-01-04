@@ -106,12 +106,23 @@ class _BottomBarState extends State<BottomBar> {
           duration: Duration(seconds: 2),
         ),
       );
+    } else if (widget.finalPrice == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Please wait, fetching data...!",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: EasyrideColors.Alertsank,
+          duration: Duration(seconds: 2),
+        ),
+      );
     } else {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                QRScannerScreen(finalPrice: widget.finalPrice)),
+          builder: (context) => QRScannerScreen(finalPrice: widget.finalPrice),
+        ),
       );
     }
   }
@@ -125,6 +136,17 @@ class _BottomBarState extends State<BottomBar> {
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else if (widget.finalPrice == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Please wait, fetching data...!",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: EasyrideColors.Alertsank,
           duration: Duration(seconds: 2),
         ),
       );

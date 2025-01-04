@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/DrawerWidget/Logoutfunction.dart';
+import 'package:easyride/DrawerWidget/promotions.dart';
 import 'package:easyride/DrawerWidget/updateprofile.dart';
 import 'package:easyride/DrawerWidget/walletpage.dart';
 import 'package:easyride/Screen/homescreen.dart';
@@ -125,7 +126,12 @@ class Drawerscreen extends StatelessWidget {
                     style: TextStyle(
                       color: EasyrideColors.Drawertext,
                     )),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CouponListScreen()),
+                  );
+                },
               ),
               ListTile(
                 leading: Icon(

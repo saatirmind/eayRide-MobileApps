@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:easyride/Placelist/placelist.dart';
+import 'package:easyride/Screen/Complete.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easyride/Screen/asplashscreen.dart';
@@ -38,11 +39,18 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _checkBookingToken() async {
     final prefs = await SharedPreferences.getInstance();
     final bookingToken = prefs.getString('booking_token');
+    final vehicleno = prefs.getString('VehicleNo');
 
-    if (bookingToken != null && bookingToken.isNotEmpty) {
+    if (vehicleno != null && vehicleno.isNotEmpty) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => PlaceList(),
+        ),
+      );
+    } else if (bookingToken != null && bookingToken.isNotEmpty) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => CompleteRideScreen(),
         ),
       );
     } else {

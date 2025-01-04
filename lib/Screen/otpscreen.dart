@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -114,7 +115,7 @@ class _OtpScreenState extends State<OtpScreen> {
     String otp = _otpControllers.map((controller) => controller.text).join();
     if (otp.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid 6-digit OTP.')),
+        SnackBar(content: Text('Please enter a valid 6-digit OTP.'.tr())),
       );
       return;
     }
@@ -128,7 +129,7 @@ class _OtpScreenState extends State<OtpScreen> {
           'otp': otp,
         },
       );
-
+      final responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         if (responseData['status'] == true) {
@@ -166,9 +167,16 @@ class _OtpScreenState extends State<OtpScreen> {
           setState(() {
             _isLoading = false;
           });
+
+          String errorMessage = "An unknown error occurred.";
+          if (responseData.containsKey('message') &&
+              responseData['message'] is List) {
+            errorMessage = responseData['message'][0];
+          }
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('OTP verification failed.'),
+              content: Text(errorMessage),
               backgroundColor: EasyrideColors.Alertsank,
             ),
           );
@@ -177,9 +185,16 @@ class _OtpScreenState extends State<OtpScreen> {
         setState(() {
           _isLoading = false;
         });
+
+        String errorMessage = "An unknown error occurred.";
+        if (responseData.containsKey('message') &&
+            responseData['message'] is List) {
+          errorMessage = responseData['message'][0];
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Invalid OTP. Please type valid OTP.'),
+            content: Text(errorMessage),
             backgroundColor: EasyrideColors.Alertsank,
           ),
         );
@@ -205,7 +220,7 @@ class _OtpScreenState extends State<OtpScreen> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('User Successfully Logged In'),
+          content: Text('User Successfully Logged In'.tr()),
           backgroundColor: EasyrideColors.successSnak,
           duration: (Duration(seconds: 2)),
         ),
@@ -248,7 +263,7 @@ class _OtpScreenState extends State<OtpScreen> {
           'mobile_code': widget.mobile_code,
         }),
       );
-
+      final responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         final verCode = responseData['data']['ver_code'];
@@ -261,9 +276,16 @@ class _OtpScreenState extends State<OtpScreen> {
         setState(() {
           _isLoading = false;
         });
+
+        String errorMessage = "An unknown error occurred.";
+        if (responseData.containsKey('message') &&
+            responseData['message'] is List) {
+          errorMessage = responseData['message'][0];
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to resend OTP. Please try again.'),
+            content: Text(errorMessage),
             backgroundColor: EasyrideColors.Alertsank,
           ),
         );
@@ -310,7 +332,7 @@ class _OtpScreenState extends State<OtpScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Text(
-                'Enter the 6 digit code sent to ${widget.phoneNumber}',
+                'enter_code'.tr(namedArgs: {'phoneNumber': widget.phoneNumber}),
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
             ),
@@ -362,7 +384,7 @@ class _OtpScreenState extends State<OtpScreen> {
             if (_canResend)
               TextButton(
                 onPressed: resendOtp,
-                child: Text('Resend OTP'),
+                child: Text('Resend OTP'.tr()),
               ),
             const SizedBox(height: 20),
             Padding(
@@ -399,7 +421,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           ),
                         )
                       : Text(
-                          'Submit',
+                          'Submit'.tr(),
                           style: TextStyle(
                             color: EasyrideColors.buttontextColor,
                           ),

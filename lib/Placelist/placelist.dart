@@ -5,7 +5,6 @@ import 'package:easyride/Placelist/placelist2.dart';
 import 'package:easyride/Screen/Complete.dart';
 import 'package:easyride/Screen/Contact.dart';
 import 'package:flutter/material.dart';
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -41,6 +40,7 @@ class _PlaceListState extends State<PlaceList> {
     loadBikeMarker();
     useSavedLocations();
     _startLocationUpdates();
+    retrieveMessageAndShowBottomSheet();
   }
 
   Future<void> retrieveMessageAndShowBottomSheet() async {
@@ -273,7 +273,7 @@ class _PlaceListState extends State<PlaceList> {
                       ),
                       child: Center(
                         child: Text(
-                          "Contact Us",
+                          "More Options",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -293,6 +293,7 @@ class _PlaceListState extends State<PlaceList> {
   }
 
   Future<void> _checkPermissionAndGetLocation() async {
+    _timer = null;
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       await Geolocator.openLocationSettings();
@@ -359,15 +360,9 @@ class _PlaceListState extends State<PlaceList> {
 
   Timer? _timer;
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
   List<LatLng> _polylineCoordinates = [];
   Future<void> _startLocationUpdates() async {
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) async {
+    _timer = Timer.periodic(const Duration(seconds: 9), (timer) async {
       await _checkPermissionAndGetLocation();
     });
   }
@@ -440,16 +435,18 @@ class _PlaceListState extends State<PlaceList> {
       String polylinePoints = data['routes'][0]['overview_polyline']['points'];
       _polylineCoordinates = _decodePolyline(polylinePoints);
 
-      setState(() {
-        _polylines.add(
-          Polyline(
-            polylineId: PolylineId('route'),
-            points: _polylineCoordinates,
-            color: Colors.green,
-            width: 7,
-          ),
-        );
-      });
+      if (mounted) {
+        setState(() {
+          _polylines.add(
+            Polyline(
+              polylineId: PolylineId('route'),
+              points: _polylineCoordinates,
+              color: Colors.green,
+              width: 7,
+            ),
+          );
+        });
+      }
     }
   }
 
@@ -494,8 +491,9 @@ class _PlaceListState extends State<PlaceList> {
 
       if (distance < 200) {
         _timer?.cancel();
+        _timer = null;
         final prefs = await SharedPreferences.getInstance();
-        await prefs.remove('booking_token');
+        await prefs.remove('VehicleNo');
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -602,10 +600,87 @@ class _PlaceListState extends State<PlaceList> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => PlacelistWaze()),
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      title: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.info_outline,
+                                            color: EasyrideColors.buttonColor,
+                                            size: 50,
+                                          ),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            'Confirmation',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      content: Text(
+                                        'Are you sure you want to proceed to the Waze Map screen?',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.grey[800]),
+                                      ),
+                                      actionsAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.grey[300],
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Cancel',
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    PlacelistWaze(),
+                                              ),
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                EasyrideColors.buttonColor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Yes',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 );
                               },
                               child: Container(
@@ -634,10 +709,87 @@ class _PlaceListState extends State<PlaceList> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Placelist2()),
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      title: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.info_outline,
+                                            color: EasyrideColors.buttonColor,
+                                            size: 50,
+                                          ),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            'Confirmation',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      content: Text(
+                                        'Are you sure you want to proceed to the Google Map screen?',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.grey[800]),
+                                      ),
+                                      actionsAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.grey[300],
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Cancel',
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Placelist2(),
+                                              ),
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                EasyrideColors.buttonColor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Yes',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 );
                               },
                               child: Container(
