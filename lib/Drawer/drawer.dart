@@ -171,10 +171,61 @@ class Drawerscreen extends StatelessWidget {
                   Icons.logout,
                   color: EasyrideColors.Drawericon,
                 ),
-                title: Text('Log Out'.tr(),
-                    style: TextStyle(color: EasyrideColors.Drawertext)),
+                title: Text(
+                  'Log Out'.tr(),
+                  style: TextStyle(color: EasyrideColors.Drawertext),
+                ),
                 onTap: () {
-                  logout(context);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Center(
+                          child: Text(
+                            'Confirm Logout',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        content: Text(
+                          'Are you sure you want to log out?',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        actionsAlignment: MainAxisAlignment.spaceEvenly,
+                        actions: <Widget>[
+                          SizedBox(
+                            width: 120,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.green,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                'No',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 120,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              onPressed: () {
+                                logout(context);
+                              },
+                              child: Text(
+                                'Yes',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
               SpacerWidget(),

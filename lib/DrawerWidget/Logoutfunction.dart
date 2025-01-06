@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/Screen/phonescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -19,7 +20,7 @@ Future<void> logout(BuildContext context) async {
     return;
   }
 
-  final url = Uri.parse('https://easyride.saatirmind.com.my/api/v1/logout');
+  final url = Uri.parse(AppApi.Logout);
 
   try {
     final response = await http.post(
@@ -67,12 +68,5 @@ Future<void> logout(BuildContext context) async {
         MaterialPageRoute(builder: (context) => PhoneNumberScreen()),
       );
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('An error occurred: $e'),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
+  } catch (e) {}
 }

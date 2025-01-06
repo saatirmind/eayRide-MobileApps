@@ -12,11 +12,12 @@ class PlacelistWaze extends StatefulWidget {
 
 class _PlacelistWazeState extends State<PlacelistWaze> {
   LatLng? startLocation;
+  LatLng? endLocation;
 
   @override
   void initState() {
     super.initState();
-    _launchWazeOnStart();
+    _launchMapOnStart();
   }
 
   Future<LatLng?> getStartLocationFromSharedPreferences() async {
@@ -28,32 +29,39 @@ class _PlacelistWazeState extends State<PlacelistWaze> {
         : null;
   }
 
-  void openWaze(LatLng startLocation) async {
-    final latitude = startLocation.latitude;
-    final longitude = startLocation.longitude;
+  Future<LatLng?> getEndLocationFromSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    final latitude = prefs.getDouble('end_latitude');
+    final longitude = prefs.getDouble('end_longitude');
+    return (latitude != null && longitude != null)
+        ? LatLng(latitude, longitude)
+        : null;
+  }
 
-    final wazeUrl = 'waze://?ll=$latitude,$longitude&navigate=yes';
-    final googleMapsUrl =
-        'https://www.google.com/maps/dir/?api=1&origin=$latitude,$longitude&destination=$latitude,$longitude&travelmode=driving';
+  void openMap(LatLng startLocation, LatLng endLocation) async {
+    final startLat = startLocation.latitude;
+    final startLng = startLocation.longitude;
+    final endLat = endLocation.latitude;
+    final endLng = endLocation.longitude;
+
+    final wazeUrl =
+        'https://waze.com/ul?ll=$startLat,$startLng&navigate=yes&zoom=16&daddr=$endLat,$endLng';
 
     if (await canLaunch(wazeUrl)) {
       await launch(wazeUrl);
     } else {
-      if (await canLaunch(googleMapsUrl)) {
-        await launch(googleMapsUrl);
-      } else {
-        throw 'Could not open Waze or Google Maps.';
-      }
+      throw 'Could not open Waze';
     }
   }
 
-  Future<void> _launchWazeOnStart() async {
+  Future<void> _launchMapOnStart() async {
     startLocation = await getStartLocationFromSharedPreferences();
+    endLocation = await getEndLocationFromSharedPreferences();
 
-    if (startLocation != null) {
-      openWaze(startLocation!);
+    if (startLocation != null && endLocation != null) {
+      openMap(startLocation!, endLocation!);
     } else {
-      print("Start Location is null!");
+      print("Start or End Location is null!");
     }
   }
 
