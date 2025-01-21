@@ -1,27 +1,33 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easyride/Screen/homescreen.dart';
+import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/Screen/splashscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  HomeScreen.homeScreenKey.currentState?.initializeApp();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   await EasyLocalization.ensureInitialized();
-  LocationService.getAndSaveLocation();
+  await LocationService.fetchBannerImage();
 
   runApp(
     EasyLocalization(
-      supportedLocales: const [Locale('en'), Locale('hi')],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('hi'),
+        Locale('zh'),
+        Locale('ms'),
+        Locale('fr'),
+      ],
       path: 'assets/lang',
       fallbackLocale: Locale('en'),
       child: const MyApp(),
@@ -36,6 +42,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'EasyRide',
+      navigatorKey: navigatorKey,
       home: SplashScreen(),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: context.localizationDelegates,
@@ -46,51 +53,28 @@ class MyApp extends StatelessWidget {
 }
 
 class LocationService {
-  static Future<void> getAndSaveLocation() async {
+  static String? imageUrl;
+
+  static Future<void> fetchBannerImage() async {
     try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        print('Location services are disabled.');
-        return;
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          SystemNavigator.pop();
-          print('Location permissions are denied');
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        print(
-            'Location permissions are permanently denied, we cannot request permissions.');
-        return;
-      }
-
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
+      final response = await http.get(
+        Uri.parse(AppApi.Bannerlist),
       );
 
-      if (placemarks.isNotEmpty) {
-        Placemark placemark = placemarks.first;
-        String? state = placemark.administrativeArea;
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        String? fetchedImageUrl =
+            data['data']['app_details']['display_mobile_logo'];
 
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('StartState', state ?? '');
+        if (fetchedImageUrl != null) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('BannerImageUrl', fetchedImageUrl);
 
-        print('State: $state');
-      } else {
-        print('No placemarks found for the given coordinates.');
+          imageUrl = fetchedImageUrl;
+        }
       }
-    } catch (e) {
-      print('Error occurred while fetching location: $e');
+    } catch (error) {
+      print('Error fetching banner image: $error');
     }
   }
 }

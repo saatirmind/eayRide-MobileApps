@@ -38,15 +38,6 @@ class _OtpScreenState extends State<OtpScreen> {
   String _resendOtp = '';
   bool _isSubmitEnabled = false;
   String? token;
-  String? firstname;
-  String? fullname;
-  String? email;
-  //String? given_name;
-  String? family_name;
-  String? dateofbirth;
-  String? nationality;
-  String? emergency_contact;
-  String? emergency_relation;
   String? registered_date;
 
   @override
@@ -135,31 +126,16 @@ class _OtpScreenState extends State<OtpScreen> {
         if (responseData['status'] == true) {
           setState(() {
             token = responseData['data']['token'];
-            firstname = responseData['data']['firstname'] ?? 'Update Profile';
-            email = responseData['data']['email'] ?? '';
 
-            family_name = responseData['data']['family_name'] ?? '';
-            fullname = responseData['data']['fullname'] ?? '';
-            dateofbirth = responseData['data']['dateofbirth'] ?? '';
             registered_date = responseData['data']['registered_date'];
-            nationality = responseData['data']['nationality'] ?? '';
-            emergency_contact = responseData['data']['emergency_contact'] ?? '';
-            emergency_relation =
-                responseData['data']['emergency_relation'] ?? '';
           });
           print('Login Successful! Token: $token');
 
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token!);
-          await prefs.setString('firstname', firstname!);
-          await prefs.setString('email', email!);
-          await prefs.setString('fullname', fullname!);
-          await prefs.setString('family_name', family_name!);
-          await prefs.setString('dateofbirth', dateofbirth!);
+
           await prefs.setString('registered_date', registered_date!);
-          await prefs.setString('nationality', nationality!);
-          await prefs.setString('emergency_contact', emergency_contact!);
-          await prefs.setString('emergency_relation', emergency_relation!);
+
           await prefs.setString('mobile', widget.phoneNumber);
 
           navigateToHomeScreen();
@@ -234,7 +210,6 @@ class _OtpScreenState extends State<OtpScreen> {
           builder: (context) => HomeScreen(
             Mobile: widget.phoneNumber,
             Token: token!,
-            Firstname: firstname!,
             registered_date: registered_date!,
           ),
         ),

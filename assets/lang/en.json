@@ -11,7 +11,7 @@
     "Language": "Language",
     "Select Language": "Select Language",
     "English": "English",
-    "Hindi": "Hindi",
+    "Hindi": "हिन्दी",
     "Don't forget to check out our promotions page to save more on your rides!": "Don't forget to check out our promotions page to save more on your rides!",
     "Flat 50% off on first ride!": "Flat 50% off on first ride!",
     "Please check the Appstore for the Latest updates!": "Please check the Appstore for the Latest updates!",
@@ -21,11 +21,11 @@
     "Redeem": "Redeem",
     "History": "History",
     "Help": "Help",
-    "Log Out": "Log Out",
+    "Logout": "Logout",
     "Follow Us": "Follow Us",
     "START":"START",
     "Enter your phone number without '0'. By continuing, you agree to our Terms of Service.":"Enter your phone number without '0'. By continuing, you agree to our Terms of Service.",
-    "Enter your mobile number":"Enter your mobile number",
+    "Enter your mobile number":"Enter mobile number",
     "Full Name is required":"Full Name is required",
     "Full Name (Passport or ID Card)":"Full Name (Passport or ID Card)",
     "Full Name must be at least 3 characters":"Full Name must be at least 3 characters",
@@ -43,5 +43,11 @@
     "enter_code": "Enter the 6 digit code sent to {phoneNumber}",
     "Resend OTP":"Resend OTP",
     "Submit":"Submit",
-    "Choose Language":"Choose Language"
+    "Choose Language":"Choose Language",
+     "Chinese": "中文",
+     
+        "Malay": "Bahasa Melayu",
+         "French": "Français"
+    
+    
 }

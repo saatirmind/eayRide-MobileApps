@@ -399,10 +399,9 @@ class _PlaceListState extends State<PlaceList> {
       );
       return;
     }
-    const String apiUrl = AppApi.ridetracking;
     try {
       final response = await http.post(
-        Uri.parse(apiUrl),
+        Uri.parse(AppApi.ridetracking),
         headers: {'Content-Type': 'application/json', 'token': token},
         body: jsonEncode({
           'booking_token': bookingToken,

@@ -104,9 +104,9 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
   void _submitPhoto() async {
     setState(() {
       _isLoading = true;
+      _animationController.stop();
     });
     try {
-      _animationController.stop();
       final token = await getToken();
       final bookingToken = await getBookingToken();
 
@@ -148,9 +148,7 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
         });
         return;
       }
-
-      const String apiUrl = AppApi.Finishride;
-
+      final String apiUrl = AppApi.Finishride;
       var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
       request.headers.addAll({
         'token': token,
@@ -167,8 +165,7 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
 
       var response = await request.send();
 
-      if (response.statusCode == 200) {
-        await Future.delayed(Duration(seconds: 2));
+      if (response.statusCode == 201 || response.statusCode == 200) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('booking_token');
 
@@ -196,8 +193,7 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
         print('Location and image sent successfully');
       } else {
         print('Failed to send location: ${response.statusCode}');
-        print(
-            'Response: ${await response.stream.bytesToString()}'); // डिबगिंग के लिए।
+        print('Response: ${await response.stream.bytesToString()}');
       }
     } catch (e) {
       print('Error sending location or image: $e');
@@ -317,13 +313,24 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
                         ),
                       ),
                       child: _isLoading
-                          ? SizedBox(
-                              height: 20,
-                              width: 50,
-                              child: CircularProgressIndicator(
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.green),
-                                strokeWidth: 3,
+                          ? Container(
+                              height: MediaQuery.of(context).size.height * 0.04,
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              child: Column(
+                                children: [
+                                  LinearProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.green),
+                                    backgroundColor: Colors.white,
+                                  ),
+                                  SizedBox(
+                                    height: 4,
+                                  ),
+                                  Text(
+                                    'Uploading',
+                                    style: TextStyle(color: Colors.red),
+                                  )
+                                ],
                               ),
                             )
                           : Text(

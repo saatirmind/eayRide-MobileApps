@@ -23,6 +23,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  String? profileImage;
   bool promotionalEmails = false;
   final _dobController = TextEditingController();
   final _givenNameController = TextEditingController();
@@ -124,177 +125,323 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Enter Email',
-                    prefixIcon: Icon(Icons.email),
-                    suffix: Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Text(
-                        '*',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                SizedBox(height: 16),
+                Center(
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage:
+                        profileImage != null && profileImage!.isNotEmpty
+                            ? NetworkImage(profileImage!)
+                            : const NetworkImage(
+                                AppApi.Dummyprofile,
+                              ),
+                    backgroundColor: Colors.grey[200],
+                  ),
+                ),
+                SizedBox(height: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Enter Email',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          '*',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 1),
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.email),
+                        counter: Text(
+                          '',
                         ),
                       ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    String pattern = r'^[a-zA-Z0-9._%+-]+@gmail\.com$';
-                    RegExp regExp = RegExp(pattern);
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        String pattern = r'^[a-zA-Z0-9._%+-]+@gmail\.com$';
+                        RegExp regExp = RegExp(pattern);
 
-                    if (!regExp.hasMatch(value)) {
-                      return 'Please enter a valid Gmail address';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: _givenNameController,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.person),
-                    suffix: Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Text(
-                        '*',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                        if (!regExp.hasMatch(value)) {
+                          return 'Please enter a valid Gmail address';
+                        }
+                        return null;
+                      },
                     ),
-                    labelText: 'Given Name',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your Given name';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: _familyNameController,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.edit),
-                    suffix: Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Text(
-                        '*',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    labelText: 'Family Name',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your Family name';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: _dobController,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.calendar_today),
-                    suffix: Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Text(
-                        '*',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    labelText: 'Date of Birth',
-                    hintText: 'DD-MM-YYYY',
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    DateInputFormatter(),
                   ],
-                  validator: _validateDate,
                 ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: _nationalityController,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.public),
-                    suffix: Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Text(
-                        '*',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Given Name',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          '*',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 1),
+                    TextFormField(
+                      controller: _givenNameController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.edit),
+                        counter: Text(
+                          '',
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Given name';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Family Name',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          '*',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 1),
+                    TextFormField(
+                      controller: _familyNameController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.edit),
+                        counter: Text(
+                          '',
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Family name';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Date of Birth',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          '*',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 1),
+                    TextFormField(
+                      controller: _dobController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.calendar_today),
+                        hintText: 'DD-MM-YYYY',
+                        counter: Text(
+                          '',
+                        ),
+                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        DateInputFormatter(),
+                      ],
+                      validator: _validateDate,
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Nationality',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          '*',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 1),
+                    TextFormField(
+                      controller: _nationalityController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.public),
+                        counter: Text(
+                          '',
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your nationality';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Emergency Number',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          '(Optional)',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 1),
+                    TextFormField(
+                      keyboardType: TextInputType.number,
+                      controller: _emergencyController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.phone),
+                        counter: Text(
+                          '',
                         ),
                       ),
                     ),
-                    labelText: 'Nationality',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your nationality';
-                    }
-                    return null;
-                  },
+                  ],
                 ),
-                SizedBox(height: 16),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  controller: _emergencyController,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.phone),
-                    labelText: 'Emergency Number',
-                    suffix: Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Text(
-                        '(Optional)',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Emergency Relation',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          '(Optional)',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 1),
+                    TextFormField(
+                      controller: _emergencyrelationController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.group),
+                        counter: Text(
+                          '',
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: _emergencyrelationController,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.group),
-                    suffix: Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Text(
-                        '(Optional)',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    labelText: 'Emergency Relation',
-                  ),
-                ),
-                SizedBox(height: 16),
                 Container(
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -334,25 +481,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 16),
-                Row(
-                  children: [
-                    Switch(
-                      value: promotionalEmails,
-                      onChanged: (bool value) {
-                        setState(() {
-                          promotionalEmails = value;
-                        });
-                      },
-                    ),
-                    Expanded(
-                      child: Text(
-                        'I do not want to receive promotions, newsletters, updates, and any other marketing communications via email, WhatsApp, or SMS.',
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
                 Text(
                   'By submitting my information, I acknowledge to have read and agreed to the Terms & Conditions and Privacy Policy documents.',
                 ),
@@ -486,21 +614,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               duration: Duration(seconds: 2),
             ),
           );
-          await saveUserDataToPreferences();
-
-          Future.delayed(Duration(seconds: 3), () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DataScreen(
-                    data: data,
-                    Token: widget.Token,
-                    Mobile: widget.Mobile,
-                    registered_date: widget.registered_date),
-              ),
-            );
-          });
-          print('Profile Update Successful: ${data['message']}');
+          Future.delayed(
+            Duration(seconds: 2),
+            () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -526,39 +646,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> saveUserDataToPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    await prefs.setString('email', _emailController.text);
-
-    await prefs.setString('family_name', _familyNameController.text);
-
-    await prefs.setString('nationality', _nationalityController.text);
-    await prefs.setString('emergency_contact', _emergencyController.text);
-    await prefs.setString(
-        'emergency_relation', _emergencyrelationController.text);
-
-    print("User data saved to SharedPreferences successfully!");
-  }
-
-  Future<void> loadUserDataFromPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    _emailController.text = prefs.getString('email') ?? '';
-    _givenNameController.text = prefs.getString('fullname') ?? '';
-    _familyNameController.text = prefs.getString('family_name') ?? '';
-    _dobController.text = prefs.getString('dateofbirth') ?? '';
-    _nationalityController.text = prefs.getString('nationality') ?? '';
-    _emergencyController.text = prefs.getString('emergency_contact') ?? '';
-    _emergencyrelationController.text =
-        prefs.getString('emergency_relation') ?? '';
-
-    print("User data loaded from SharedPreferences!");
-  }
-
   @override
   void initState() {
     super.initState();
-    loadUserDataFromPreferences();
+    GetProfile();
+  }
+
+  Future<void> GetProfile() async {
+    final token = await getToken();
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Token is missing. Please log in again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse(AppApi.Getprofile),
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data['status'] == true) {
+          final userInfo = data['data']['user_info'];
+
+          _dobController.text = userInfo['dateofbirth'] ?? '';
+          _givenNameController.text = userInfo['firstname'] ?? '';
+          _familyNameController.text = userInfo['family_name'] ?? '';
+          _emailController.text = userInfo['email'] ?? '';
+          _nationalityController.text = userInfo['nationality'] ?? '';
+          _emergencyController.text = userInfo['emergency_contact'] ?? '';
+          _emergencyrelationController.text =
+              userInfo['emergency_relation'] ?? '';
+          setState(() {
+            profileImage = userInfo['userImage'];
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${data['message']}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          print('Error: ${data['message']}');
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Failed to fetch profile. Status Code: ${response.statusCode}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (error) {
+      print('Error occurred: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An unexpected error occurred.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

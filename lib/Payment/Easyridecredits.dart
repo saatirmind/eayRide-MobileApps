@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/Payment/wallethistory.dart';
 import 'package:easyride/Screen/homescreen.dart';
@@ -16,7 +15,7 @@ class CreditsReloadScreen extends StatefulWidget {
 }
 
 class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
-  String _reloadAmount = '';
+  final TextEditingController _reloadController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +75,7 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
                       child: TextField(
                         decoration: InputDecoration(hintText: 'Min.RM10'),
                         textAlign: TextAlign.center,
-                        controller: TextEditingController(text: _reloadAmount),
+                        controller: _reloadController,
                         readOnly: false,
                         keyboardType: TextInputType.number,
                         inputFormatters: <TextInputFormatter>[
@@ -173,38 +172,44 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
               ),
               const SizedBox(height: 32),
               GestureDetector(
-                onTap: () {
-                  _AddWallettmoney();
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  decoration: BoxDecoration(
-                    color: EasyrideColors.buttonColor,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _isLoading
-                          ? const CircularProgressIndicator(
-                              color: EasyrideColors.buttontextColor,
-                            )
-                          : Row(
-                              children: [
-                                Icon(Icons.wallet,
-                                    size: 24, color: EasyrideColors.Drawericon),
-                                SizedBox(width: 8),
-                                Text(
-                                  'ADD',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: EasyrideColors.buttontextColor),
-                                ),
-                              ],
-                            )
-                    ],
+                onTap: _isLoading
+                    ? null
+                    : () {
+                        _AddWallettmoney();
+                      },
+                child: IgnorePointer(
+                  ignoring: _isLoading,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    decoration: BoxDecoration(
+                      color: EasyrideColors.buttonColor,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _isLoading
+                            ? const CircularProgressIndicator(
+                                color: EasyrideColors.buttontextColor,
+                              )
+                            : Row(
+                                children: [
+                                  Icon(Icons.wallet,
+                                      size: 24,
+                                      color: EasyrideColors.Drawericon),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'ADD',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: EasyrideColors.buttontextColor),
+                                  ),
+                                ],
+                              )
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -231,14 +236,12 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
   bool _isLoading = false;
 
   void _onReloadAmountSelected(String amount) {
-    setState(() {
-      _reloadAmount = '$amount';
-    });
+    setState(() {});
   }
 
   Widget _buildReloadButton(String amount) {
     return GestureDetector(
-      onTap: () => _onReloadAmountSelected(amount),
+      onTap: () => _reloadController.text = amount,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
         decoration: BoxDecoration(
@@ -313,6 +316,7 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
   }
 
   Future<void> _AddWallettmoney() async {
+    final reloadAmount = _reloadController.text.trim();
     setState(() {
       _isLoading = true;
     });
@@ -332,7 +336,7 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
       return;
     }
 
-    if (_reloadAmount.isEmpty) {
+    if (reloadAmount.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please enter a reload amount.'),
@@ -356,7 +360,7 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
         },
         body: jsonEncode({
           'is_credit': 'credit',
-          'amount': _reloadAmount,
+          'amount': reloadAmount,
         }),
       );
 
@@ -375,6 +379,7 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
               backgroundColor: Colors.green,
             ),
           );
+          _reloadController.clear();
           await Future.delayed((Duration(microseconds: 500)));
           _fetchWalletHistory();
           HomeScreen.homeScreenKey.currentState?.Wallethistoryapi();

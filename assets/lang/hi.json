@@ -10,7 +10,7 @@
     "Settings": "सेटिंग्स",
     "Language": "भाषा",
     "Select Language": "भाषा चुनें",
-    "English": "अंग्रेज़ी",
+    "English": "English",
     "Hindi": "हिन्दी",
     "Don't forget to check out our promotions page to save more on your rides!": "अपनी राइड पर और अधिक बचत करने के लिए हमारे प्रमोशन्स पेज को देखना न भूलें!",
     "Flat 50% off on first ride!": "पहली यात्रा पर सीधा 50% की छूट!",
@@ -21,7 +21,7 @@
     "Redeem": "रिडीम",
     "History": "इतिहास",
     "Help": "मदद",
-    "Log Out": "लॉग आउट",
+    "Logout": "लॉग आउट",
     "Follow Us": "हमारा अनुसरण करें",
     
         "START": "शुरू करें",
@@ -43,6 +43,10 @@
         "User Successfully Logged In": "उपयोगकर्ता सफलतापूर्वक लॉग इन हो गया",
         "enter_code": "{phoneNumber} पर भेजा गया 6 अंकों का कोड दर्ज करें",
         "Resend OTP": "ओटीपी पुनः भेजें",
-        "Submit": "जमा करें","Choose Language": "भाषा चुनें"
-      }
+        "Submit": "जमा करें","Choose Language": "भाषा चुनें",
+         "Chinese": "中文",
+         "Malay": "Bahasa Melayu", "French": "Français"}
+
+
+      
       

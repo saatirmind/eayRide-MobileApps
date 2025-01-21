@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/Payment/Easyridecredits.dart';
 import 'package:easyride/Payment/wallethistory.dart';
@@ -26,6 +25,14 @@ class Ridingstart extends StatefulWidget {
 }
 
 class _RidingstartState extends State<Ridingstart> {
+  String? totalAmountLabel;
+  Future<void> _getTotalAmountLabel() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      totalAmountLabel = prefs.getString('totalAmountLabel') ?? 'N/A';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -71,7 +78,7 @@ class _RidingstartState extends State<Ridingstart> {
               ),
               const SizedBox(height: 32),
               Text(
-                'You need to pay RM ${widget.finalPrice} to Start your ride.',
+                'You need to pay ${totalAmountLabel} to Start your ride.',
                 style: TextStyle(fontSize: 19, color: Colors.red),
               ),
               // const SizedBox(height: 32),
@@ -276,6 +283,7 @@ class _RidingstartState extends State<Ridingstart> {
     _fetchWalletHistory();
     _loadSelectedCity();
     getSavedLocation();
+    _getTotalAmountLabel();
   }
 
   Future<void> _loadSelectedCity() async {
@@ -365,6 +373,11 @@ class _RidingstartState extends State<Ridingstart> {
     }
   }
 
+  Future<String?> getSavedTripWiseValue() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('tripWiseValue');
+  }
+
   Future<void> _PaymentWallettmoney() async {
     setState(() {
       _isLoading = true;
@@ -398,6 +411,14 @@ class _RidingstartState extends State<Ridingstart> {
 
       return;
     }
+    final String? tripWiseValue = await getSavedTripWiseValue();
+
+    if (tripWiseValue == null) {
+      print('TripWiseValue is missing. Please set it first.');
+      return;
+    }
+
+    print('Retrieved tripWiseValue: $tripWiseValue');
     LatLng? savedLocation = await getSavedLocation();
     if (savedLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -412,11 +433,9 @@ class _RidingstartState extends State<Ridingstart> {
       return;
     }
 
-    final String apiUrl = AppApi.ridebooking;
-
     try {
       final response = await http.post(
-        Uri.parse(apiUrl),
+        Uri.parse(AppApi.ridebooking),
         headers: {
           'Content-Type': 'application/json',
           'token': token,
@@ -425,7 +444,7 @@ class _RidingstartState extends State<Ridingstart> {
           'vehicle_no': widget.Vehicle_no,
           'current_lat': savedLocation.latitude,
           'current_long': savedLocation.longitude,
-          'trip_type': 'trip_wise',
+          'trip_type': tripWiseValue,
           'pickup_id': dropLocation,
           'drop_id': pickupLocation,
         }),

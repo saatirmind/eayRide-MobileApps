@@ -15,7 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class HomeScreen extends StatefulWidget {
   static final GlobalKey<HomeScreenState> homeScreenKey =
       GlobalKey<HomeScreenState>();
-  final String Firstname;
   final String Mobile;
   final String Token;
   final String registered_date;
@@ -24,7 +23,6 @@ class HomeScreen extends StatefulWidget {
     Key? key,
     required this.Mobile,
     required this.Token,
-    required this.Firstname,
     required this.registered_date,
   }) : super(key: key);
 
@@ -93,7 +91,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         drawer: Drawerscreen(
           Mobile: widget.Mobile,
           Token: widget.Token,
-          Firstname: widget.Firstname,
+          Firstname: FirstNameg ?? '',
           registered_date: widget.registered_date,
         ),
         body: RefreshIndicator(
@@ -190,6 +188,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                 onChanged: (value) {
                                   setState(() {
                                     _selectedValue = value!;
+                                    _selectdropstatefinal();
                                   });
                                 },
                               ),
@@ -212,6 +211,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                   onChanged: (value) {
                                     setState(() {
                                       _selectedValue = value!;
+                                      _selectdropstatefinal();
                                     });
                                   },
                                 ),
@@ -259,7 +259,9 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           : Padding(
                               padding: const EdgeInsets.only(left: 15.0),
                               child: Text(
-                                'Minute-wise → 200 RM + 0.25 RM (P/M)\n220 RM (Minimum Amount in your Purse)',
+                                securityAmountLabel.isEmpty
+                                    ? ''
+                                    : 'Minute-wise → $securityAmountLabel + $finalPrice RM \n$totalAmountLabel (Minimum Amount in your Purse)',
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
                                     fontSize: 14,
@@ -296,6 +298,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     builder: (BuildContext context) {
                       return InkWell(
                         onTap: () {
+                          GetProfile();
                           bool? isUpdated = true;
                           Scaffold.of(context).openDrawer();
 
@@ -351,6 +354,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         await _saveCity(
                             'pickupCity', _pickupCity?.split('(ID:')[0].trim());
                         if (PselectedId != null) {
+                          _hideMarkers();
                           _selectpickupstateAPI(PselectedId);
                           _createPolylines();
                         }
@@ -446,6 +450,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               await _selectdropstateAPI(DselectedId);
 
                               _createPolylines();
+                              _selectdropstatefinal();
                             }
                           }
                         },
@@ -549,7 +554,6 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Future<void> initializeApp() async {
     _getCurrentLocation();
     _createMarkers();
-
     Wallethistoryapi();
   }
 
@@ -596,6 +600,12 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ),
       );
     }).toSet();
+  }
+
+  void _hideMarkers() {
+    setState(() {
+      _markers.clear();
+    });
   }
 
   Future<void> _createPolylines() async {
@@ -798,6 +808,9 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       print('State is missing. Please set a state first.');
       return;
     }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('tripWiseValue', tripWiseValue);
+    print('Saved tripWiseValue: $tripWiseValue');
 
     try {
       final response = await http.post(
@@ -807,7 +820,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           'token': token,
         },
         body: jsonEncode({
-          'state': 'Uttar Pradesh',
+          'state': 'Kuala Lumpur',
           'trip_type': tripWiseValue,
         }),
       );
@@ -866,6 +879,9 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       print('State is missing. Please set a state first.');
       return;
     }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('tripWiseValue', tripWiseValue);
+    print('Saved tripWiseValue: $tripWiseValue');
 
     try {
       final response = await http.post(
@@ -875,7 +891,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           'token': token,
         },
         body: jsonEncode({
-          'state': 'Uttar Pradesh',
+          'state': 'Kuala Lumpur',
           'trip_type': tripWiseValue,
           'pickup_location': PselectedId,
         }),
@@ -967,6 +983,9 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       print('State is missing. Please set a state first.');
       return;
     }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('tripWiseValue', tripWiseValue);
+    print('Saved tripWiseValue: $tripWiseValue');
 
     try {
       final response = await http.post(
@@ -976,7 +995,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           'token': token,
         },
         body: jsonEncode({
-          'state': 'Uttar Pradesh',
+          'state': 'Kuala Lumpur',
           'trip_type': tripWiseValue,
           'pickup_location': selectedlocationp,
           'drop_location': DselectedId,
@@ -1022,6 +1041,8 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   snippet: 'Latitude: $pickuplat, Longitude: $pickuplong',
                 )));
           });
+          await prefs.setString('totalAmountLabel', totalAmountLabel);
+          print('Saved totalAmountLabel: $totalAmountLabel');
           saveLocationToSharedPreferences(
               _selectedStartLocation!, _selectedEndLocation!);
           _saveSelectedcity();
@@ -1038,7 +1059,6 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Future<void> _saveSelectedcity() async {
     final prefs = await SharedPreferences.getInstance();
-
     await prefs.setString('selectedlocationd', selectedlocationd);
     await prefs.setString('selectedlocationp', selectedlocationp);
   }
@@ -1052,5 +1072,163 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     await prefs.setDouble('end_latitude', endLocation.latitude);
     await prefs.setDouble('end_longitude', endLocation.longitude);
+  }
+
+  Future<void> _selectdropstatefinal() async {
+    final token = await getToken();
+    print('HIT API SELECTED STATE API');
+
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Token is missing. Please log in again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    String tripWiseValue = _selectedValue == 1 ? 'trip_wise' : 'minute_wise';
+    final String? state = await getSavedState();
+    if (state == null) {
+      print('State is missing. Please set a state first.');
+      return;
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('tripWiseValue', tripWiseValue);
+    print('Saved tripWiseValue: $tripWiseValue');
+
+    try {
+      final response = await http.post(
+        Uri.parse(AppApi.PickupDropLocation),
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+        body: jsonEncode({
+          'state': 'Kuala Lumpur',
+          'trip_type': tripWiseValue,
+          'pickup_location': selectedlocationp,
+          'drop_location': selectedlocationw,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data['status'] == true) {
+          final Map<String, dynamic> responseData = data;
+
+          setState(() {
+            selectedlocationw =
+                responseData['data']['selected_drop_location']['id'].toString();
+            securityAmountLabel = responseData['data']['security_amount_label'];
+            destination = responseData['data']['destination_lebal'];
+            finalPrice = responseData['data']['final_price'].toString();
+            totalAmountLabel = responseData['data']['total_amount_lebal'];
+            selectedlocationd =
+                responseData['data']['selected_drop_location']['id'].toString();
+
+            droplat = double.parse(responseData['data']
+                    ['selected_drop_location']['latitude']
+                .toString());
+            droplong = double.parse(responseData['data']
+                    ['selected_drop_location']['longitude']
+                .toString());
+
+            _selectedEndLocation = LatLng(droplat, droplong);
+            _markers.add(Marker(
+                markerId: MarkerId('drop_location'),
+                position: _selectedEndLocation!,
+                infoWindow: InfoWindow(
+                  title: 'Drop Location',
+                  snippet: 'Latitude: $droplat, Longitude: $droplong',
+                )));
+            _markers.add(Marker(
+                markerId: MarkerId('pickup_location'),
+                position: _selectedStartLocation!,
+                infoWindow: InfoWindow(
+                  title: 'Pickup Location',
+                  snippet: 'Latitude: $pickuplat, Longitude: $pickuplong',
+                )));
+          });
+          await prefs.setString('totalAmountLabel', totalAmountLabel);
+          print('Saved totalAmountLabel: $totalAmountLabel');
+          saveLocationToSharedPreferences(
+              _selectedStartLocation!, _selectedEndLocation!);
+          _saveSelectedcity();
+        } else {
+          print('Error: ${data['message']}');
+        }
+      } else {
+        print('Server Error: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error occurred: $error');
+    }
+  }
+
+  String? FirstNameg;
+
+  Future<void> GetProfile() async {
+    final token = await getToken();
+
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Token is missing. Please log in again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse(AppApi.Getprofile),
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data['status'] == true) {
+          final userInfo = data['data']['user_info'];
+
+          setState(() {
+            FirstNameg = userInfo['firstname']?.isNotEmpty == true
+                ? userInfo['firstname']
+                : 'Update Profile';
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${data['message']}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          print('Error: ${data['message']}');
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Failed to fetch profile. Status Code: ${response.statusCode}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (error) {
+      print('Error occurred: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An unexpected error occurred.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

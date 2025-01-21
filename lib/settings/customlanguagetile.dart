@@ -53,6 +53,48 @@ class CustomLanguageTile extends StatelessWidget {
                   },
                 ),
               ),
+              ListTile(
+                title: Text(
+                  'Malay'.tr(),
+                  style: TextStyle(color: EasyrideColors.buttontextColor),
+                ),
+                leading: Radio(
+                  value: 'ms',
+                  groupValue: selectedLanguage,
+                  onChanged: (value) {
+                    onLanguageChanged(value.toString());
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'Chinese'.tr(),
+                  style: TextStyle(color: EasyrideColors.buttontextColor),
+                ),
+                leading: Radio(
+                  value: 'zh',
+                  groupValue: selectedLanguage,
+                  onChanged: (value) {
+                    onLanguageChanged(value.toString());
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'French'.tr(),
+                  style: TextStyle(color: EasyrideColors.buttontextColor),
+                ),
+                leading: Radio(
+                  value: 'fr',
+                  groupValue: selectedLanguage,
+                  onChanged: (value) {
+                    onLanguageChanged(value.toString());
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
             ],
           ),
         );
@@ -68,9 +110,26 @@ class CustomLanguageTile extends StatelessWidget {
         color: Colors.blue,
       ),
       title: Text('Language'.tr()),
-      subtitle: Text(selectedLanguage == 'en' ? 'English'.tr() : 'Hindi'.tr()),
+      subtitle: Text(_getLanguageName(selectedLanguage)),
       onTap: () => _showLanguageDialog(context),
       trailing: const Icon(Icons.arrow_forward_ios),
     );
+  }
+
+  String _getLanguageName(String code) {
+    switch (code) {
+      case 'en':
+        return 'English'.tr();
+      case 'hi':
+        return 'Hindi'.tr();
+      case 'zh':
+        return 'Chinese'.tr();
+      case 'ms':
+        return 'Malay'.tr();
+      case 'fr':
+        return 'French'.tr();
+      default:
+        return 'Unknown'.tr();
+    }
   }
 }

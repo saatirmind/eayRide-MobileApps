@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easyride/NewScreen/homenew.dart';
+import 'package:easyride/NewScreen/login.dart';
 import 'package:easyride/settings/setting.dart';
 import 'package:http/http.dart' as http;
 import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easyride/Screen/homescreen.dart';
-import 'package:easyride/Screen/phonescreen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -169,28 +171,30 @@ class _AsplashscreenState extends State<Asplashscreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? mobile = prefs.getString('mobile');
-    String? firstname = prefs.getString('firstname');
     String? registeredDate = prefs.getString('registered_date');
 
-    if (token != null &&
-        mobile != null &&
-        firstname != null &&
-        registeredDate != null) {
+    if (token != null && mobile != null && registeredDate != null) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => HomeScreen(
             Mobile: mobile,
             Token: token,
-            Firstname: firstname,
             registered_date: registeredDate,
           ),
+        ),
+      );
+    } else if (token != null && mobile != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Homenew(),
         ),
       );
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => PhoneNumberScreen()),
+        MaterialPageRoute(builder: (context) => Login()),
       );
     }
   }

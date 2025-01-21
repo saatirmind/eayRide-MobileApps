@@ -68,9 +68,10 @@ class Drawerscreen extends StatelessWidget {
                             Text(
                               Firstname,
                               style: TextStyle(
-                                  color: EasyrideColors.Drawerheadertext,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
+                                color: EasyrideColors.Drawerheadertext,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             Text(
                               Mobile,
@@ -166,67 +167,83 @@ class Drawerscreen extends StatelessWidget {
                     )),
                 onTap: () {},
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.logout,
-                  color: EasyrideColors.Drawericon,
-                ),
-                title: Text(
-                  'Log Out'.tr(),
-                  style: TextStyle(color: EasyrideColors.Drawertext),
-                ),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Center(
-                          child: Text(
-                            'Confirm Logout',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        content: Text(
-                          'Are you sure you want to log out?',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        actionsAlignment: MainAxisAlignment.spaceEvenly,
-                        actions: <Widget>[
-                          SizedBox(
-                            width: 120,
-                            child: TextButton(
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colors.green,
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                'No',
-                                style: TextStyle(color: Colors.white),
-                              ),
+              Card(
+                color: EasyrideColors.Drawerheaderbackground,
+                elevation: 3,
+                child: ListTile(
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.power_settings_new,
+                        color: EasyrideColors.Drawerheadertext,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        'Logout'.tr(),
+                        style:
+                            TextStyle(color: EasyrideColors.Drawerheadertext),
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor:
+                              EasyrideColors.Drawerheaderbackground,
+                          title: Center(
+                            child: Icon(
+                              Icons.logout,
+                              size: 64,
+                              color: Colors.red,
                             ),
                           ),
-                          SizedBox(
-                            width: 120,
-                            child: TextButton(
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colors.red,
-                              ),
-                              onPressed: () {
-                                logout(context);
-                              },
-                              child: Text(
-                                'Yes',
-                                style: TextStyle(color: Colors.white),
+                          content: Text(
+                            'Are you sure you want to log out?',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                            textAlign: TextAlign.center,
+                          ),
+                          actionsAlignment: MainAxisAlignment.spaceEvenly,
+                          actions: <Widget>[
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text(
+                                  'No',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                    backgroundColor: Colors.red),
+                                onPressed: () {
+                                  logout(context);
+                                },
+                                child: Text(
+                                  'Yes',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
               SpacerWidget(),
               ListTile(

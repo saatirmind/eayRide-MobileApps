@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:easyride/AppColors.dart/EasyrideAppColors.dart';
-import 'package:easyride/Screen/phonescreen.dart';
+import 'package:easyride/NewScreen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,7 +44,7 @@ Future<void> logout(BuildContext context) async {
         print("All SharedPreferences data cleared successfully!");
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PhoneNumberScreen()),
+          MaterialPageRoute(builder: (context) => Login()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -65,7 +65,7 @@ Future<void> logout(BuildContext context) async {
       print("All SharedPreferences data cleared successfully!");
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => PhoneNumberScreen()),
+        MaterialPageRoute(builder: (context) => Login()),
       );
     }
   } catch (e) {}

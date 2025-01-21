@@ -47,3 +47,4 @@ app.*.map.json
 /lib/AppColors.dart
 /lib/Screen/Contact.dart
 /assets
+/lib/NewScreen
