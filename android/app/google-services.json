@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "396255044410",
+    "project_id": "easyride-kl",
+    "storage_bucket": "easyride-kl.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396255044410:android:dd7aa201cd38bed745e603",
+        "android_client_info": {
+          "package_name": "com.gaurav.easymotorbike.easymotorbike"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "396255044410-tgc9685a807dic47s1qnta8pmmperiu3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzzok7Fv5JMRMJGFl0n-VfDMpiML5T-V4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "396255044410-tgc9685a807dic47s1qnta8pmmperiu3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
