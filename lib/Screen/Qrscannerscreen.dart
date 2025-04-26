@@ -1,4 +1,5 @@
-// ignore_for_file: file_names, use_build_context_synchronously
+// ignore_for_file: file_names, use_build_context_synchronously, avoid_print
+import 'dart:io';
 import 'package:easymotorbike/QrScannerScreenWidget/buildBottomcontainer.dart';
 import 'package:easymotorbike/QrScannerScreenWidget/cameraframe.dart';
 import 'package:easymotorbike/QrScannerScreenWidget/iconbutton.dart';
@@ -28,21 +29,30 @@ class QRScannerScreenState extends State<QRScannerScreen> {
   }
 
   Future<void> _checkCameraPermission() async {
-    final status = await Permission.camera.request();
-    if (status.isGranted) {
+    if (Platform.isAndroid) {
+      final status = await Permission.camera.request();
+
+      if (status.isGranted) {
+        setState(() {
+          isCameraAvailable = true;
+        });
+      } else {
+        setState(() {
+          isCameraAvailable = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Camera permission is required for QR scanning.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } else {
       setState(() {
         isCameraAvailable = true;
       });
-    } else {
-      setState(() {
-        isCameraAvailable = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Camera permission is required for QR scanning.'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      print("Non-Android platform detected. Skipping permission check.");
     }
   }
 

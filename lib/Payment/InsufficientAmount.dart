@@ -9,7 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class InsufficientAmount extends StatefulWidget {
-  const InsufficientAmount({super.key});
+  final double amount;
+  const InsufficientAmount({super.key, required this.amount});
 
   @override
   State<InsufficientAmount> createState() => _InsufficientAmountState();
@@ -17,6 +18,7 @@ class InsufficientAmount extends StatefulWidget {
 
 class _InsufficientAmountState extends State<InsufficientAmount> {
   final TextEditingController _reloadController = TextEditingController();
+  bool _showAmountError = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +71,12 @@ class _InsufficientAmountState extends State<InsufficientAmount> {
                   ),
                   Expanded(
                     child: TextField(
-                      decoration: const InputDecoration(hintText: 'Min.RM10'),
+                      decoration: InputDecoration(
+                        hintText: 'Min. ${widget.amount.toStringAsFixed(2)}',
+                        errorText: _showAmountError
+                            ? 'Please enter at least ₹${widget.amount}'
+                            : null,
+                      ),
                       textAlign: TextAlign.center,
                       controller: _reloadController,
                       readOnly: false,
@@ -92,9 +99,9 @@ class _InsufficientAmountState extends State<InsufficientAmount> {
               ],
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Your wallet balance is low. Please reload your wallet to complete the ride. Upload the required amount and try again.',
-              style: TextStyle(
+            Text(
+              'Your wallet balance is low. Please reload your wallet to complete the ride. You must add at least ${widget.amount} to continue.',
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: Colors.red,
@@ -262,6 +269,20 @@ class _InsufficientAmountState extends State<InsufficientAmount> {
 
   Future<void> _AddWallettmoney() async {
     final reloadAmount = _reloadController.text.trim();
+    final parsedAmount = double.tryParse(reloadAmount) ?? 0.0;
+
+    if (reloadAmount.isEmpty || parsedAmount < widget.amount) {
+      setState(() {
+        _showAmountError = true;
+        _isLoading = false;
+      });
+      return;
+    } else {
+      setState(() {
+        _showAmountError = false;
+      });
+    }
+
     setState(() {
       _isLoading = true;
     });

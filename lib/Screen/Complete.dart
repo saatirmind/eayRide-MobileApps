@@ -1,4 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api, file_names, use_build_context_synchronously, deprecated_member_use, avoid_print
+import 'dart:convert';
 import 'dart:io';
 import 'package:easymotorbike/AppColors.dart/VehicleLocationProvider.dart';
 import 'package:easymotorbike/AppColors.dart/currentlocationprovide.dart';
@@ -160,7 +161,7 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
 
       var response = await request.send();
 
-      if (response.statusCode == 201 || response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('booking_token');
 
@@ -186,10 +187,13 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
 
         print('✅ Location and image sent successfully');
       } else if (response.statusCode == 402) {
+        final responseBody = await response.stream.bytesToString();
+        final decodedResponse = json.decode(responseBody);
+        final double amount = decodedResponse['data']['amount_label'];
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const InsufficientAmount(),
+            builder: (context) => InsufficientAmount(amount: amount),
           ),
         );
         Provider.of<WalletProvider>(context, listen: false)

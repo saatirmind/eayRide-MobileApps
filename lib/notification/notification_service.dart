@@ -99,7 +99,7 @@ class NotificationService {
       await messaging.requestPermission();
 
       String? apnsToken = await messaging.getAPNSToken();
-      print("APNs Token: $apnsToken"); // Debug ke liye
+      print("APNs Token: $apnsToken");
     }
 
     String? token = await messaging.getToken();
