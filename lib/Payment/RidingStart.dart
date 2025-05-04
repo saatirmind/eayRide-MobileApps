@@ -4,7 +4,7 @@ import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/AppColors.dart/currentlocationprovide.dart';
 import 'package:easymotorbike/AppColors.dart/tripprovide.dart';
 import 'package:easymotorbike/AppColors.dart/walletapi.dart';
-import 'package:easymotorbike/Payment/Easyridecredits.dart';
+import 'package:easymotorbike/Payment/add_amount.dart';
 import 'package:easymotorbike/Payment/wallethistory.dart';
 import 'package:easymotorbike/Screen/sucess.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +91,7 @@ class _RidingstartState extends State<Ridingstart> {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const CreditsReloadScreen(),
+                      builder: (context) => const AddAmount(),
                     ),
                   );
                 },

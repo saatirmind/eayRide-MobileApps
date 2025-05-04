@@ -350,7 +350,7 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
                                   ),
                                 ),
                                 const Text(
-                                  'Uploading...',
+                                  'Conforming...',
                                   style: TextStyle(
                                       color: Colors.red, fontSize: 14),
                                 ),
@@ -358,7 +358,7 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
                             ),
                           )
                         : Text(
-                            _isSubmitted ? 'Uploaded' : 'Upload',
+                            _isSubmitted ? 'Confirmed' : 'Confirm',
                             style: TextStyle(
                               fontSize: 18,
                               color: _isSubmitted ? Colors.red : Colors.white,

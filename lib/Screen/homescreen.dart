@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names, unused_element, deprecated_member_use, use_build_context_synchronously, avoid_print, prefer_final_fields
 import 'dart:async';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
-import 'package:easymotorbike/AppColors.dart/stationprovider.dart';
 import 'package:easymotorbike/AppColors.dart/tripprovide.dart';
 import 'package:easymotorbike/AppColors.dart/userprovider.dart';
 import 'package:easymotorbike/AppColors.dart/walletapi.dart';
@@ -144,43 +143,43 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               ),
             ),
           ),
-          if (isBottomSheetbutton)
-            Positioned(
-              bottom: 280,
-              left: -30,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(60),
-                  color: Colors.white,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Builder(
-                    builder: (BuildContext context) {
-                      return InkWell(
-                        onTap: () {
-                          final stationProvider = Provider.of<StationProvider>(
-                              context,
-                              listen: false);
-                          if (stationProvider.stations.isNotEmpty) {
-                            _showBottomSheet(context, stationProvider.stations);
-                          }
-                        },
-                        child: const CircleAvatar(
-                          radius: 30,
-                          backgroundColor: EasyrideColors.buttonColor,
-                          child: Icon(
-                            Icons.directions_transit,
-                            color: EasyrideColors.buttontextColor,
-                            size: 30,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
+          // if (isBottomSheetbutton)
+          //   Positioned(
+          //     bottom: 280,
+          //     left: -30,
+          //     child: Container(
+          //       decoration: BoxDecoration(
+          //         borderRadius: BorderRadius.circular(60),
+          //         color: Colors.white,
+          //       ),
+          //       child: Padding(
+          //         padding: const EdgeInsets.all(8.0),
+          //         child: Builder(
+          //           builder: (BuildContext context) {
+          //             return InkWell(
+          //               onTap: () {
+          //                 final stationProvider = Provider.of<StationProvider>(
+          //                     context,
+          //                     listen: false);
+          //                 if (stationProvider.stations.isNotEmpty) {
+          //                   _showBottomSheet(context, stationProvider.stations);
+          //                 }
+          //               },
+          //               child: const CircleAvatar(
+          //                 radius: 30,
+          //                 backgroundColor: EasyrideColors.buttonColor,
+          //                 child: Icon(
+          //                   Icons.directions_transit,
+          //                   color: EasyrideColors.buttontextColor,
+          //                   size: 30,
+          //                 ),
+          //               ),
+          //             );
+          //           },
+          //         ),
+          //       ),
+          //     ),
+          //   ),
           Positioned(
             top: 150,
             left: 0,
@@ -404,19 +403,19 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         CameraUpdate.newLatLngZoom(_currentPosition!, 12),
       );
 
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _mapController.showMarkerInfoWindow(const MarkerId('currentLocation'));
-      });
-      await Provider.of<StationProvider>(context, listen: false)
-          .fetchStations(position.latitude, position.longitude);
+      // Future.delayed(const Duration(milliseconds: 500), () {
+      //   _mapController.showMarkerInfoWindow(const MarkerId('currentLocation'));
+      // });
+      // await Provider.of<StationProvider>(context, listen: false)
+      //     .fetchStations(position.latitude, position.longitude);
 
-      Future.delayed(const Duration(milliseconds: 50), () {
-        final stationProvider =
-            Provider.of<StationProvider>(context, listen: false);
-        if (stationProvider.stations.isNotEmpty) {
-          _showBottomSheet(context, stationProvider.stations);
-        }
-      });
+      // Future.delayed(const Duration(milliseconds: 50), () {
+      //   final stationProvider =
+      //       Provider.of<StationProvider>(context, listen: false);
+      //   if (stationProvider.stations.isNotEmpty) {
+      //     _showBottomSheet(context, stationProvider.stations);
+      //   }
+      // });
     } catch (e) {
       debugPrint("Error fetching location: $e");
     }
@@ -443,68 +442,68 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  void _showBottomSheet(BuildContext context, List<String> stations) {
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.black.withOpacity(0.00001),
-        isScrollControlled: true,
-        isDismissible: false,
-        enableDrag: false,
-        builder: (context) {
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                isBottomSheetbutton = true;
-                Navigator.pop(context);
-              });
-            },
-            behavior: HitTestBehavior.opaque,
-            child: Stack(
-              children: [
-                Container(color: Colors.transparent),
-                DraggableScrollableSheet(
-                  initialChildSize: 0.25,
-                  minChildSize: 0.25,
-                  maxChildSize: 0.25,
-                  builder: (BuildContext context,
-                      ScrollController scrollController) {
-                    return Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(20)),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Center(
-                            child: Text(
-                              "Nearby Stations",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Expanded(
-                            child: ListView.builder(
-                              controller: scrollController,
-                              itemCount: stations.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(stations[index]),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          );
-        });
-  }
+  // void _showBottomSheet(BuildContext context, List<String> stations) {
+  //   showModalBottomSheet(
+  //       context: context,
+  //       backgroundColor: Colors.black.withOpacity(0.00001),
+  //       isScrollControlled: true,
+  //       isDismissible: false,
+  //       enableDrag: false,
+  //       builder: (context) {
+  //         return GestureDetector(
+  //           onTap: () {
+  //             setState(() {
+  //               isBottomSheetbutton = true;
+  //               Navigator.pop(context);
+  //             });
+  //           },
+  //           behavior: HitTestBehavior.opaque,
+  //           child: Stack(
+  //             children: [
+  //               Container(color: Colors.transparent),
+  //               DraggableScrollableSheet(
+  //                 initialChildSize: 0.25,
+  //                 minChildSize: 0.25,
+  //                 maxChildSize: 0.25,
+  //                 builder: (BuildContext context,
+  //                     ScrollController scrollController) {
+  //                   return Container(
+  //                     padding: const EdgeInsets.all(16),
+  //                     decoration: const BoxDecoration(
+  //                       color: Colors.white,
+  //                       borderRadius:
+  //                           BorderRadius.vertical(top: Radius.circular(20)),
+  //                     ),
+  //                     child: Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         const Center(
+  //                           child: Text(
+  //                             "Nearby Stations",
+  //                             style: TextStyle(
+  //                                 fontSize: 18, fontWeight: FontWeight.bold),
+  //                           ),
+  //                         ),
+  //                         const SizedBox(height: 10),
+  //                         Expanded(
+  //                           child: ListView.builder(
+  //                             controller: scrollController,
+  //                             itemCount: stations.length,
+  //                             itemBuilder: (context, index) {
+  //                               return ListTile(
+  //                                 title: Text(stations[index]),
+  //                               );
+  //                             },
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   );
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       });
+  // }
 }

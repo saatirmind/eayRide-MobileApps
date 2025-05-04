@@ -1,16 +1,17 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, non_constant_identifier_names
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, non_constant_identifier_names, avoid_print
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/AppColors.dart/VehicleLocationProvider.dart';
-//import 'package:easymotorbike/Placelist/Waze.dart';
+import 'package:easymotorbike/AppColors.dart/polyline_provider.dart';
 import 'package:easymotorbike/Placelist/drop_station_screen.dart';
 import 'package:easymotorbike/Placelist/toggle.dart';
-//import 'package:easymotorbike/Placelist/placelist2.dart';
 import 'package:easymotorbike/Screen/Contact.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -22,6 +23,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   int batteryCapacity = 20;
   Set<Marker> _markers = {};
+  LatLng? _selectedDestination;
 
   final List<String> _places = [
     "Bukit Bintang Walk",
@@ -46,14 +48,53 @@ class _MapScreenState extends State<MapScreen> {
   ];
 
   final LatLng _kualaLumpur = const LatLng(3.1390, 101.6869);
+  LatLng? _currentVehiclePosition;
+  late GoogleMapController _mapController;
+
+  void _onMapCreated(GoogleMapController controller) {
+    _mapController = controller;
+  }
 
   @override
   void initState() {
     super.initState();
     _createMarkers();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<LocationTrackingProvider>(context, listen: false)
-          .fetchAndTrackVehicleLocation();
+      final provider =
+          Provider.of<LocationTrackingProvider>(context, listen: false);
+
+      provider.fetchAndTrackVehicleLocation();
+
+      provider.addListener(() async {
+        final updatedLocation = provider.currentLocation;
+        if (updatedLocation != null) {
+          setState(() {
+            _currentVehiclePosition = updatedLocation;
+          });
+          if (_selectedDestination != null) {
+            final polylinePoints = await getPolylinePointsFromAPI(
+              updatedLocation.latitude,
+              updatedLocation.longitude,
+              _selectedDestination!.latitude,
+              _selectedDestination!.longitude,
+            );
+
+            if (polylinePoints.isNotEmpty) {
+              final polyline = Polyline(
+                polylineId: const PolylineId('route'),
+                color: Colors.blue,
+                width: 5,
+                points: polylinePoints,
+              );
+
+              final polylineProvider =
+                  Provider.of<PolylineProvider>(context, listen: false);
+              polylineProvider.setPolyline({polyline});
+            }
+          }
+        }
+      });
     });
   }
 
@@ -63,14 +104,111 @@ class _MapScreenState extends State<MapScreen> {
         int index = entry.key;
         LatLng location = entry.value;
         return Marker(
-          markerId: MarkerId(_places[index]),
-          position: location,
-          infoWindow: InfoWindow(
-            title: _places[index],
-          ),
-        );
+            markerId: MarkerId(_places[index]),
+            position: location,
+            infoWindow: InfoWindow(title: _places[index]),
+            onTap: () async {
+              final vehiclePos = _currentVehiclePosition;
+              if (vehiclePos == null) return;
+
+              _selectedDestination = location;
+
+              final polylinePoints = await getPolylinePointsFromAPI(
+                vehiclePos.latitude,
+                vehiclePos.longitude,
+                location.latitude,
+                location.longitude,
+              );
+
+              if (polylinePoints.isEmpty) return;
+
+              final polyline = Polyline(
+                polylineId: const PolylineId('route'),
+                color: Colors.blue,
+                width: 5,
+                points: polylinePoints,
+              );
+
+              final polylineProvider =
+                  Provider.of<PolylineProvider>(context, listen: false);
+              polylineProvider.setPolyline({polyline});
+
+              _moveCameraToBounds(vehiclePos, location);
+            });
       }).toSet();
     });
+  }
+
+  void _moveCameraToBounds(LatLng start, LatLng end) {
+    LatLngBounds bounds = LatLngBounds(
+      southwest: LatLng(
+        start.latitude < end.latitude ? start.latitude : end.latitude,
+        start.longitude < end.longitude ? start.longitude : end.longitude,
+      ),
+      northeast: LatLng(
+        start.latitude > end.latitude ? start.latitude : end.latitude,
+        start.longitude > end.longitude ? start.longitude : end.longitude,
+      ),
+    );
+    _mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
+  }
+
+  Future<List<LatLng>> getPolylinePointsFromAPI(
+    double originLat,
+    double originLng,
+    double destinationLat,
+    double destinationLng,
+  ) async {
+    final url = AppApi.getDirectionsUrl(
+        originLat, originLng, destinationLat, destinationLng);
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final points = data['routes'][0]['overview_polyline']['points'];
+      return decodePolyline(points);
+    } else {
+      print('Failed to fetch route: ${response.body}');
+      return [];
+    }
+  }
+
+  List<LatLng> decodePolyline(String encoded) {
+    List<LatLng> polylineCoordinates = [];
+    int index = 0, len = encoded.length;
+    int lat = 0, lng = 0;
+
+    while (index < len) {
+      int b, shift = 0, result = 0;
+
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+
+      int dlat = ((result & 1) != 0) ? ~(result >> 1) : (result >> 1);
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+
+      int dlng = ((result & 1) != 0) ? ~(result >> 1) : (result >> 1);
+      lng += dlng;
+
+      polylineCoordinates.add(
+        LatLng(lat / 1E5, lng / 1E5),
+      );
+    }
+
+    return polylineCoordinates;
   }
 
   @override
@@ -79,13 +217,28 @@ class _MapScreenState extends State<MapScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: _kualaLumpur,
-                zoom: 12,
-              ),
-              onMapCreated: (controller) {},
-              markers: _markers,
+            child: Consumer<PolylineProvider>(
+              builder: (context, polylineProvider, _) {
+                return GoogleMap(
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: _kualaLumpur,
+                    zoom: 12.5,
+                  ),
+                  markers: {
+                    ..._markers,
+                    if (_currentVehiclePosition != null)
+                      Marker(
+                        markerId: const MarkerId("current_vehicle"),
+                        position: _currentVehiclePosition!,
+                        icon: BitmapDescriptor.defaultMarkerWithHue(
+                            BitmapDescriptor.hueBlue),
+                        infoWindow: const InfoWindow(title: "Your Vehicle"),
+                      ),
+                  },
+                  polylines: polylineProvider.polylines,
+                );
+              },
             ),
           ),
           Positioned(
