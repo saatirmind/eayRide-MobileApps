@@ -63,15 +63,20 @@ class _MapScreenState extends State<MapScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
           Provider.of<LocationTrackingProvider>(context, listen: false);
+      final polylineProvider =
+          Provider.of<PolylineProvider>(context, listen: false);
 
       provider.fetchAndTrackVehicleLocation();
 
       provider.addListener(() async {
+        if (!mounted) return;
+
         final updatedLocation = provider.currentLocation;
         if (updatedLocation != null) {
           setState(() {
             _currentVehiclePosition = updatedLocation;
           });
+
           if (_selectedDestination != null) {
             final polylinePoints = await getPolylinePointsFromAPI(
               updatedLocation.latitude,
@@ -79,6 +84,8 @@ class _MapScreenState extends State<MapScreen> {
               _selectedDestination!.latitude,
               _selectedDestination!.longitude,
             );
+
+            if (!mounted) return;
 
             if (polylinePoints.isNotEmpty) {
               final polyline = Polyline(
@@ -88,8 +95,6 @@ class _MapScreenState extends State<MapScreen> {
                 points: polylinePoints,
               );
 
-              final polylineProvider =
-                  Provider.of<PolylineProvider>(context, listen: false);
               polylineProvider.setPolyline({polyline});
             }
           }
@@ -99,44 +104,46 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _createMarkers() {
-    setState(() {
-      _markers = _locations.asMap().entries.map((entry) {
-        int index = entry.key;
-        LatLng location = entry.value;
-        return Marker(
-            markerId: MarkerId(_places[index]),
-            position: location,
-            infoWindow: InfoWindow(title: _places[index]),
-            onTap: () async {
-              final vehiclePos = _currentVehiclePosition;
-              if (vehiclePos == null) return;
+    if (mounted) {
+      setState(() {
+        _markers = _locations.asMap().entries.map((entry) {
+          int index = entry.key;
+          LatLng location = entry.value;
+          return Marker(
+              markerId: MarkerId(_places[index]),
+              position: location,
+              infoWindow: InfoWindow(title: _places[index]),
+              onTap: () async {
+                final vehiclePos = _currentVehiclePosition;
+                if (vehiclePos == null) return;
 
-              _selectedDestination = location;
+                _selectedDestination = location;
 
-              final polylinePoints = await getPolylinePointsFromAPI(
-                vehiclePos.latitude,
-                vehiclePos.longitude,
-                location.latitude,
-                location.longitude,
-              );
+                final polylinePoints = await getPolylinePointsFromAPI(
+                  vehiclePos.latitude,
+                  vehiclePos.longitude,
+                  location.latitude,
+                  location.longitude,
+                );
 
-              if (polylinePoints.isEmpty) return;
+                if (polylinePoints.isEmpty) return;
 
-              final polyline = Polyline(
-                polylineId: const PolylineId('route'),
-                color: Colors.blue,
-                width: 5,
-                points: polylinePoints,
-              );
+                final polyline = Polyline(
+                  polylineId: const PolylineId('route'),
+                  color: Colors.blue,
+                  width: 5,
+                  points: polylinePoints,
+                );
 
-              final polylineProvider =
-                  Provider.of<PolylineProvider>(context, listen: false);
-              polylineProvider.setPolyline({polyline});
+                final polylineProvider =
+                    Provider.of<PolylineProvider>(context, listen: false);
+                polylineProvider.setPolyline({polyline});
 
-              _moveCameraToBounds(vehiclePos, location);
-            });
-      }).toSet();
-    });
+                _moveCameraToBounds(vehiclePos, location);
+              });
+        }).toSet();
+      });
+    }
   }
 
   void _moveCameraToBounds(LatLng start, LatLng end) {
@@ -403,6 +410,9 @@ class _MapScreenState extends State<MapScreen> {
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.remove('VehicleNo');
                   Navigator.of(context).pop();
+                  final polylineProvider =
+                      Provider.of<PolylineProvider>(context, listen: false);
+                  polylineProvider.clearPolylines();
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(

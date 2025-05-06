@@ -23,11 +23,11 @@ class EasyrideColors {
 }
 
 class AppApi {
-  static const String baseUrl = 'https://easyride.saatirmind.com.my/api/v1';
+  static const String baseUrl = 'https://easymotorbike.asia/api/v1';
   static const String Dummyprofile =
-      'https://easyride.saatirmind.com.my/public/backend/images/default/profile-default.webp';
+      'https://easymotorbike.asia/public/backend/images/default/profile-default.webp';
   static const String termsurl = 'https://www.emrkl.com/';
-  static const String imagebaseurl = 'https://easyride.saatirmind.com.my/';
+  static const String imagebaseurl = 'https://easymotorbike.asia/';
 
   // All API Endpoints
   static const String getWallet = '$baseUrl/get-wallet';
@@ -40,6 +40,8 @@ class AppApi {
   static const String walletactivity = '$baseUrl/wallet-activity';
   static const String Updateprofile = '$baseUrl/update';
   static const String Couponslist = '$baseUrl/get-coupon-list';
+  static const String CouponsApply = '$baseUrl/apply-coupon';
+  static const String AppliedCoupons = '$baseUrl/applied-coupon-history';
   static const String Finishride = '$baseUrl/ride-finish';
   static const String Bannerlist = '$baseUrl/get-banner';
   static const String Logout = '$baseUrl/logout';

@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/AppColors.dart/walletapi.dart';
-import 'package:easymotorbike/Payment/wallethistory.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -60,21 +59,13 @@ class ApiService {
       if (response.statusCode == 200) {
         Provider.of<WalletProvider>(context, listen: false)
             .fetchWalletHistory(context);
-        final snackBar = SnackBar(
+        SnackBar(
           content: Text(
             message,
             style: const TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.green,
         );
-
-        ScaffoldMessenger.of(context).showSnackBar(snackBar).closed.then((_) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const WalletHistoryScreen()),
-          );
-        });
         return true;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -200,9 +191,8 @@ class _CouponListScreenState extends State<CouponListScreen> {
                                           .applyCoupon(
                                               coupon.coupon_code, context);
                                       if (success) {
-                                        setState(() {
-                                          coupon.isApplied = true;
-                                        });
+                                        Navigator.pop(
+                                            context, coupon.coupon_code);
                                       } else {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(

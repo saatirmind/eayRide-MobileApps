@@ -4,6 +4,7 @@ import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/AppColors.dart/currentlocationprovide.dart';
 import 'package:easymotorbike/AppColors.dart/tripprovide.dart';
 import 'package:easymotorbike/AppColors.dart/walletapi.dart';
+import 'package:easymotorbike/Payment/Applycoupon.dart';
 import 'package:easymotorbike/Payment/add_amount.dart';
 import 'package:easymotorbike/Payment/wallethistory.dart';
 import 'package:easymotorbike/Screen/sucess.dart';
@@ -208,6 +209,79 @@ class _RidingstartState extends State<Ridingstart> {
               ),
               const SizedBox(height: 16),
               GestureDetector(
+                onTap: _couponController.text.isEmpty
+                    ? () async {
+                        final selectedCouponCode = await Navigator.push<String>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CouponListScreen(),
+                          ),
+                        );
+
+                        if (selectedCouponCode != null) {
+                          setState(() {
+                            _showCouponField = true;
+                            _couponController.text = selectedCouponCode;
+                          });
+                        }
+                      }
+                    : null,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: _couponController.text.isEmpty
+                        ? Colors.orange.shade100
+                        : Colors.green.shade100,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _couponController.text.isEmpty
+                            ? 'Apply Coupon – Tap Here'
+                            : 'Coupon Applied',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Icon(
+                        Icons.local_offer_outlined,
+                        color: _couponController.text.isEmpty
+                            ? Colors.deepOrange
+                            : Colors.green,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              if (_showCouponField)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 12.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade400),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextField(
+                        controller: _couponController,
+                        readOnly: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Coupon Code',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              SizedBox(height: 12),
+              GestureDetector(
                 onTap: () {
                   _PaymentWallettmoney();
                 },
@@ -372,6 +446,9 @@ class _RidingstartState extends State<Ridingstart> {
       });
     }
   }
+
+  bool _showCouponField = false;
+  final TextEditingController _couponController = TextEditingController();
 
   String Bookingtoken = '';
 }

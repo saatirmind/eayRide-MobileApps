@@ -4,6 +4,7 @@ import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/DrawerWidget/Logoutfunction.dart';
 import 'package:easymotorbike/DrawerWidget/history.dart';
 import 'package:easymotorbike/DrawerWidget/promotions.dart';
+import 'package:easymotorbike/DrawerWidget/redeemcoupon.dart';
 import 'package:easymotorbike/DrawerWidget/updateprofile.dart';
 import 'package:easymotorbike/DrawerWidget/walletpage.dart';
 import 'package:flutter/material.dart';
@@ -142,7 +143,13 @@ class _DrawerscreenState extends State<Drawerscreen> {
                   style: const TextStyle(
                     color: EasyrideColors.Drawertext,
                   )),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AppliedCouponListScreen()),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(
