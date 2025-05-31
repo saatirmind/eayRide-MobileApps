@@ -29,6 +29,7 @@ class WalletHistoryScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
+      //
       body: provider.walletHistory.isEmpty
           ? const Center(child: Text("No history found."))
           : ListView.builder(
