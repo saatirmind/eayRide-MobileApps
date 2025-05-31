@@ -2,10 +2,12 @@
 import 'dart:convert';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/AppColors.dart/userprovider.dart';
+import 'package:easymotorbike/AppColors.dart/webview.dart';
 import 'package:http/http.dart' as http;
 import 'package:easymotorbike/DrawerWidget/DateInputFormatter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/gestures.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String Mobile;
@@ -496,8 +498,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                 ),
-                const Text(
-                  'By submitting my information, I acknowledge to have read and agreed to the Terms & Conditions and Privacy Policy documents.',
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: const TextStyle(color: Colors.black),
+                    children: [
+                      const TextSpan(
+                        text:
+                            'By submitting my information, I acknowledge to have read and agreed to the ',
+                      ),
+                      TextSpan(
+                        text: 'Terms & Conditions',
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WebViewPage(
+                                  url: AppApi.term_condition,
+                                ),
+                              ),
+                            );
+                          },
+                      ),
+                      const TextSpan(
+                        text: ' and ',
+                      ),
+                      TextSpan(
+                        text: 'Privacy Policy',
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WebViewPage(
+                                  url: AppApi.privacy_policy,
+                                ),
+                              ),
+                            );
+                          },
+                      ),
+                      const TextSpan(
+                        text: ' documents.',
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Center(

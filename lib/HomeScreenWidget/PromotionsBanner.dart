@@ -1,5 +1,5 @@
 // ignore_for_file: file_names
-/*import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:flutter/material.dart';
@@ -28,30 +28,37 @@ class _PromotionsBannerState extends State<PromotionsBanner> {
   Widget _buildPromotionsBanner() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
-      child: SizedBox(
-        width: 310,
-        height: 90,
-        child: CarouselSlider(
-          options: CarouselOptions(
-            height: 90,
-            autoPlay: true,
-            autoPlayInterval: const Duration(seconds: 3),
-            onPageChanged: (index, reason) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-            viewportFraction: 1.0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Container(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height * 0.10,
+          decoration: BoxDecoration(
+            color: EasyrideColors.buttonColor,
+            borderRadius: BorderRadius.circular(20),
           ),
-          items: [
-            _buildBannerItem(
-              "Don't forget to check out our promotions page to save more on your rides!"
-                  .tr(),
+          child: CarouselSlider(
+            options: CarouselOptions(
+              height: MediaQuery.of(context).size.height * 0.10,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 3),
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              viewportFraction: 1.0,
             ),
-            _buildBannerItem("Flat 50% off on first ride!".tr()),
-            _buildBannerItem(
-                "Please check the Appstore for the Latest updates!".tr()),
-          ],
+            items: [
+              _buildBannerItem(
+                "Don't forget to check out our promotions page to save more on your rides!"
+                    .tr(),
+              ),
+              _buildBannerItem("Flat 50% off on first ride!".tr()),
+              _buildBannerItem(
+                  "Please check the Appstore for the Latest updates!".tr()),
+            ],
+          ),
         ),
       ),
     );
@@ -65,8 +72,8 @@ class _PromotionsBannerState extends State<PromotionsBanner> {
           AnimatedContainer(
             duration: const Duration(seconds: 1),
             margin: const EdgeInsets.symmetric(horizontal: 4),
-            width: _currentIndex == i ? 12 : 8,
-            height: _currentIndex == i ? 9 : 8,
+            width: _currentIndex == i ? 18 : 8,
+            height: _currentIndex == i ? 9 : 18,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: _currentIndex == i ? Colors.white : Colors.grey,
@@ -78,7 +85,7 @@ class _PromotionsBannerState extends State<PromotionsBanner> {
 
   Widget _buildBannerItem(String text) {
     return Container(
-      color: EasyrideColors.buttonColor,
+      color: Colors.transparent,
       child: Row(
         children: [
           Padding(
@@ -90,7 +97,7 @@ class _PromotionsBannerState extends State<PromotionsBanner> {
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
-                  Icons.campaign,
+                  Icons.celebration,
                   color: Colors.black,
                 )),
           ),
@@ -99,7 +106,7 @@ class _PromotionsBannerState extends State<PromotionsBanner> {
               child: Text(
             text,
             style: const TextStyle(
-              color: EasyrideColors.Pramotionbannertext,
+              color: Colors.white,
             ),
           )),
         ],
@@ -107,8 +114,8 @@ class _PromotionsBannerState extends State<PromotionsBanner> {
     );
   }
 }
-*/
 
+/*
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -244,3 +251,4 @@ class PromotionsBanner extends StatelessWidget {
     );
   }
 }
+*/

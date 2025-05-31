@@ -1,4 +1,5 @@
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
+import 'package:easymotorbike/DrawerWidget/healp.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -30,13 +31,10 @@ class _IconButtonWidgetState extends State<IconButtonWidget> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildIconButton(Icons.flash_on),
-        const SizedBox(width: 20),
         _buildIconButton(Icons.headset_mic),
-        const SizedBox(width: 20),
-        _buildIconButton(Icons.motorcycle),
       ],
     );
   }
@@ -54,6 +52,11 @@ class _IconButtonWidgetState extends State<IconButtonWidget> {
         onPressed: () {
           if (icon == Icons.flash_on) {
             toggleFlash();
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HelpScreen()),
+            );
           }
         },
       ),

@@ -42,6 +42,7 @@ class _OtpScreenState extends State<OtpScreen> {
   String _resendOtp = '';
   bool _isSubmitEnabled = false;
   String? token;
+  String? userid;
   String? bookingtoken;
   String? vehicleno;
   String? vehicle_id;
@@ -142,9 +143,11 @@ class _OtpScreenState extends State<OtpScreen> {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        print(responseData);
 
         if (responseData['status'] == true) {
           setState(() {
+            userid = responseData['data']['id'].toString();
             token = responseData['data']['token'];
             bookingtoken = responseData['data']['booking_token'];
             vehicleno = responseData['data']['vehicle_no'];
@@ -158,6 +161,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token!);
+          await prefs.setString('user_id', userid!);
           await prefs.setString('registered_date', registered_date!);
           await prefs.setString('mobile', widget.phoneNumber);
 

@@ -5,11 +5,13 @@ import 'package:easymotorbike/AppColors.dart/currentlocationprovide.dart';
 import 'package:easymotorbike/AppColors.dart/tripprovide.dart';
 import 'package:easymotorbike/AppColors.dart/walletapi.dart';
 import 'package:easymotorbike/Payment/Applycoupon.dart';
-import 'package:easymotorbike/Payment/add_amount.dart';
+import 'package:easymotorbike/Payment/Easyridecredits.dart';
+import 'package:easymotorbike/Payment/InsufficientAmount.dart';
 import 'package:easymotorbike/Payment/wallethistory.dart';
 import 'package:easymotorbike/Screen/sucess.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -78,13 +80,20 @@ class _RidingstartState extends State<Ridingstart> {
               ),
               const SizedBox(height: 32),
               Text(
-                'You need to pay ${tripProvider.selectedTripPrice} to Start your ride.',
-                style: const TextStyle(fontSize: 19, color: Colors.red),
+                'Your ride will be charged at ${tripProvider.selectedTripPrice} per minute',
+                style: const TextStyle(fontSize: 16, color: Colors.black),
               ),
               const SizedBox(height: 16),
               Text(
                 'Vehicle No. : ${widget.Vehicle_no}',
                 style: const TextStyle(fontSize: 19, color: Colors.black),
+              ),
+              SizedBox(height: 16),
+              Lottie.asset(
+                'assets/lang/walletfound.json',
+                width: MediaQuery.of(context).size.width * 1,
+                height: MediaQuery.of(context).size.width * 0.6,
+                fit: BoxFit.contain,
               ),
               const Spacer(),
               GestureDetector(
@@ -92,7 +101,7 @@ class _RidingstartState extends State<Ridingstart> {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AddAmount(),
+                      builder: (context) => const CreditsReloadScreen(),
                     ),
                   );
                 },
@@ -176,37 +185,37 @@ class _RidingstartState extends State<Ridingstart> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 12.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Other Payment Method:',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Select Here',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          Icon(Icons.arrow_forward_ios, size: 16),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              //const SizedBox(height: 16),
+              // GestureDetector(
+              //   onTap: () {},
+              //   child: Container(
+              //     padding: const EdgeInsets.symmetric(
+              //         horizontal: 16.0, vertical: 12.0),
+              //     decoration: BoxDecoration(
+              //       border: Border.all(color: Colors.grey),
+              //       borderRadius: BorderRadius.circular(8.0),
+              //     ),
+              //     child: const Row(
+              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       children: [
+              //         Text(
+              //           'Other Payment Method:',
+              //           style: TextStyle(fontSize: 16),
+              //         ),
+              //         Row(
+              //           children: [
+              //             Text(
+              //               'Select Here',
+              //               style: TextStyle(
+              //                   fontSize: 16, fontWeight: FontWeight.bold),
+              //             ),
+              //             Icon(Icons.arrow_forward_ios, size: 16),
+              //           ],
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 16),
               GestureDetector(
                 onTap: _couponController.text.isEmpty
@@ -280,7 +289,7 @@ class _RidingstartState extends State<Ridingstart> {
                     ],
                   ),
                 ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               GestureDetector(
                 onTap: () {
                   _PaymentWallettmoney();
@@ -362,10 +371,6 @@ class _RidingstartState extends State<Ridingstart> {
       return;
     }
 
-    print(
-      '${widget.Vehicle_no}, ${widget.latitude}, ${widget.longitude}, ${provider.selectedTripType} ${providecity.cityName}',
-    );
-
     try {
       final response = await http.post(
         Uri.parse(AppApi.new_ride_booking),
@@ -381,7 +386,8 @@ class _RidingstartState extends State<Ridingstart> {
           'city': providecity.cityName,
         }),
       );
-
+      print("Response Data: ${response.body}");
+      print("Response Data: ${response.statusCode}");
       if (response.statusCode == 201) {
         final data = jsonDecode(response.body);
 
@@ -407,6 +413,22 @@ class _RidingstartState extends State<Ridingstart> {
             ),
             (Route<dynamic> route) => false,
           );
+        } else if (data['status'] == false) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => InsufficientAmount(amount: data),
+            ),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${data['message']}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          setState(() {
+            _isLoading = false;
+          });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -418,6 +440,32 @@ class _RidingstartState extends State<Ridingstart> {
             _isLoading = false;
           });
         }
+      } else if (response.statusCode == 402) {
+        final data = jsonDecode(response.body);
+
+        final dynamic amountValue = data['data']['amount'];
+        double? amount;
+        if (amountValue != null && amountValue is num) {
+          amount = amountValue.toDouble();
+        }
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InsufficientAmount(amount: amount ?? 0.0),
+          ),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${data['message'] ?? 'Unknown error'}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+
+        setState(() {
+          _isLoading = false;
+        });
       } else {
         final data = jsonDecode(response.body);
         final Map<String, dynamic> responseData = data;

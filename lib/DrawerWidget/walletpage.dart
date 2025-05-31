@@ -66,7 +66,7 @@ class _WalletPageState extends State<WalletPage> {
                               ),
                             ),
                             TextSpan(
-                              text: 'EASYRIDE PASS',
+                              text: 'Easy Motorbike PASS',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 28,
@@ -146,7 +146,7 @@ class _WalletPageState extends State<WalletPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('EASYRIDE Credits'),
+                          const Text('Easy Motorbike Credits'),
                           InkWell(
                             onTap: () {
                               Navigator.push(
@@ -249,7 +249,7 @@ class _WalletPageState extends State<WalletPage> {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                '- Any remaining EASYRIDE Credit will be deducted first before charging your Credit/Debit card\n\n'
+                '- Any remaining Easy Motorbike Credit will be deducted first before charging your Credit/Debit card\n\n'
                 '- Transaction refunds will take up to five working days.',
                 style: TextStyle(fontSize: 12),
               ),

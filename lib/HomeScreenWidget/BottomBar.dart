@@ -45,13 +45,17 @@ class _BottomBarState extends State<BottomBar> {
                   walletProvider.walletAmount,
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildBottomButton("GROUP"),
-                    _buildBottomButton("START"),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: _buildBottomButton("START"),
                 ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     _buildBottomButton("GROUP"),
+                //     _buildBottomButton("START"),
+                //   ],
+                // ),
               ],
             ),
           ],
@@ -83,8 +87,18 @@ class _BottomBarState extends State<BottomBar> {
         }
       },
       style: ElevatedButton.styleFrom(
-          backgroundColor: EasyrideColors.buttonColor,
-          foregroundColor: EasyrideColors.buttontextColor),
+        backgroundColor: EasyrideColors.buttonColor,
+        foregroundColor: EasyrideColors.buttontextColor,
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        textStyle: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       child: Text(text),
     );
   }

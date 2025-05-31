@@ -1,14 +1,20 @@
 // ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
+import 'package:easymotorbike/AppColors.dart/webview.dart';
+//import 'package:easymotorbike/AppColors.dart/webview.dart';
 import 'package:easymotorbike/DrawerWidget/Logoutfunction.dart';
+import 'package:easymotorbike/DrawerWidget/Tourist_attraction.dart';
+import 'package:easymotorbike/DrawerWidget/healp.dart';
 import 'package:easymotorbike/DrawerWidget/history.dart';
 import 'package:easymotorbike/DrawerWidget/promotions.dart';
 import 'package:easymotorbike/DrawerWidget/redeemcoupon.dart';
 import 'package:easymotorbike/DrawerWidget/updateprofile.dart';
-import 'package:easymotorbike/DrawerWidget/walletpage.dart';
+//import 'package:easymotorbike/DrawerWidget/walletpage.dart';
+import 'package:easymotorbike/Payment/Easyridecredits.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Drawerscreen extends StatefulWidget {
   final String Firstname;
@@ -113,7 +119,8 @@ class _DrawerscreenState extends State<Drawerscreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const WalletPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const CreditsReloadScreen()),
                 );
               },
             ),
@@ -153,6 +160,22 @@ class _DrawerscreenState extends State<Drawerscreen> {
             ),
             ListTile(
               leading: const Icon(
+                Icons.location_on,
+                color: EasyrideColors.Drawericon,
+              ),
+              title: Text('Tourist Attraction',
+                  style: const TextStyle(
+                    color: EasyrideColors.Drawertext,
+                  )),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TouristScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(
                 Icons.history,
                 color: EasyrideColors.Drawericon,
               ),
@@ -177,7 +200,12 @@ class _DrawerscreenState extends State<Drawerscreen> {
                   style: const TextStyle(
                     color: EasyrideColors.Drawertext,
                   )),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HelpScreen()),
+                );
+              },
             ),
             Card(
               color: EasyrideColors.Drawerheaderbackground,
@@ -274,21 +302,68 @@ class _DrawerscreenState extends State<Drawerscreen> {
                     FontAwesomeIcons.facebook,
                     color: EasyrideColors.Drawericon,
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    final url = Uri.parse(
+                        'https://www.facebook.com/easymotorbikerentalkl');
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Could not launch Facebook page')),
+                      );
+                    }
+                  },
                 ),
                 IconButton(
                   icon: const Icon(
                     FontAwesomeIcons.instagram,
                     color: EasyrideColors.Drawericon,
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    final url =
+                        Uri.parse('https://www.instagram.com/easymotorbikekl/');
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Could not launch Facebook page')),
+                      );
+                    }
+                  },
+                  // onPressed: () {
+                  //   Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (context) => const WebViewPage(
+                  //         url: 'https://www.tiktok.com/@easymotorbikerentalkl',
+                  //       ),
+                  //     ),
+                  //   );
+                  // },
                 ),
                 IconButton(
                   icon: const Icon(
-                    FontAwesomeIcons.globe,
+                    FontAwesomeIcons.tiktok,
                     color: EasyrideColors.Drawericon,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WebViewPage(
+                          url: 'https://www.tiktok.com/@easymotorbikerentalkl',
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

@@ -350,7 +350,7 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
                                   ),
                                 ),
                                 const Text(
-                                  'Conforming...',
+                                  'Confirming...',
                                   style: TextStyle(
                                       color: Colors.red, fontSize: 14),
                                 ),

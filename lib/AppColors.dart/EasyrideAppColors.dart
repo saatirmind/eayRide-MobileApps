@@ -28,6 +28,13 @@ class AppApi {
       'https://easymotorbike.asia/public/backend/images/default/profile-default.webp';
   static const String termsurl = 'https://www.emrkl.com/';
   static const String imagebaseurl = 'https://easymotorbike.asia/';
+  static const String term_condition =
+      'https://easymotorbike.asia/page/term-conditions';
+  static const String privacy_policy =
+      'https://easymotorbike.asia/page/privacy-policy';
+  static const String faq = 'https://easymotorbike.asia/faq';
+  static const String customerhelp =
+      'https://easymotorbike.asia/chat-with-customer';
 
   // All API Endpoints
   static const String getWallet = '$baseUrl/get-wallet';

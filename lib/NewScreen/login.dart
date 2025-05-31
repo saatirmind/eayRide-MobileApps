@@ -5,13 +5,14 @@ import 'dart:io';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
+import 'package:easymotorbike/AppColors.dart/webview.dart';
 import 'package:easymotorbike/NewScreen/otp.dart';
 import 'package:easymotorbike/Screen/otpscreen.dart';
 import 'package:easymotorbike/Screen/phonescreen.dart';
 import 'package:easymotorbike/main.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 
@@ -26,7 +27,6 @@ class _LoginState extends State<Login> {
   String appVersion = 'Loading...';
   final FocusNode phoneFocusNode = FocusNode();
   bool _isLoading = false;
-  final Uri _url = Uri.parse(AppApi.termsurl);
   String countryCode = '+60';
   final _formKey = GlobalKey<FormState>();
   TextEditingController phoneController = TextEditingController();
@@ -271,29 +271,25 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 const SizedBox(height: 80),
-                TextButton(
-                  onPressed: () async {
-                    if (!await launchUrl(_url)) {
-                      throw 'Could not launch $_url';
-                    }
-                  },
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: const TextSpan(
-                      text: 'TERMS OF SERVICE\n',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 16,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: 'FAQ',
-                          style: TextStyle(
-                            color: Colors.blue,
-                          ),
-                        ),
-                      ],
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: 'TERMS OF SERVICE\nFAQ',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontSize: 16,
                     ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const WebViewPage(
+                              url: AppApi.term_condition,
+                            ),
+                          ),
+                        );
+                      },
                   ),
                 ),
                 const SizedBox(height: 16),

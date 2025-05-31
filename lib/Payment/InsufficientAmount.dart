@@ -2,11 +2,13 @@
 import 'dart:convert';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/AppColors.dart/walletapi.dart';
+import 'package:easymotorbike/AppColors.dart/webview.dart';
 import 'package:easymotorbike/Payment/wallethistory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InsufficientAmount extends StatefulWidget {
   final double amount;
@@ -19,6 +21,11 @@ class InsufficientAmount extends StatefulWidget {
 class _InsufficientAmountState extends State<InsufficientAmount> {
   final TextEditingController _reloadController = TextEditingController();
   bool _showAmountError = false;
+  @override
+  void initState() {
+    super.initState();
+    _reloadController.text = widget.amount.toStringAsFixed(2);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,42 +160,111 @@ class _InsufficientAmountState extends State<InsufficientAmount> {
               ),
             ),
             const SizedBox(height: 32),
-            GestureDetector(
-              onTap: () {},
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 12.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Other Payment Methods:',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'Select Here',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        Icon(Icons.arrow_forward_ios, size: 16),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
+            // GestureDetector(
+            //   onTap: () {},
+            //   child: Container(
+            //     padding: const EdgeInsets.symmetric(
+            //         horizontal: 16.0, vertical: 12.0),
+            //     decoration: BoxDecoration(
+            //       border: Border.all(color: Colors.grey),
+            //       borderRadius: BorderRadius.circular(8.0),
+            //     ),
+            //     child: const Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Text(
+            //           'Other Payment Methods:',
+            //           style: TextStyle(fontSize: 16),
+            //         ),
+            //         Row(
+            //           children: [
+            //             Text(
+            //               'Select Here',
+            //               style: TextStyle(
+            //                   fontSize: 16, fontWeight: FontWeight.bold),
+            //             ),
+            //             Icon(Icons.arrow_forward_ios, size: 16),
+            //           ],
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // const SizedBox(height: 32),
             GestureDetector(
               onTap: _isLoading
                   ? null
-                  : () {
-                      _AddWallettmoney();
+                  : () async {
+                      final amount = _reloadController.text.trim();
+
+                      if (amount.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Please enter amount first")),
+                        );
+                        return;
+                      }
+
+                      final enteredAmount = double.tryParse(amount);
+
+                      if (enteredAmount == null ||
+                          enteredAmount < widget.amount) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "❗ Minimum ₹${widget.amount.toStringAsFixed(2)} required for processing.",
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            backgroundColor: Colors.redAccent,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            margin: const EdgeInsets.all(16),
+                            duration: const Duration(seconds: 3),
+                          ),
+                        );
+                        return;
+                      }
+
+                      setState(() {
+                        _isLoading = true;
+                      });
+
+                      try {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        String? userId = prefs.getString('user_id');
+
+                        if (userId == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("User ID not found")),
+                          );
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          return;
+                        }
+
+                        String url =
+                            'https://easymotorbike.asia/payment/create-payment?request_id=$userId&amount=$amount';
+
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WebViewPage3(url: url),
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Error: $e")),
+                        );
+                      } finally {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      }
                     },
               child: IgnorePointer(
                 ignoring: _isLoading,
