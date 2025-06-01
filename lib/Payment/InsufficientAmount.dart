@@ -7,6 +7,7 @@ import 'package:easymotorbike/Payment/wallethistory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,6 +32,7 @@ class _InsufficientAmountState extends State<InsufficientAmount> {
   Widget build(BuildContext context) {
     final walletProvider = Provider.of<WalletProvider>(context);
     return Scaffold(
+      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
@@ -66,7 +68,7 @@ class _InsufficientAmountState extends State<InsufficientAmount> {
                 color: Colors.green,
               ),
             ),
-            const SizedBox(height: 32),
+
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -96,24 +98,12 @@ class _InsufficientAmountState extends State<InsufficientAmount> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildReloadButton('30'),
-                _buildReloadButton('50'),
-                _buildReloadButton('100'),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Your wallet balance is low. Please reload your wallet to complete the ride. You must add at least ${widget.amount} to continue.',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.red,
-              ),
-              textAlign: TextAlign.center,
+            const Spacer(),
+            Lottie.asset(
+              'assets/lang/walletfound.json',
+              width: MediaQuery.of(context).size.width * 1,
+              height: MediaQuery.of(context).size.width * 0.7,
+              fit: BoxFit.contain,
             ),
             const Spacer(),
             GestureDetector(
@@ -159,7 +149,7 @@ class _InsufficientAmountState extends State<InsufficientAmount> {
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 5),
             // GestureDetector(
             //   onTap: () {},
             //   child: Container(
@@ -301,7 +291,7 @@ class _InsufficientAmountState extends State<InsufficientAmount> {
                 ),
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 8),
             GestureDetector(
               onTap: () {},
               child: const Text(
@@ -313,7 +303,7 @@ class _InsufficientAmountState extends State<InsufficientAmount> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
           ],
         ),
       ),

@@ -69,7 +69,7 @@ class _RidingstartState extends State<Ridingstart> {
                 'Current Balance:',
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
               ),
-              const SizedBox(height: 8),
+
               Text(
                 walletProvider.walletAmount,
                 style: const TextStyle(
@@ -78,7 +78,7 @@ class _RidingstartState extends State<Ridingstart> {
                   color: Colors.green,
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 10),
               Text(
                 'Your ride will be charged at ${tripProvider.selectedTripPrice} per minute',
                 style: const TextStyle(fontSize: 16, color: Colors.black),
@@ -88,11 +88,11 @@ class _RidingstartState extends State<Ridingstart> {
                 'Vehicle No. : ${widget.Vehicle_no}',
                 style: const TextStyle(fontSize: 19, color: Colors.black),
               ),
-              SizedBox(height: 16),
+              const Spacer(),
               Lottie.asset(
                 'assets/lang/walletfound.json',
-                width: MediaQuery.of(context).size.width * 1,
-                height: MediaQuery.of(context).size.width * 0.6,
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: MediaQuery.of(context).size.width * 0.550,
                 fit: BoxFit.contain,
               ),
               const Spacer(),
@@ -141,7 +141,7 @@ class _RidingstartState extends State<Ridingstart> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -216,7 +216,7 @@ class _RidingstartState extends State<Ridingstart> {
               //     ),
               //   ),
               // ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               GestureDetector(
                 onTap: _couponController.text.isEmpty
                     ? () async {
@@ -266,7 +266,7 @@ class _RidingstartState extends State<Ridingstart> {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              //const SizedBox(height: 8),
               if (_showCouponField)
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -289,7 +289,7 @@ class _RidingstartState extends State<Ridingstart> {
                     ],
                   ),
                 ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               GestureDetector(
                 onTap: () {
                   _PaymentWallettmoney();
@@ -324,7 +324,7 @@ class _RidingstartState extends State<Ridingstart> {
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 8),
               GestureDetector(
                 onTap: () {},
                 child: const Text(
@@ -336,6 +336,7 @@ class _RidingstartState extends State<Ridingstart> {
                   ),
                 ),
               ),
+              const SizedBox(height: 8),
             ],
           ),
         ),

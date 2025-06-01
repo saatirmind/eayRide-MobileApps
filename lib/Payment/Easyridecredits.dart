@@ -60,7 +60,7 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
                 color: Colors.green,
               ),
             ),
-            const SizedBox(height: 32),
+            //  const SizedBox(height: 32),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -85,7 +85,7 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -145,7 +145,7 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 15),
             // GestureDetector(
             //   onTap: () {},
             //   child: Container(

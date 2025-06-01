@@ -189,7 +189,9 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
       } else if (response.statusCode == 402) {
         final responseBody = await response.stream.bytesToString();
         final decodedResponse = json.decode(responseBody);
-        final double amount = decodedResponse['data']['amount_label'];
+        final rawAmount = decodedResponse['data']['amount_label'].toString();
+        final double amount =
+            double.parse(rawAmount.replaceAll(RegExp(r'[^\d.]'), ''));
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -244,151 +246,165 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _isSubmitted
-                ? const Text(
-                    'Your ride has been completed!',
-                    style: TextStyle(fontSize: 24, color: Colors.green),
-                    textAlign: TextAlign.center,
-                  )
-                : const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Text(
-                      'To complete the ride, you must upload a drop station photo.',
-                      style: TextStyle(fontSize: 20, color: Colors.red),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFFF9A9E),
+              Color(0xFFFAD0C4),
+              Color(0xFFFFB347),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _isSubmitted
+                  ? const Text(
+                      'Your ride has been completed!',
+                      style: TextStyle(fontSize: 24, color: Colors.green),
                       textAlign: TextAlign.center,
-                    ),
-                  ),
-            const SizedBox(height: 20),
-            if (_selectedPhoto == null)
-              GestureDetector(
-                onTap: () {
-                  _animationController.stop();
-                  _openCamera(context);
-                  if (_selectedPhoto == null) {
-                    _animationController.repeat(reverse: true);
-                  }
-                },
-                child: Column(
-                  children: [
-                    const Text(
-                      'Tap here',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SlideTransition(
-                          position: _animation,
-                          child: const Icon(
-                            Icons.arrow_forward,
-                            size: 32,
-                            color: Colors.green,
-                          ),
-                        ),
-                        const SizedBox(width: 13),
-                        const Icon(
-                          Icons.camera_alt,
-                          size: 90,
-                          color: Colors.blue,
-                        ),
-                        SlideTransition(
-                          position: _animation,
-                          child: const Icon(
-                            Icons.arrow_back,
-                            size: 32,
-                            color: Colors.green,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            else
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Image.file(
-                      File(_selectedPhoto!.path),
-                      height: MediaQuery.of(context).size.height * 0.350,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _isLoading || _isSubmitted ? null : _submitPhoto,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _isLoading
-                          ? Colors.transparent
-                          : EasyrideColors.buttonColor,
-                      shadowColor: Colors.transparent,
-                      elevation: _isLoading ? 0 : 4,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 25, vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    )
+                  : const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      child: Text(
+                        'To complete the ride, you must upload a drop station photo.',
+                        style: TextStyle(fontSize: 20, color: Colors.green),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                    child: _isLoading
-                        ? SizedBox(
-                            width: double.infinity,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.1,
-                                  child: Lottie.asset(
-                                    'assets/lang/uploading.json',
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const Text(
-                                  'Confirming...',
-                                  style: TextStyle(
-                                      color: Colors.red, fontSize: 14),
-                                ),
-                              ],
-                            ),
-                          )
-                        : Text(
-                            _isSubmitted ? 'Confirmed' : 'Confirm',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: _isSubmitted ? Colors.red : Colors.white,
+              const SizedBox(height: 2),
+              if (_selectedPhoto == null)
+                GestureDetector(
+                  onTap: () {
+                    _animationController.stop();
+                    _openCamera(context);
+                    if (_selectedPhoto == null) {
+                      _animationController.repeat(reverse: true);
+                    }
+                  },
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Tap here',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SlideTransition(
+                            position: _animation,
+                            child: const Icon(
+                              Icons.arrow_forward,
+                              size: 32,
+                              color: Colors.green,
                             ),
                           ),
+                          const SizedBox(width: 13),
+                          const Icon(
+                            Icons.camera_alt,
+                            size: 90,
+                            color: Colors.black,
+                          ),
+                          SlideTransition(
+                            position: _animation,
+                            child: const Icon(
+                              Icons.arrow_back,
+                              size: 32,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            const SizedBox(height: 10),
-            if (_selectedPhoto != null && !_isLoading && !_isSubmitted)
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedPhoto = null;
-                  });
-                  _openCamera(context);
-                },
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
+                )
+              else
+                Column(
                   children: [
-                    Icon(Icons.refresh, color: Colors.blue),
-                    SizedBox(width: 8),
-                    Text(
-                      'Retake Photo',
-                      style: TextStyle(color: Colors.blue),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Image.file(
+                        File(_selectedPhoto!.path),
+                        height: MediaQuery.of(context).size.height * 0.350,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed:
+                          _isLoading || _isSubmitted ? null : _submitPhoto,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _isLoading
+                            ? Colors.transparent
+                            : EasyrideColors.buttonColor,
+                        shadowColor: Colors.transparent,
+                        elevation: _isLoading ? 0 : 4,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 25, vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: _isLoading
+                          ? SizedBox(
+                              width: double.infinity,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.1,
+                                    child: Lottie.asset(
+                                      'assets/lang/uploading.json',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  const Text(
+                                    'Confirming...',
+                                    style: TextStyle(
+                                        color: Colors.red, fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Text(
+                              _isSubmitted ? 'Confirmed' : 'Confirm',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: _isSubmitted ? Colors.red : Colors.white,
+                              ),
+                            ),
                     ),
                   ],
                 ),
-              ),
-          ],
+              const SizedBox(height: 10),
+              if (_selectedPhoto != null && !_isLoading && !_isSubmitted)
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectedPhoto = null;
+                    });
+                    _openCamera(context);
+                  },
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.refresh, color: Colors.blue),
+                      SizedBox(width: 8),
+                      Text(
+                        'Retake Photo',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

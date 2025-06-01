@@ -403,7 +403,7 @@ class _PlaceListState extends State<PlaceList> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: EasyrideColors.Drawerheaderbackground,
+          backgroundColor: Colors.white,
           title: const Center(
             child: Icon(
               Icons.logout,
@@ -413,7 +413,7 @@ class _PlaceListState extends State<PlaceList> {
           ),
           content: const Text(
             'Are you sure you want to finish your ride?',
-            style: TextStyle(fontSize: 16, color: Colors.white),
+            style: TextStyle(fontSize: 16, color: Colors.green),
             textAlign: TextAlign.center,
           ),
           actionsAlignment: MainAxisAlignment.spaceEvenly,
@@ -451,7 +451,7 @@ class _PlaceListState extends State<PlaceList> {
                   );
                 },
                 child: const Text(
-                  'Yes',
+                  'Ok',
                   style: TextStyle(color: Colors.white),
                 ),
               ),

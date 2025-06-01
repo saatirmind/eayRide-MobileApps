@@ -372,7 +372,7 @@ class _MapScreenState extends State<MapScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: EasyrideColors.Drawerheaderbackground,
+          backgroundColor: Colors.white,
           title: const Center(
             child: Icon(
               Icons.logout,
@@ -382,7 +382,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
           content: const Text(
             'Are you sure you want to finish your ride?',
-            style: TextStyle(fontSize: 16, color: Colors.white),
+            style: TextStyle(fontSize: 16, color: Colors.green),
             textAlign: TextAlign.center,
           ),
           actionsAlignment: MainAxisAlignment.spaceEvenly,
@@ -391,7 +391,7 @@ class _MapScreenState extends State<MapScreen> {
               width: MediaQuery.of(context).size.width * 0.3,
               child: TextButton(
                 style: TextButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: EasyrideColors.buttonColor,
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -422,7 +422,7 @@ class _MapScreenState extends State<MapScreen> {
                   );
                 },
                 child: const Text(
-                  'Yes',
+                  'Ok',
                   style: TextStyle(color: Colors.white),
                 ),
               ),

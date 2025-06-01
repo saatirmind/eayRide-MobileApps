@@ -1,4 +1,6 @@
-// ignore_for_file: non_constant_identifier_names, unused_element, deprecated_member_use, use_build_context_synchronously, avoid_print, prefer_final_fields, sort_child_properties_last
+// ignore_for_file: sort_child_properties_last
+
+/*// ignore_for_file: non_constant_identifier_names, unused_element, deprecated_member_use, use_build_context_synchronously, avoid_print, prefer_final_fields, sort_child_properties_last
 import 'dart:async';
 import 'dart:convert';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
@@ -76,7 +78,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             right: -10,
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [
                     EasyrideColors.buttonColor,
                     EasyrideColors.buttonColor
@@ -356,7 +358,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     }
                     if (_pickupCity == _destinationCity) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text(
                               "Pickup and Destination cannot be the same!"),
                           backgroundColor: EasyrideColors.Alertsank,
@@ -1180,5 +1182,609 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     await prefs.setDouble('end_latitude', endLocation.latitude);
     await prefs.setDouble('end_longitude', endLocation.longitude);
+  }
+}*/
+
+// ignore_for_file: non_constant_identifier_names, unused_element, deprecated_member_use, use_build_context_synchronously, avoid_print, prefer_final_fields
+import 'dart:async';
+import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
+import 'package:easymotorbike/AppColors.dart/dropapi.dart';
+import 'package:easymotorbike/AppColors.dart/pickupapi.dart';
+import 'package:easymotorbike/AppColors.dart/tripprovide.dart';
+import 'package:easymotorbike/AppColors.dart/userprovider.dart';
+import 'package:easymotorbike/AppColors.dart/walletapi.dart';
+import 'package:easymotorbike/DrawerWidget/Tourist_attraction.dart';
+import 'package:easymotorbike/settings/setting.dart';
+import 'package:easymotorbike/Drawer/drawer.dart';
+import 'package:easymotorbike/GoogleMap/googlemap.dart';
+import 'package:easymotorbike/HomeScreenWidget/BottomBar.dart';
+import 'package:easymotorbike/HomeScreenWidget/PromotionsBanner.dart';
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class HomeScreen extends StatefulWidget {
+  final String Mobile;
+  final String Token;
+  final String registered_date;
+
+  const HomeScreen({
+    super.key,
+    required this.Mobile,
+    required this.Token,
+    required this.registered_date,
+  });
+
+  @override
+  HomeScreenState createState() => HomeScreenState();
+}
+
+class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+  final GlobalKey<GooglemapState> _googleMapKey = GlobalKey();
+  LatLng? _currentPosition;
+  final LatLng _kualaLumpur = const LatLng(3.139, 101.6869);
+
+  @override
+  Widget build(BuildContext context) {
+    final tripProvider = Provider.of<TripProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
+    return Scaffold(
+        drawer: Drawerscreen(
+          Mobile: widget.Mobile,
+          Token: widget.Token,
+          Firstname: userProvider.firstName,
+          registered_date: widget.registered_date,
+        ),
+        body: Stack(children: [
+          Positioned.fill(
+            child: GoogleMap(
+              key: _googleMapKey,
+              initialCameraPosition: CameraPosition(
+                target: _currentPosition ?? _kualaLumpur,
+                zoom: 12,
+              ),
+              onMapCreated: (controller) {
+                _mapController = controller;
+              },
+              markers: _markers,
+              polylines: _polylines,
+            ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 25,
+            left: 0,
+            right: 0,
+            child: PromotionsBanner(),
+          ),
+          Positioned(
+            top: 420,
+            right: -10,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    EasyrideColors.buttonColor,
+                    EasyrideColors.buttonColor
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(18),
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: Colors.black26,
+                //     blurRadius: 6,
+                //     offset: Offset(0, 3),
+                //   ),
+                // ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: Builder(
+                  builder: (BuildContext context) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SettingsScreen(),
+                          ),
+                        );
+                      },
+                      child: const CircleAvatar(
+                        radius: 30,
+                        backgroundColor: EasyrideColors.buttonColor,
+                        child: Icon(
+                          Icons.settings,
+                          color: EasyrideColors.buttontextColor,
+                          size: 30,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: MediaQuery.of(context).padding.bottom + 10,
+            left: 0,
+            right: 0,
+            child: BottomBar(),
+          ),
+          Positioned(
+            top: 420,
+            left: -10,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    EasyrideColors.buttonColor,
+                    EasyrideColors.buttonColor
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(0),
+                child: Builder(
+                  builder: (BuildContext context) {
+                    return InkWell(
+                      onTap: () {
+                        GetProfile(context);
+
+                        Scaffold.of(context).openDrawer();
+                      },
+                      child: const CircleAvatar(
+                        radius: 30,
+                        backgroundColor: EasyrideColors.buttonColor,
+                        child: Icon(
+                          Icons.menu,
+                          color: EasyrideColors.buttontextColor,
+                          size: 30,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 124,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 18.0,
+              ),
+              child: Container(
+                height: 110,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: Colors.grey.withOpacity(1),
+                  //     spreadRadius: 2,
+                  //     blurRadius: 4,
+                  //     offset: const Offset(0, 2),
+                  //   ),
+                  // ],
+                ),
+                child: tripProvider.tripTypes.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : Column(
+                        children: [
+                          ...List.generate(
+                            (tripProvider.tripTypes.length / 2).ceil(),
+                            (index) {
+                              int firstIndex = index * 2;
+                              int secondIndex = firstIndex + 1;
+                              return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: RadioListTile<String>(
+                                      title: Text(tripProvider
+                                          .tripTypes[firstIndex]["name"]),
+                                      value: tripProvider.tripTypes[firstIndex]
+                                              ["id"]
+                                          .toString(),
+                                      groupValue: tripProvider.selectedTripType,
+                                      onChanged: (value) {
+                                        tripProvider
+                                            .setSelectedTripType(value!);
+                                      },
+                                    ),
+                                  ),
+                                  if (secondIndex <
+                                      tripProvider.tripTypes.length)
+                                    Expanded(
+                                      child: RadioListTile<String>(
+                                        title: Text(tripProvider
+                                            .tripTypes[secondIndex]["name"]),
+                                        value: tripProvider
+                                            .tripTypes[secondIndex]["id"]
+                                            .toString(),
+                                        groupValue:
+                                            tripProvider.selectedTripType,
+                                        onChanged: (value) {
+                                          tripProvider
+                                              .setSelectedTripType(value!);
+                                        },
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
+                          ),
+                          const Divider(height: 1),
+                          Builder(
+                            builder: (context) {
+                              final selectedTrip =
+                                  tripProvider.tripTypes.firstWhere(
+                                (trip) =>
+                                    trip["id"].toString() ==
+                                    tripProvider.selectedTripType,
+                                orElse: () => null,
+                              );
+
+                              return selectedTrip != null
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Text(
+                                            "Rent: ${selectedTrip["price_label"]} Per Minute"),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 6),
+                                          child: Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          TouristScreen(),
+                                                    ),
+                                                  );
+                                                },
+                                                child: const Row(
+                                                  children: [
+                                                    Icon(Icons.place,
+                                                        color: Colors.blue),
+                                                    SizedBox(width: 4),
+                                                    Text(
+                                                      "Tourist Attractions",
+                                                      style: TextStyle(
+                                                        color: Colors.blue,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Container();
+                            },
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 240,
+            left: 10,
+            right: 10,
+            child: Column(
+              children: [
+                // ----------- Pickup Dropdown -------------
+                PopupMenuButton<String>(
+                  onSelected: (value) async {
+                    final parts = value.split('(ID:');
+                    setState(() {
+                      _pickupCity = parts[0].trim();
+                      _pickupId = parts.length > 1
+                          ? parts[1].replaceAll(')', '').trim()
+                          : null;
+                      _dropCity = null;
+                      _dropLocationapi.clear();
+                    });
+                    if (_pickupId != null) {
+                      final dropList =
+                          await fetchDropLocationByPickupId(_pickupId!);
+                      setState(() {
+                        _dropLocationapi = dropList
+                            .map((e) => '${e.name} (ID: ${e.id})')
+                            .toList();
+                      });
+                    }
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return locations.map((location) {
+                      return PopupMenuItem<String>(
+                        value: '${location.name} (ID: ${location.id})',
+                        child: Text(location.name),
+                      );
+                    }).toList();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.location_on),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _pickupCity ?? "Select Pickup Location",
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        const Icon(Icons.keyboard_arrow_down),
+                      ],
+                    ),
+                  ),
+                  offset: const Offset(0, 40),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  color: Colors.white,
+                ),
+
+                const SizedBox(height: 5),
+
+                // ---------- Destination Dropdown ------------
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    final parts = value.split('(ID:');
+                    final selectedName = parts[0].trim();
+
+                    if (_pickupCity == selectedName) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              "Pickup and Destination cannot be the same!"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      setState(() {
+                        _dropCity = null;
+                      });
+                    } else {
+                      setState(() {
+                        _dropCity = selectedName;
+                      });
+                    }
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return _dropLocationapi.map((location) {
+                      return PopupMenuItem<String>(
+                        value: location,
+                        child: Text(location.split('(ID:')[0]),
+                      );
+                    }).toList();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.location_on),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _dropCity ?? "Select Destination Location",
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        const Icon(Icons.keyboard_arrow_down),
+                      ],
+                    ),
+                  ),
+                  offset: const Offset(0, 40),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  color: Colors.white,
+                ),
+              ],
+            ),
+          )
+        ]));
+  }
+
+  final Set<Polyline> _polylines = {};
+
+  late GoogleMapController _mapController;
+
+  Set<Marker> _markers = {};
+
+  final List<String> _places = [
+    "Bukit Bintang Walk",
+    "Ceylonz Suites, Persiaran Raja Chulan",
+    "Scarletz Suites, Jalan Yap Kwan Seng",
+    "Central Market",
+    "The Colony by Infinitum, Chow Kit",
+    "The Mansion, Brickfields",
+    "Batu Caves",
+    "Thean Hou Temple, Persiaran Endah",
+  ];
+
+  final List<LatLng> _locations = [
+    const LatLng(3.1460887463338447, 101.71770362698292),
+    const LatLng(3.150236, 101.705465),
+    const LatLng(3.159932, 101.712492),
+    const LatLng(3.142896, 101.695771),
+    const LatLng(3.162606, 101.695721),
+    const LatLng(3.134852, 101.685504),
+    const LatLng(3.235014, 101.683455),
+    const LatLng(3.121977, 101.687094),
+  ];
+
+  String? _pickupCity;
+  String? _pickupId;
+
+  String? _dropCity;
+
+  List<LocationModel> locations = [];
+  List<LocationdropModel> dropLocations = [];
+  List<String> _dropLocationapi = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _requestLocationPermission();
+    fetchPickupDropLocation().then((value) {
+      setState(() {
+        locations = value;
+      });
+    });
+    initializeApp();
+    Provider.of<WalletProvider>(context, listen: false)
+        .fetchWalletHistory(context);
+    Provider.of<TripProvider>(context, listen: false).fetchTripTypes(context);
+  }
+
+  Future<void> initializeApp() async {
+    _getCurrentLocation();
+    _createMarkers();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _requestLocationPermission();
+    }
+  }
+
+  Future<void> _requestLocationPermission() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      _showLocationDialog();
+      return;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.deniedForever) return;
+    }
+  }
+
+  void _createMarkers() {
+    _markers = _locations.asMap().entries.map((entry) {
+      int index = entry.key;
+      LatLng location = entry.value;
+      return Marker(
+        markerId: MarkerId(_places[index]),
+        position: location,
+        infoWindow: InfoWindow(
+          title: _places[index],
+          snippet: "Click to select",
+        ),
+      );
+    }).toSet();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      setState(() {
+        _currentPosition = LatLng(position.latitude, position.longitude);
+
+        _markers.add(
+          Marker(
+            markerId: const MarkerId('currentLocation'),
+            position: _currentPosition!,
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueAzure),
+            infoWindow: const InfoWindow(title: 'You are here'),
+            onTap: () {
+              _mapController
+                  .showMarkerInfoWindow(const MarkerId('currentLocation'));
+            },
+          ),
+        );
+      });
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setDouble('latitude', position.latitude);
+      await prefs.setDouble('longitude', position.longitude);
+
+      _mapController.animateCamera(
+        CameraUpdate.newLatLngZoom(_currentPosition!, 12),
+      );
+    } catch (e) {
+      debugPrint("Error fetching location: $e");
+    }
+  }
+
+  void _showLocationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Location Service Disabled"),
+          content: const Text("Please enable location services to continue."),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                await Geolocator.openLocationSettings();
+                Navigator.of(context).pop();
+              },
+              child: const Text("Enable"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
