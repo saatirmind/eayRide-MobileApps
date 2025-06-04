@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 //import 'package:easy_localization/easy_localization.dart';
 import 'package:easymotorbike/NewScreen/homenew.dart';
-import 'package:easymotorbike/NewScreen/login.dart';
+//import 'package:easymotorbike/NewScreen/login.dart';
+import 'package:easymotorbike/Screen/beforelogin.dart';
 import 'package:easymotorbike/notification/notification_service.dart';
 //import 'package:easymotorbike/settings/setting.dart';
 import 'package:http/http.dart' as http;
@@ -284,7 +285,7 @@ class _AsplashscreenState extends State<Asplashscreen> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const Login()),
+        MaterialPageRoute(builder: (context) => const BeamLoginScreen()),
       );
     }
   }

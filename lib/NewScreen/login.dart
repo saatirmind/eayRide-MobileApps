@@ -63,17 +63,22 @@ class _LoginState extends State<Login> {
     return Scaffold(
       backgroundColor: EasyrideColors.background,
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: EasyrideColors.background,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
-              const Icon(Icons.arrow_back),
-              const SizedBox(height: 40),
               const Text(
                 "Hi there 👋",
                 style: TextStyle(
