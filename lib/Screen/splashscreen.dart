@@ -1,5 +1,6 @@
 // ignore_for_file: unrelated_type_equality_checks, library_private_types_in_public_api, avoid_print, use_build_context_synchronously, deprecated_member_use
 import 'dart:async';
+import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/AppColors.dart/VehicleLocationProvider.dart';
 import 'package:easymotorbike/Placelist/drop_station_screen.dart';
 import 'package:easymotorbike/Placelist/new_place.dart';
@@ -21,7 +22,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late AnimationController _animationController;
-  late Animation<double> _animation;
+  //late Animation<double> _animation;
 
   @override
   void initState() {
@@ -34,12 +35,12 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(seconds: 3),
     );
 
-    _animation = Tween<double>(begin: 0.3, end: 0.9).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
+    //  _animation = Tween<double>(begin: 0.3, end: 0.9).animate(
+    //     CurvedAnimation(
+    //       parent: _animationController,
+    //       curve: Curves.easeInOut,
+    //     ),
+    //   );
 
     _animationController.forward();
 
@@ -103,28 +104,35 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: EasyrideColors.pureWhite,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AnimatedBuilder(
-              animation: _animation,
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: _animation.value,
-                  child: Opacity(
-                    opacity: _animation.value,
-                    child: imageBytes != null
-                        ? Image.memory(
-                            imageBytes!,
-                            fit: BoxFit.contain,
-                          )
-                        : const CircularProgressIndicator(),
-                  ),
-                );
-              },
-            ),
+            // AnimatedBuilder(
+            //   animation: _animation,
+            //   builder: (context, child) {
+            //     return Transform.scale(
+            //       scale: _animation.value,
+            //       child: Opacity(
+            //         opacity: _animation.value,
+            //         child: imageBytes != null
+            //             ? Image.memory(
+            //                 imageBytes!,
+            //                 fit: BoxFit.contain,
+            //               )
+            //             : const CircularProgressIndicator(),
+            //       ),
+            //     );
+            //   },
+            // ),
+
+            imageBytes != null
+                ? Image.memory(
+                    imageBytes!,
+                    fit: BoxFit.contain,
+                  )
+                : const CircularProgressIndicator(),
           ],
         ),
       ),

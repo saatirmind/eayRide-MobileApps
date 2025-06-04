@@ -254,6 +254,7 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
               Color(0xFFFAD0C4),
               Color(0xFFFFB347),
             ],
+            //
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

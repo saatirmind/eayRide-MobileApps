@@ -7,6 +7,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 class EasyrideColors {
   const EasyrideColors();
 
+  static const Color vibrantGreen =
+      Color(0xFF22B14D); // Energy & Sustainability
+  static const Color deepBlack = Color(0xFF020202); // Sophistication & Strength
+
+  // Secondary Colors
+  static const Color mediumGray = Color(0xFF6B6B6A); // Neutral Tone
+  static const Color pureWhite = Color(0xFFFFFFFF); // Contrast Background
+
   static const Color background = Color(0xFFf2f6ff);
   static const Color buttonColor = Color.fromARGB(255, 11, 155, 11);
   static const Color buttontextColor = Color.fromARGB(255, 248, 249, 250);
