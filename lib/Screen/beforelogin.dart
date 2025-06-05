@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/NewScreen/login.dart';
 import 'package:easymotorbike/main.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +63,19 @@ class _BeamLoginScreenState extends State<BeamLoginScreen>
                 label: const Text("Continue with Google"),
               ),
               const SizedBox(height: 16),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.grey.shade200,
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {},
+                icon: Image.asset('assets/facebook.jpg', height: 24),
+                label: const Text("Continue with Facebook"),
+              ),
               const Row(
                 children: [
                   Expanded(child: Divider()),
@@ -74,10 +88,10 @@ class _BeamLoginScreenState extends State<BeamLoginScreen>
               ),
               const SizedBox(height: 8),
               const Text("Already signed up with phone number?"),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               TextButton.icon(
                 style: TextButton.styleFrom(
-                    foregroundColor: const Color(0xFF7F3DFF),
+                    foregroundColor: EasyrideColors.vibrantGreen,
                     backgroundColor: const Color(0xFFF5EDFF),
                     minimumSize: const Size(double.infinity, 48),
                     shape: RoundedRectangleBorder(

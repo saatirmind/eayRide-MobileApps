@@ -25,7 +25,6 @@ class _AsplashscreenState extends State<Asplashscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: EasyrideColors.vibrantGreen,
       // body: Stack(
       //   children: [
       //     InkWell(
@@ -141,69 +140,81 @@ class _AsplashscreenState extends State<Asplashscreen> {
       //   ],
       // ),
 
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Stack(
         children: [
-          const Spacer(flex: 1),
-          // Image
-          Image.asset(
-            'assets/scooter.jpeg',
-            height: 300,
+          // 🔹 Background Image - full screen
+          SizedBox.expand(
+            child: Image.asset(
+              'assets/splash.jpg',
+              fit: BoxFit.fill,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+            ),
           ),
 
-          Spacer(flex: 1),
-          const Column(
+          // 🔹 Foreground Content - over the image
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Welcome to EasyMotorbike',
-                style: TextStyle(
-                  fontSize: 24,
-                  color: EasyrideColors.pureWhite,
-                  fontWeight: FontWeight.bold,
-                ),
+              Spacer(),
+
+              const Column(
+                children: [
+                  Text(
+                    'Welcome to EasyMotorbike',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: EasyrideColors.pureWhite,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 24.0, vertical: 12),
+                    child: Text(
+                      'Join now for the most fun, affordable and eco-friendly way to get around town.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: EasyrideColors.pureWhite,
+                      ),
+                    ),
+                  ),
+                ],
               ),
+
+              // 🔹 Button
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12),
-                child: Text(
-                  'Join now for the most fun, affordable and eco-friendly way to get around town.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: EasyrideColors.pureWhite,
+                padding:
+                    const EdgeInsets.only(bottom: 40.0, right: 24, left: 24),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: EasyrideColors.pureWhite,
+                      foregroundColor: EasyrideColors.vibrantGreen,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      side: const BorderSide(
+                        color: EasyrideColors.vibrantGreen,
+                        width: 2,
+                      ),
+                    ),
+                    onPressed: () {
+                      _checkUserLoggedIn();
+                    },
+                    child: const Text(
+                      'Start now',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
               ),
             ],
-          ),
-
-          // Button
-          Padding(
-            padding: const EdgeInsets.only(bottom: 40.0, right: 24, left: 24),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: EasyrideColors.pureWhite,
-                  foregroundColor: EasyrideColors.vibrantGreen,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  side: const BorderSide(
-                    color: EasyrideColors.vibrantGreen,
-                    width: 2,
-                  ),
-                ),
-                onPressed: () {
-                  _checkUserLoggedIn();
-                },
-                child: const Text(
-                  'Start now',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
           ),
         ],
       ),

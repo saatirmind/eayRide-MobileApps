@@ -4,11 +4,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
+import 'package:easymotorbike/Dummyscreen/dummyhome.dart';
 import 'package:easymotorbike/Placelist/new_place.dart';
 import 'package:easymotorbike/notification/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:easymotorbike/Screen/homescreen.dart';
+// import 'package:easymotorbike/Screen/homescreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -224,12 +225,13 @@ class _OtpScreenState extends State<OtpScreen> {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-          builder: (context) => HomeScreen(
+            builder:
+                (context) => /*HomeScreen(
             Mobile: widget.phoneNumber,
             Token: token!,
             registered_date: registered_date!,
-          ),
-        ),
+          ),*/
+                    HomeScreen9()),
         (Route<dynamic> route) => false,
       );
     } else {

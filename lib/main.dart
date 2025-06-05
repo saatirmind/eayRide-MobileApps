@@ -10,6 +10,7 @@ import 'package:easymotorbike/AppColors.dart/stationprovider.dart';
 import 'package:easymotorbike/AppColors.dart/tripprovide.dart';
 import 'package:easymotorbike/AppColors.dart/userprovider.dart';
 import 'package:easymotorbike/AppColors.dart/walletapi.dart';
+import 'package:easymotorbike/Dummyscreen/dummyhome.dart';
 import 'package:easymotorbike/Placelist/toggle.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -101,7 +102,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'EasyMotorbike',
-      home: const SplashScreen(),
+      home: const HomeScreen9(),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
