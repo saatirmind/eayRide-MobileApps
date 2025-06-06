@@ -3,7 +3,9 @@ import 'dart:typed_data';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/NewScreen/login.dart';
 import 'package:easymotorbike/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class BeamLoginScreen extends StatefulWidget {
   const BeamLoginScreen({super.key});
@@ -58,7 +60,9 @@ class _BeamLoginScreenState extends State<BeamLoginScreen>
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  signInWithGoogle();
+                },
                 icon: Image.asset('assets/google_icon.png', height: 24),
                 label: const Text("Continue with Google"),
               ),
@@ -138,5 +142,48 @@ class _BeamLoginScreenState extends State<BeamLoginScreen>
         ),
       ),
     );
+  }
+
+  Future<void> signInWithGoogle() async {
+    try {
+      print("🔁 Step 1: Google SignIn() shuru kiya...");
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        print("⚠️ User ne Google account choose nahi kiya (cancelled)");
+        return;
+      }
+
+      print("✅ Step 2: User ne account choose kiya: ${googleUser.email}");
+      print("ℹ️  Display Name: ${googleUser.displayName}");
+      print("🔐 Getting Google Auth tokens...");
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      print("✅ Step 3: Access Token: ${googleAuth.accessToken}");
+      print("✅ Step 4: ID Token: ${googleAuth.idToken}");
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      print("🛠️ Step 5: Firebase Auth se login kar rahe hain...");
+
+      
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final user = userCredential.user;
+
+      print("🎉 ✅ Step 6: Firebase login successful");
+      print("👤 UID: ${user?.uid}");
+      print("📧 Email: ${user?.email}");
+      print("👨‍🦰 Name: ${user?.displayName}");
+      print("🖼️ Photo URL: ${user?.photoURL}");
+    } catch (e) {
+      print("❌ Error during Google sign-in: $e");
+    }
   }
 }

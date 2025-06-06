@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "396255044410-tgc9685a807dic47s1qnta8pmmperiu3.apps.googleusercontent.com",
+          "client_id": "396255044410-j015ni31tt8i80emjag7051gvtpcg51p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gaurav.easymotorbike.easymotorbike",
+            "certificate_hash": "1579337f5b72d76a5df8b10e94f3e2f8defb9b28"
+          }
+        },
+        {
+          "client_id": "396255044410-3vo5k6sup16bsuskdpleeso9mfhjb8o0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,8 +35,15 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "396255044410-tgc9685a807dic47s1qnta8pmmperiu3.apps.googleusercontent.com",
+              "client_id": "396255044410-3vo5k6sup16bsuskdpleeso9mfhjb8o0.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "396255044410-g7ulda9fp2qlqe7gfk7guigitgbp0jdg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.gaurav.easymotorbike.easymotorbike"
+              }
             }
           ]
         }

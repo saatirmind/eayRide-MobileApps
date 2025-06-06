@@ -12,6 +12,8 @@ import 'package:easymotorbike/AppColors.dart/userprovider.dart';
 import 'package:easymotorbike/AppColors.dart/walletapi.dart';
 import 'package:easymotorbike/Dummyscreen/dummyhome.dart';
 import 'package:easymotorbike/Placelist/toggle.dart';
+import 'package:easymotorbike/Screen/beforelogin.dart';
+import 'package:easymotorbike/bottombaar/bottodummy.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
@@ -102,7 +104,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'EasyMotorbike',
-      home: const HomeScreen9(),
+      home: BeamLoginScreen(),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,

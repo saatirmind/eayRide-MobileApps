@@ -1,4 +1,3 @@
-import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,8 +11,6 @@ class HomeScreen9 extends StatefulWidget {
 }
 
 class _HomeScreen9State extends State<HomeScreen9> {
-  int _selectedIndex = 2;
-
   GoogleMapController? _mapController;
   Marker? _userMarker;
   LatLng? _userLocation;
@@ -133,43 +130,6 @@ class _HomeScreen9State extends State<HomeScreen9> {
                 const SizedBox(height: 80),
               ],
             ),
-          ),
-
-          // Convex Bottom Bar
-          bottomNavigationBar: ConvexAppBar(
-            style: TabStyle.react,
-            backgroundColor: Colors.white,
-            activeColor: Colors.deepPurple,
-            color: Colors.grey,
-            initialActiveIndex: _selectedIndex,
-            items: const [
-              TabItem(icon: Icons.home, title: 'Home'),
-              TabItem(icon: Icons.account_balance_wallet, title: 'Payments'),
-              TabItem(icon: Icons.qr_code_scanner, title: 'Scan QR'),
-              TabItem(icon: Icons.support, title: 'Support'),
-              TabItem(icon: Icons.menu, title: 'Menu'),
-            ],
-            onTap: (int index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-              if (index == 0) {
-                // Home tab
-                print("Home clicked");
-                // Navigator.push(...); // Optional: navigate
-              } else if (index == 1) {
-                // Payments tab
-                print("Payments clicked");
-              } else if (index == 2) {
-                // Scan QR
-                print("Scan QR clicked");
-                // _scanQRCode(); // Function call
-              } else if (index == 3) {
-                print("Support clicked");
-              } else if (index == 4) {
-                print("Menu clicked");
-              }
-            },
           ),
         ),
       ],
