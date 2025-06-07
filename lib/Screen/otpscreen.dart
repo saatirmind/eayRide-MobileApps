@@ -4,13 +4,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
-import 'package:easymotorbike/Dummyscreen/dummyhome.dart';
+//import 'package:easymotorbike/Dummyscreen/dummyhome.dart';
 import 'package:easymotorbike/Placelist/new_place.dart';
 import 'package:easymotorbike/notification/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 // import 'package:easymotorbike/Screen/homescreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../bottombaar/bottodummy.dart';
 
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;
@@ -47,7 +49,7 @@ class _OtpScreenState extends State<OtpScreen> {
   String? bookingtoken;
   String? vehicleno;
   String? vehicle_id;
-  String? registered_date;
+  String? registereddate;
   NotificationService notificationService = NotificationService();
 
   @override
@@ -153,18 +155,25 @@ class _OtpScreenState extends State<OtpScreen> {
             bookingtoken = responseData['data']['booking_token'];
             vehicleno = responseData['data']['vehicle_no'];
             vehicle_id = responseData['data']['bike_id'].toString();
-            registered_date = responseData['data']['registered_date'];
+            registereddate = responseData['data']['registered_date'];
           });
 
           print('Booking Token: $bookingtoken');
           print('Vehicle No.: $vehicleno');
           print('Vehicle_id: $vehicle_id');
+          print('Registered Date: $registereddate');
+          print('User ID: $userid');
+          print('Token: $token');
 
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token!);
           await prefs.setString('user_id', userid!);
-          await prefs.setString('registered_date', registered_date!);
-          await prefs.setString('mobile', widget.phoneNumber);
+          await prefs.setString('registereddate', registereddate!);
+          await prefs.setString('mobileno', widget.phoneNumber);
+
+          print("✅ Stored mobile no: ${prefs.getString('mobileno')}");
+          print(
+              "✅ Stored registered date: ${prefs.getString('registereddate')}");
 
           if (bookingtoken != null && bookingtoken!.isNotEmpty) {
             await prefs.setString('booking_token', bookingtoken!);
@@ -231,7 +240,7 @@ class _OtpScreenState extends State<OtpScreen> {
             Token: token!,
             registered_date: registered_date!,
           ),*/
-                    HomeScreen9()),
+                    MainScreen()),
         (Route<dynamic> route) => false,
       );
     } else {

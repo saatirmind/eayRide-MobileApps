@@ -1232,10 +1232,10 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
         drawer: Drawerscreen(
-          Mobile: widget.Mobile,
-          Token: widget.Token,
+          Mobile: mobile ?? '',
+          Token: token ?? '',
           Firstname: userProvider.firstName,
-          registered_date: widget.registered_date,
+          registered_date: registeredDate ?? '',
         ),
         body: Stack(children: [
           Positioned.fill(
@@ -1256,7 +1256,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             top: MediaQuery.of(context).padding.top + 25,
             left: 0,
             right: 0,
-            child: PromotionsBanner(),
+            child: const PromotionsBanner(),
           ),
           Positioned(
             top: 420,
@@ -1312,7 +1312,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             bottom: MediaQuery.of(context).padding.bottom + 10,
             left: 0,
             right: 0,
-            child: BottomBar(),
+            child: const BottomBar(),
           ),
           Positioned(
             top: 420,
@@ -1672,6 +1672,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    loadUserData();
     WidgetsBinding.instance.addObserver(this);
     _requestLocationPermission();
     fetchPickupDropLocation().then((value) {
@@ -1694,6 +1695,27 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  String? mobile;
+  String? token;
+  String? registeredDate;
+  Future<void> loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      mobile = widget.Mobile.isNotEmpty
+          ? widget.Mobile
+          : prefs.getString('mobileno') ?? '';
+
+      token = widget.Token.isNotEmpty
+          ? widget.Token
+          : prefs.getString('token') ?? '';
+
+      registeredDate = widget.registered_date.isNotEmpty
+          ? widget.registered_date
+          : prefs.getString('registereddate') ?? '';
+    });
   }
 
   @override

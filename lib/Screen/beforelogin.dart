@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/NewScreen/login.dart';
 import 'package:easymotorbike/main.dart';
@@ -171,7 +170,6 @@ class _BeamLoginScreenState extends State<BeamLoginScreen>
 
       print("🛠️ Step 5: Firebase Auth se login kar rahe hain...");
 
-      
       final userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
 

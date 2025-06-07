@@ -1,4 +1,5 @@
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
+import 'package:easymotorbike/Screen/homescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -66,14 +67,12 @@ class _HomeScreen9State extends State<HomeScreen9> {
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.250,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
+                    // 1️⃣ Google Map sabse neeche
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.250,
+                        width: double.infinity,
                         child: GoogleMap(
                           initialCameraPosition: const CameraPosition(
                             target: LatLng(28.6139, 77.2090),
@@ -89,6 +88,30 @@ class _HomeScreen9State extends State<HomeScreen9> {
                         ),
                       ),
                     ),
+
+                    // 2️⃣ Tap detector transparent area
+                    Positioned.fill(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const HomeScreen(
+                                  Mobile: '',
+                                  Token: '',
+                                  registered_date: '',
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
+                    // 3️⃣ Overlay label
                     Positioned(
                       top: 8,
                       child: Container(
@@ -103,13 +126,10 @@ class _HomeScreen9State extends State<HomeScreen9> {
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
-
                 const SizedBox(height: 20),
-
-                // Grid Cards
                 GridView.count(
                   crossAxisCount: 2,
                   shrinkWrap: true,
@@ -117,16 +137,32 @@ class _HomeScreen9State extends State<HomeScreen9> {
                   mainAxisSpacing: 12,
                   physics: const NeverScrollableScrollPhysics(),
                   children: const [
-                    InfoCard(title: "Plans available", subtitle: "View plans"),
                     InfoCard(
-                        title: "Refer a friend", subtitle: "Get free credits!"),
+                      title: "Plans available",
+                      subtitle: "View plans",
+                      imagePath:
+                          "https://www.indiafirstlife.com/content/dam/ifliwebsite/blog/type-of-term-insurance-plans/type-of-term-insurance-plans.jpg",
+                    ),
                     InfoCard(
-                        title: "Half Beam mode", subtitle: "Decrease power"),
+                      title: "Refer a friend",
+                      subtitle: "Get free credits!",
+                      imagePath:
+                          "https://img.freepik.com/premium-vector/refer-friend-flat-design-illustration-with-megaphone-screen-mobile-phone-social-media-marketing-friends-via-banner-background-poster_2175-2222.jpg",
+                    ),
                     InfoCard(
-                        title: "Reserve in advance", subtitle: "Secure a ride"),
+                      title: "EasyMotorbike mode",
+                      subtitle: "Decrease power",
+                      imagePath:
+                          "https://iheartcraftythings.com/wp-content/uploads/2021/05/Motorcycle-DRAWING-%E2%80%93-STEP-10.jpg",
+                    ),
+                    InfoCard(
+                      title: "Reserve in advance",
+                      subtitle: "Secure a ride",
+                      imagePath:
+                          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJUmMjBqxifWINtnNhSQhNuPOJlOInrNso_A&s",
+                    ),
                   ],
                 ),
-
                 const SizedBox(height: 80),
               ],
             ),
@@ -140,8 +176,14 @@ class _HomeScreen9State extends State<HomeScreen9> {
 class InfoCard extends StatelessWidget {
   final String title;
   final String subtitle;
+  final String imagePath;
 
-  const InfoCard({super.key, required this.title, required this.subtitle});
+  const InfoCard({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.imagePath,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -161,11 +203,29 @@ class InfoCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          // 📝 Title
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text(subtitle, style: const TextStyle(fontSize: 13)),
+          // 📄 Subtitle
+          Text(
+            subtitle,
+            style: const TextStyle(fontSize: 13),
+          ),
+          Spacer(flex: 1),
+          // 🖼️ Image
+          Image.network(
+            imagePath,
+            height: 60,
+            width: 60,
+            fit: BoxFit.contain,
+          ),
+          const SizedBox(height: 8),
         ],
       ),
     );
