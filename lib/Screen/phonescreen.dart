@@ -429,12 +429,12 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                 //   ),
                 // ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Version: 1.0.9',
-                  //appVersion,
-                  style: TextStyle(fontSize: 15, color: Colors.grey),
-                  textAlign: TextAlign.center,
-                ),
+                // const Text(
+                //   'Version: 1.0.9',
+                //   //appVersion,
+                //   style: TextStyle(fontSize: 15, color: Colors.grey),
+                //   textAlign: TextAlign.center,
+                // ),
               ],
             ),
           ),

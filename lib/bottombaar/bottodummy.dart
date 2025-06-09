@@ -1,7 +1,12 @@
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
+import 'package:easymotorbike/DrawerWidget/walletpage.dart';
 import 'package:easymotorbike/Dummyscreen/dummyhome.dart';
 import 'package:flutter/material.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+
+import '../Drawer/drawer.dart';
+import '../DrawerWidget/healp.dart';
+import '../Screen/Qrscannerscreen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -13,10 +18,16 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen9(),
-    Center(child: Text('💰 Payments Screen')),
-    Center(child: Text('📷 Scan QR Screen')),
-    Center(child: Text('📞 Support Screen')),
-    Center(child: Text('📋 Menu Screen')),
+    WalletPage(),
+    QRScannerScreen(),
+    HelpScreen(),
+    Drawerscreen(
+      Mobile: '',
+      Token: '',
+      registered_date: '',
+      Firstname: '',
+    ), // Assuming you have a DrawerScreen widget
+    // Replace with your actual drawer screen widget
   ];
 
   @override

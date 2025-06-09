@@ -1,10 +1,22 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/NewScreen/login.dart';
 import 'package:easymotorbike/main.dart';
+import 'package:easymotorbike/notification/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Placelist/new_place.dart';
+import '../bottombaar/bottodummy.dart';
 
 class BeamLoginScreen extends StatefulWidget {
   const BeamLoginScreen({super.key});
@@ -16,6 +28,7 @@ class BeamLoginScreen extends StatefulWidget {
 class _BeamLoginScreenState extends State<BeamLoginScreen>
     with WidgetsBindingObserver {
   Uint8List? imageBytes;
+  NotificationService notificationService = NotificationService();
 
   Future<void> _loadBannerImage() async {
     Uint8List? image = await Bannersave.getSavedBannerImage();
@@ -47,6 +60,7 @@ class _BeamLoginScreenState extends State<BeamLoginScreen>
                   ? Image.memory(
                       imageBytes!,
                       fit: BoxFit.contain,
+                      height: MediaQuery.of(context).size.height * 0.2,
                     )
                   : const CircularProgressIndicator(),
               const SizedBox(height: 40),
@@ -75,7 +89,9 @@ class _BeamLoginScreenState extends State<BeamLoginScreen>
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  signInWithFacebook();
+                },
                 icon: Image.asset('assets/facebook.jpg', height: 24),
                 label: const Text("Continue with Facebook"),
               ),
@@ -145,6 +161,13 @@ class _BeamLoginScreenState extends State<BeamLoginScreen>
 
   Future<void> signInWithGoogle() async {
     try {
+      String? deviceToken;
+
+      if (Platform.isAndroid) {
+        deviceToken = await notificationService.getDeviceToken();
+      } else {
+        deviceToken = null;
+      }
       print("🔁 Step 1: Google SignIn() shuru kiya...");
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -169,19 +192,189 @@ class _BeamLoginScreenState extends State<BeamLoginScreen>
       );
 
       print("🛠️ Step 5: Firebase Auth se login kar rahe hain...");
-
       final userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
-
       final user = userCredential.user;
 
       print("🎉 ✅ Step 6: Firebase login successful");
       print("👤 UID: ${user?.uid}");
       print("📧 Email: ${user?.email}");
       print("👨‍🦰 Name: ${user?.displayName}");
+      print("Phone: ${user?.phoneNumber}");
       print("🖼️ Photo URL: ${user?.photoURL}");
+
+      // 🔗 Step 7: Call backend API
+      print("🌐 Step 7: Calling backend API...");
+
+      final response = await http.post(
+        Uri.parse('https://easymotorbike.asia/api/v1/login'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'type': 'google',
+          'user_data': jsonEncode({
+            'email': user?.email,
+            'name': user?.displayName,
+            'firebase_uid': user?.uid,
+            'photo_url': user?.photoURL,
+            'id_token': googleAuth.idToken,
+          }),
+          if (deviceToken != null) 'device_token': deviceToken,
+        }),
+      );
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print(responseData);
+
+        if (responseData['status'] == true) {
+          setState(() {
+            userid = responseData['data']['id'].toString();
+            token = responseData['data']['token'];
+            bookingtoken = responseData['data']['booking_token'];
+            vehicleno = responseData['data']['vehicle_no'];
+            vehicle_id = responseData['data']['bike_id'].toString();
+            registereddate = responseData['data']['registered_date'];
+          });
+
+          print('Booking Token: $bookingtoken');
+          print('Vehicle No.: $vehicleno');
+          print('Vehicle_id: $vehicle_id');
+          print('Registered Date: $registereddate');
+          print('User ID: $userid');
+          print('Token: $token');
+
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', token!);
+          await prefs.setString('user_id', userid!);
+          await prefs.setString('registereddate', registereddate!);
+          //await prefs.setString('mobileno', phoneNumber);
+
+          print("✅ Stored mobile no: ${prefs.getString('mobileno')}");
+          print(
+              "✅ Stored registered date: ${prefs.getString('registereddate')}");
+
+          if (bookingtoken != null && bookingtoken!.isNotEmpty) {
+            await prefs.setString('booking_token', bookingtoken!);
+            await prefs.setString('VehicleNo', vehicleno!);
+            await AppApi.saveVehicleId(vehicle_id);
+
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MapScreen()),
+              (Route<dynamic> route) => false,
+            );
+          } else {
+            navigateToHomeScreen();
+          }
+        } else {
+          String errorMessage = "Something went wrong.";
+          if (responseData['message'] != null) {
+            errorMessage = responseData['message'].toString();
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(errorMessage)),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Server error: ${response.statusCode}")),
+        );
+      }
     } catch (e) {
-      print("❌ Error during Google sign-in: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Something went wrong: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+    setState(() {});
+  }
+
+  Future<void> signInWithFacebook() async {
+    try {
+      print("🔁 Facebook login shuru ho gaya...");
+      final LoginResult result = await FacebookAuth.instance.login();
+
+      if (result.status == LoginStatus.success) {
+        print("✅ Facebook login success: ${result.accessToken}");
+        final OAuthCredential facebookAuthCredential =
+            FacebookAuthProvider.credential(result.accessToken!.tokenString);
+
+        final userCredential = await FirebaseAuth.instance
+            .signInWithCredential(facebookAuthCredential);
+
+        final user = userCredential.user;
+
+        print("🎉 ✅ Firebase login with Facebook success");
+        print("👤 UID: ${user?.uid}");
+        print("📧 Email: ${user?.email}");
+        print("👨‍🦰 Name: ${user?.displayName}");
+        print("🖼️ Photo URL: ${user?.photoURL}");
+
+        // 🔗 Step: Call your backend API
+        final response = await http.post(
+          Uri.parse('https://easymotorbike.asia/api/v1/login'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'type': 'facebook',
+            'user_data': jsonEncode({
+              'email': user?.email,
+              'name': user?.displayName,
+              'firebase_uid': user?.uid,
+              'photo_url': user?.photoURL,
+            }),
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          print("✅ Backend response: ${response.body}");
+        } else {
+          print("❌ API error: ${response.statusCode} - ${response.body}");
+        }
+      } else {
+        print("❌ Facebook login failed: ${result.status}");
+      }
+    } catch (e) {
+      print("❌ Facebook login error: $e");
+    }
+  }
+
+  String? token;
+  String? userid;
+  String? bookingtoken;
+  String? vehicleno;
+  String? vehicle_id;
+  String? registereddate;
+
+  Future<void> navigateToHomeScreen() async {
+    if (token != null) {
+      setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('User Successfully Logged In'.tr()),
+          backgroundColor: EasyrideColors.successSnak,
+          duration: (const Duration(seconds: 2)),
+        ),
+      );
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder:
+                (context) => /*HomeScreen(
+            Mobile: widget.phoneNumber,
+            Token: token!,
+            registered_date: registered_date!,
+          ),*/
+                    MainScreen()),
+        (Route<dynamic> route) => false,
+      );
+    } else {
+      setState(() {});
     }
   }
 }

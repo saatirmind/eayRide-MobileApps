@@ -14,6 +14,7 @@ import 'package:easymotorbike/DrawerWidget/updateprofile.dart';
 import 'package:easymotorbike/Payment/Easyridecredits.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Drawerscreen extends StatefulWidget {
@@ -35,6 +36,32 @@ class Drawerscreen extends StatefulWidget {
 }
 
 class _DrawerscreenState extends State<Drawerscreen> {
+  initsateState() {
+    super.initState();
+    loadUserData();
+  }
+
+  String? mobile;
+  String? token;
+  String? registeredDate;
+  Future<void> loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      mobile = widget.Mobile.isNotEmpty
+          ? widget.Mobile
+          : prefs.getString('mobileno') ?? '';
+
+      token = widget.Token.isNotEmpty
+          ? widget.Token
+          : prefs.getString('token') ?? '';
+
+      registeredDate = widget.registered_date.isNotEmpty
+          ? widget.registered_date
+          : prefs.getString('registereddate') ?? '';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -163,8 +190,8 @@ class _DrawerscreenState extends State<Drawerscreen> {
                 Icons.location_on,
                 color: EasyrideColors.Drawericon,
               ),
-              title: Text('Tourist Attraction',
-                  style: const TextStyle(
+              title: const Text('Tourist Attraction',
+                  style: TextStyle(
                     color: EasyrideColors.Drawertext,
                   )),
               onTap: () {
