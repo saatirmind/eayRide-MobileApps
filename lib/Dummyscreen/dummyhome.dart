@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../HomeScreenWidget/dummysubscrabstion.dart';
+
 class HomeScreen9 extends StatefulWidget {
   const HomeScreen9({super.key});
 
@@ -136,30 +138,36 @@ class _HomeScreen9State extends State<HomeScreen9> {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   physics: const NeverScrollableScrollPhysics(),
-                  children: const [
-                    InfoCard(
-                      title: "Plans available",
-                      subtitle: "View plans",
-                      imagePath:
-                          "https://www.indiafirstlife.com/content/dam/ifliwebsite/blog/type-of-term-insurance-plans/type-of-term-insurance-plans.jpg",
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SubscriptionScreen(),
+                          ),
+                        );
+                      },
+                      child: const InfoCard(
+                        title: "Plans available",
+                        subtitle: "View plans",
+                        iconData: Icons.card_membership, // 👈 your desired icon
+                      ),
                     ),
-                    InfoCard(
+                    const InfoCard(
                       title: "Refer a friend",
                       subtitle: "Get free credits!",
-                      imagePath:
-                          "https://img.freepik.com/premium-vector/refer-friend-flat-design-illustration-with-megaphone-screen-mobile-phone-social-media-marketing-friends-via-banner-background-poster_2175-2222.jpg",
+                      iconData: Icons.group_add,
                     ),
-                    InfoCard(
+                    const InfoCard(
                       title: "EasyMotorbike mode",
                       subtitle: "Decrease power",
-                      imagePath:
-                          "https://iheartcraftythings.com/wp-content/uploads/2021/05/Motorcycle-DRAWING-%E2%80%93-STEP-10.jpg",
+                      iconData: Icons.motorcycle,
                     ),
-                    InfoCard(
+                    const InfoCard(
                       title: "Reserve in advance",
                       subtitle: "Secure a ride",
-                      imagePath:
-                          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJUmMjBqxifWINtnNhSQhNuPOJlOInrNso_A&s",
+                      iconData: Icons.schedule_send,
                     ),
                   ],
                 ),
@@ -176,13 +184,13 @@ class _HomeScreen9State extends State<HomeScreen9> {
 class InfoCard extends StatelessWidget {
   final String title;
   final String subtitle;
-  final String imagePath;
+  final IconData iconData; // 👈 imagePath ki jagah icon
 
   const InfoCard({
     super.key,
     required this.title,
     required this.subtitle,
-    required this.imagePath,
+    required this.iconData,
   });
 
   @override
@@ -217,13 +225,14 @@ class InfoCard extends StatelessWidget {
             subtitle,
             style: const TextStyle(fontSize: 13),
           ),
-          Spacer(flex: 1),
-          // 🖼️ Image
-          Image.network(
-            imagePath,
-            height: 60,
-            width: 60,
-            fit: BoxFit.contain,
+          const Spacer(),
+          // 🖼️ Icon
+          Center(
+            child: Icon(
+              iconData,
+              size: 48,
+              color: Colors.deepPurple,
+            ),
           ),
           const SizedBox(height: 8),
         ],

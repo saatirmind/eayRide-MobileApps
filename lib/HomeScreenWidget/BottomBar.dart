@@ -24,11 +24,11 @@ class _BottomBarState extends State<BottomBar> {
   }
 
   Widget _buildBottomBar() {
-    final walletProvider = Provider.of<WalletProvider>(context);
+    //  final walletProvider = Provider.of<WalletProvider>(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
+        // padding: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(25),
@@ -38,17 +38,16 @@ class _BottomBarState extends State<BottomBar> {
           children: [
             Column(
               children: [
-                _buildBottomBarItem(
-                    Icons.card_giftcard, "7 Day Streak: 0 Trip(s)"),
-                _buildBottomBarItem(
-                  Icons.attach_money,
-                  walletProvider.walletAmount,
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: _buildBottomButton("START"),
-                ),
+                // _buildBottomBarItem(
+                //     Icons.card_giftcard, "7 Day Streak: 0 Trip(s)"),
+                // _buildBottomBarItem(
+                //   Icons.attach_money,
+                //   walletProvider.walletAmount,
+                // ),
+                //const SizedBox(height: 10),
+
+                _buildBottomButton("Scan to ride"),
+
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 //   children: [
@@ -78,28 +77,31 @@ class _BottomBarState extends State<BottomBar> {
   }
 
   Widget _buildBottomButton(String text) {
-    return ElevatedButton(
-      onPressed: () {
-        if (text == "START") {
-          _handleStartButton();
-        } else if (text == "GROUP") {
-          _handleGroupButton();
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: EasyrideColors.buttonColor,
-        foregroundColor: EasyrideColors.buttontextColor,
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          if (text == "Scan to ride") {
+            _handleStartButton();
+          } else if (text == "GROUP") {
+            _handleGroupButton();
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: EasyrideColors.buttonColor,
+          foregroundColor: EasyrideColors.buttontextColor,
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        child: Text(text),
       ),
-      child: Text(text),
     );
   }
 

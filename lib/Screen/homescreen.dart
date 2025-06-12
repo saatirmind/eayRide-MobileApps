@@ -1229,188 +1229,188 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final tripProvider = Provider.of<TripProvider>(context);
-    final userProvider = Provider.of<UserProvider>(context);
-    return Scaffold(
-        drawer: Drawerscreen(
-          Mobile: mobile ?? '',
-          Token: token ?? '',
-          Firstname: userProvider.firstName,
-          registered_date: registeredDate ?? '',
-        ),
-        body: Stack(children: [
-          Positioned.fill(
-            child: GoogleMap(
-              key: _googleMapKey,
-              initialCameraPosition: CameraPosition(
-                target: _currentPosition ?? _kualaLumpur,
-                zoom: 12,
-              ),
-              onMapCreated: (controller) {
-                _mapController = controller;
-              },
-              markers: _markers,
-              polylines: _polylines,
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 25,
-            left: 0,
-            right: 0,
-            child: const PromotionsBanner(),
-          ),
-          Positioned(
-            top: 420,
-            right: -10,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    EasyrideColors.buttonColor,
-                    EasyrideColors.buttonColor
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+    //final userProvider = Provider.of<UserProvider>(context);
+    return SafeArea(
+      child: Scaffold(
+          drawer: Drawerscreen(),
+          body: Stack(children: [
+            Positioned.fill(
+              child: GoogleMap(
+                key: _googleMapKey,
+                initialCameraPosition: CameraPosition(
+                  target: _currentPosition ?? _kualaLumpur,
+                  zoom: 12,
                 ),
-                borderRadius: BorderRadius.circular(18),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Colors.black26,
-                //     blurRadius: 6,
-                //     offset: Offset(0, 3),
-                //   ),
-                // ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Builder(
-                  builder: (BuildContext context) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SettingsScreen(),
-                          ),
-                        );
-                      },
-                      child: const CircleAvatar(
-                        radius: 30,
-                        backgroundColor: EasyrideColors.buttonColor,
-                        child: Icon(
-                          Icons.settings,
-                          color: EasyrideColors.buttontextColor,
-                          size: 30,
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                onMapCreated: (controller) {
+                  _mapController = controller;
+                },
+                markers: _markers,
+                polylines: _polylines,
               ),
             ),
-          ),
-          Positioned(
-            bottom: MediaQuery.of(context).padding.bottom + 10,
-            left: 0,
-            right: 0,
-            child: const BottomBar(),
-          ),
-          Positioned(
-            top: 420,
-            left: -10,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    EasyrideColors.buttonColor,
-                    EasyrideColors.buttonColor
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(0),
-                child: Builder(
-                  builder: (BuildContext context) {
-                    return InkWell(
-                      onTap: () {
-                        GetProfile(context);
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 25,
+              left: 0,
+              right: 0,
+              child: const PromotionsBanner(),
+            ),
+            // Positioned(
+            //   top: 420,
+            //   right: -10,
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       gradient: const LinearGradient(
+            //         colors: [
+            //           EasyrideColors.buttonColor,
+            //           EasyrideColors.buttonColor
+            //         ],
+            //         begin: Alignment.topLeft,
+            //         end: Alignment.bottomRight,
+            //       ),
+            //       borderRadius: BorderRadius.circular(18),
+            //       // boxShadow: [
+            //       //   BoxShadow(
+            //       //     color: Colors.black26,
+            //       //     blurRadius: 6,
+            //       //     offset: Offset(0, 3),
+            //       //   ),
+            //       // ],
+            //     ),
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(0.0),
+            //       child: Builder(
+            //         builder: (BuildContext context) {
+            //           return InkWell(
+            //             onTap: () {
+            //               Navigator.push(
+            //                 context,
+            //                 MaterialPageRoute(
+            //                   builder: (context) => const SettingsScreen(),
+            //                 ),
+            //               );
+            //             },
+            //             child: const CircleAvatar(
+            //               radius: 30,
+            //               backgroundColor: EasyrideColors.buttonColor,
+            //               child: Icon(
+            //                 Icons.settings,
+            //                 color: EasyrideColors.buttontextColor,
+            //                 size: 30,
+            //               ),
+            //             ),
+            //           );
+            //         },
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            Positioned(
+              bottom: MediaQuery.of(context).padding.bottom + 10,
+              left: 0,
+              right: 0,
+              child: const BottomBar(),
+            ),
+            // Positioned(
+            //   top: 420,
+            //   left: -10,
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       gradient: const LinearGradient(
+            //         colors: [
+            //           EasyrideColors.buttonColor,
+            //           EasyrideColors.buttonColor
+            //         ],
+            //         begin: Alignment.topLeft,
+            //         end: Alignment.bottomRight,
+            //       ),
+            //       borderRadius: BorderRadius.circular(18),
+            //     ),
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(0),
+            //       child: Builder(
+            //         builder: (BuildContext context) {
+            //           return InkWell(
+            //             onTap: () {
+            //               // GetProfile(context);
 
-                        Scaffold.of(context).openDrawer();
-                      },
-                      child: const CircleAvatar(
-                        radius: 30,
-                        backgroundColor: EasyrideColors.buttonColor,
-                        child: Icon(
-                          Icons.menu,
-                          color: EasyrideColors.buttontextColor,
-                          size: 30,
-                        ),
-                      ),
-                    );
-                  },
+            //               Scaffold.of(context).openDrawer();
+            //             },
+            //             child: const CircleAvatar(
+            //               radius: 30,
+            //               backgroundColor: EasyrideColors.buttonColor,
+            //               child: Icon(
+            //                 Icons.menu,
+            //                 color: EasyrideColors.buttontextColor,
+            //                 size: 30,
+            //               ),
+            //             ),
+            //           );
+            //         },
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            Positioned(
+              top: 10,
+              left: 10,
+              child: GestureDetector(
+                onTap: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 20),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 124,
-            left: 0,
-            right: 0,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 18.0,
-              ),
-              child: Container(
-                height: 110,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color: Colors.grey.withOpacity(1),
-                  //     spreadRadius: 2,
-                  //     blurRadius: 4,
-                  //     offset: const Offset(0, 2),
-                  //   ),
-                  // ],
+
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 124,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18.0,
                 ),
-                child: tripProvider.tripTypes.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
-                    : Column(
-                        children: [
-                          ...List.generate(
-                            (tripProvider.tripTypes.length / 2).ceil(),
-                            (index) {
-                              int firstIndex = index * 2;
-                              int secondIndex = firstIndex + 1;
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Expanded(
-                                    child: RadioListTile<String>(
-                                      title: Text(tripProvider
-                                          .tripTypes[firstIndex]["name"]),
-                                      value: tripProvider.tripTypes[firstIndex]
-                                              ["id"]
-                                          .toString(),
-                                      groupValue: tripProvider.selectedTripType,
-                                      onChanged: (value) {
-                                        tripProvider
-                                            .setSelectedTripType(value!);
-                                      },
-                                    ),
-                                  ),
-                                  if (secondIndex <
-                                      tripProvider.tripTypes.length)
+                child: Container(
+                  height: 110,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    // boxShadow: [
+                    //   BoxShadow(
+                    //     color: Colors.grey.withOpacity(1),
+                    //     spreadRadius: 2,
+                    //     blurRadius: 4,
+                    //     offset: const Offset(0, 2),
+                    //   ),
+                    // ],
+                  ),
+                  child: tripProvider.tripTypes.isEmpty
+                      ? const Center(child: CircularProgressIndicator())
+                      : Column(
+                          children: [
+                            ...List.generate(
+                              (tripProvider.tripTypes.length / 2).ceil(),
+                              (index) {
+                                int firstIndex = index * 2;
+                                int secondIndex = firstIndex + 1;
+                                return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
                                     Expanded(
                                       child: RadioListTile<String>(
                                         title: Text(tripProvider
-                                            .tripTypes[secondIndex]["name"]),
+                                            .tripTypes[firstIndex]["name"]),
                                         value: tripProvider
-                                            .tripTypes[secondIndex]["id"]
+                                            .tripTypes[firstIndex]["id"]
                                             .toString(),
                                         groupValue:
                                             tripProvider.selectedTripType,
@@ -1420,216 +1420,234 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                         },
                                       ),
                                     ),
-                                ],
-                              );
-                            },
-                          ),
-                          const Divider(height: 1),
-                          Builder(
-                            builder: (context) {
-                              final selectedTrip =
-                                  tripProvider.tripTypes.firstWhere(
-                                (trip) =>
-                                    trip["id"].toString() ==
-                                    tripProvider.selectedTripType,
-                                orElse: () => null,
-                              );
-
-                              return selectedTrip != null
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                            "Rent: ${selectedTrip["price_label"]} Per Minute"),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 6),
-                                          child: Row(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          TouristScreen(),
-                                                    ),
-                                                  );
-                                                },
-                                                child: const Row(
-                                                  children: [
-                                                    Icon(Icons.place,
-                                                        color: Colors.blue),
-                                                    SizedBox(width: 4),
-                                                    Text(
-                                                      "Tourist Attractions",
-                                                      style: TextStyle(
-                                                        color: Colors.blue,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                    if (secondIndex <
+                                        tripProvider.tripTypes.length)
+                                      Expanded(
+                                        child: RadioListTile<String>(
+                                          title: Text(tripProvider
+                                              .tripTypes[secondIndex]["name"]),
+                                          value: tripProvider
+                                              .tripTypes[secondIndex]["id"]
+                                              .toString(),
+                                          groupValue:
+                                              tripProvider.selectedTripType,
+                                          onChanged: (value) {
+                                            tripProvider
+                                                .setSelectedTripType(value!);
+                                          },
                                         ),
-                                      ],
-                                    )
-                                  : Container();
-                            },
+                                      ),
+                                  ],
+                                );
+                              },
+                            ),
+                            const Divider(height: 1),
+                            Builder(
+                              builder: (context) {
+                                final selectedTrip =
+                                    tripProvider.tripTypes.firstWhere(
+                                  (trip) =>
+                                      trip["id"].toString() ==
+                                      tripProvider.selectedTripType,
+                                  orElse: () => null,
+                                );
+
+                                return selectedTrip != null
+                                    ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Text(
+                                              "Rent: ${selectedTrip["price_label"]} Per Minute"),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 6),
+                                            child: Row(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            TouristScreen(),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: const Row(
+                                                    children: [
+                                                      Icon(Icons.place,
+                                                          color: Colors.blue),
+                                                      SizedBox(width: 4),
+                                                      Text(
+                                                        "Tourist Attractions",
+                                                        style: TextStyle(
+                                                          color: Colors.blue,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : Container();
+                              },
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 240,
+              left: 10,
+              right: 10,
+              child: Column(
+                children: [
+                  // ----------- Pickup Dropdown -------------
+                  PopupMenuButton<String>(
+                    onSelected: (value) async {
+                      final parts = value.split('(ID:');
+                      setState(() {
+                        _pickupCity = parts[0].trim();
+                        _pickupId = parts.length > 1
+                            ? parts[1].replaceAll(')', '').trim()
+                            : null;
+                        _dropCity = null;
+                        _dropLocationapi.clear();
+                      });
+                      if (_pickupId != null) {
+                        final dropList =
+                            await fetchDropLocationByPickupId(_pickupId!);
+                        setState(() {
+                          _dropLocationapi = dropList
+                              .map((e) => '${e.name} (ID: ${e.id})')
+                              .toList();
+                        });
+                      }
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return locations.map((location) {
+                        return PopupMenuItem<String>(
+                          value: '${location.name} (ID: ${location.id})',
+                          child: Text(location.name),
+                        );
+                      }).toList();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.location_on),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _pickupCity ?? "Select Pickup Location",
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          const Icon(Icons.keyboard_arrow_down),
+                        ],
+                      ),
+                    ),
+                    offset: const Offset(0, 40),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    color: Colors.white,
+                  ),
+
+                  const SizedBox(height: 5),
+
+                  // ---------- Destination Dropdown ------------
+                  PopupMenuButton<String>(
+                    onSelected: (value) {
+                      final parts = value.split('(ID:');
+                      final selectedName = parts[0].trim();
+
+                      if (_pickupCity == selectedName) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                "Pickup and Destination cannot be the same!"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        setState(() {
+                          _dropCity = null;
+                        });
+                      } else {
+                        setState(() {
+                          _dropCity = selectedName;
+                        });
+                      }
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return _dropLocationapi.map((location) {
+                        return PopupMenuItem<String>(
+                          value: location,
+                          child: Text(location.split('(ID:')[0]),
+                        );
+                      }).toList();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.location_on),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _dropCity ?? "Select Destination Location",
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          const Icon(Icons.keyboard_arrow_down),
+                        ],
+                      ),
+                    ),
+                    offset: const Offset(0, 40),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    color: Colors.white,
+                  ),
+                ],
               ),
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 240,
-            left: 10,
-            right: 10,
-            child: Column(
-              children: [
-                // ----------- Pickup Dropdown -------------
-                PopupMenuButton<String>(
-                  onSelected: (value) async {
-                    final parts = value.split('(ID:');
-                    setState(() {
-                      _pickupCity = parts[0].trim();
-                      _pickupId = parts.length > 1
-                          ? parts[1].replaceAll(')', '').trim()
-                          : null;
-                      _dropCity = null;
-                      _dropLocationapi.clear();
-                    });
-                    if (_pickupId != null) {
-                      final dropList =
-                          await fetchDropLocationByPickupId(_pickupId!);
-                      setState(() {
-                        _dropLocationapi = dropList
-                            .map((e) => '${e.name} (ID: ${e.id})')
-                            .toList();
-                      });
-                    }
-                  },
-                  itemBuilder: (BuildContext context) {
-                    return locations.map((location) {
-                      return PopupMenuItem<String>(
-                        value: '${location.name} (ID: ${location.id})',
-                        child: Text(location.name),
-                      );
-                    }).toList();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.location_on),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            _pickupCity ?? "Select Pickup Location",
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        const Icon(Icons.keyboard_arrow_down),
-                      ],
-                    ),
-                  ),
-                  offset: const Offset(0, 40),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  color: Colors.white,
-                ),
-
-                const SizedBox(height: 5),
-
-                // ---------- Destination Dropdown ------------
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    final parts = value.split('(ID:');
-                    final selectedName = parts[0].trim();
-
-                    if (_pickupCity == selectedName) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              "Pickup and Destination cannot be the same!"),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                      setState(() {
-                        _dropCity = null;
-                      });
-                    } else {
-                      setState(() {
-                        _dropCity = selectedName;
-                      });
-                    }
-                  },
-                  itemBuilder: (BuildContext context) {
-                    return _dropLocationapi.map((location) {
-                      return PopupMenuItem<String>(
-                        value: location,
-                        child: Text(location.split('(ID:')[0]),
-                      );
-                    }).toList();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.location_on),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            _dropCity ?? "Select Destination Location",
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        const Icon(Icons.keyboard_arrow_down),
-                      ],
-                    ),
-                  ),
-                  offset: const Offset(0, 40),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  color: Colors.white,
-                ),
-              ],
-            ),
-          )
-        ]));
+            )
+          ])),
+    );
   }
 
   final Set<Polyline> _polylines = {};

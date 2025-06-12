@@ -2,14 +2,14 @@
 import 'dart:convert';
 import 'dart:io';
 //import 'package:easy_localization/easy_localization.dart';
-import 'package:easymotorbike/NewScreen/homenew.dart';
+//import 'package:easymotorbike/NewScreen/homenew.dart';
 //import 'package:easymotorbike/NewScreen/login.dart';
 import 'package:easymotorbike/Screen/beforelogin.dart';
 import 'package:easymotorbike/notification/notification_service.dart';
 //import 'package:easymotorbike/settings/setting.dart';
 import 'package:http/http.dart' as http;
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
-import 'package:easymotorbike/Screen/homescreen.dart';
+//import 'package:easymotorbike/Screen/homescreen.dart';
 import 'package:flutter/material.dart';
 //import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -145,7 +145,7 @@ class _AsplashscreenState extends State<Asplashscreen> {
           // 🔹 Background Image - full screen
           SizedBox.expand(
             child: Image.asset(
-              'assets/splash.jpg',
+              'assets/splash.png',
               fit: BoxFit.fill,
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -239,7 +239,7 @@ class _AsplashscreenState extends State<Asplashscreen> {
       print("📵 iOS detected – skipping notification setup");
     }
     fetchBannerImages();
-    _atomaticmove();
+    // _atomaticmove();
   }
 
   Future<void> fetchBannerImages() async {
@@ -260,14 +260,14 @@ class _AsplashscreenState extends State<Asplashscreen> {
     }
   }
 
-  Future<void> _atomaticmove() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    if (token != null) {
-      _checkUserLoggedIn();
-    }
-    return;
-  }
+  // Future<void> _atomaticmove() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? token = prefs.getString('token');
+  //   if (token != null) {
+  //     _checkUserLoggedIn();
+  //   }
+  //   return;
+  // }
 
   Future<void> _checkUserLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -279,18 +279,18 @@ class _AsplashscreenState extends State<Asplashscreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => HomeScreen(
-            Mobile: mobile,
-            Token: token,
-            registered_date: registeredDate,
-          ),
+          builder: (context) => BeamLoginScreen(
+              // Mobile: mobile,
+              // Token: token,
+              // registered_date: registeredDate,
+              ),
         ),
       );
     } else if (token != null && mobile != null) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const Homenew(),
+          builder: (context) => const BeamLoginScreen(),
         ),
       );
     } else {

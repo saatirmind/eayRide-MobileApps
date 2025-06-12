@@ -98,7 +98,7 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
             Lottie.asset(
               'assets/lang/walletfound.json',
               width: MediaQuery.of(context).size.width * 1,
-              height: MediaQuery.of(context).size.width * 0.7,
+              height: MediaQuery.of(context).size.width * 0.6,
               fit: BoxFit.contain,
             ),
             const Spacer(),

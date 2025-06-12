@@ -2,8 +2,8 @@
 import 'dart:async';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/AppColors.dart/VehicleLocationProvider.dart';
-import 'package:easymotorbike/Placelist/drop_station_screen.dart';
-import 'package:easymotorbike/Placelist/new_place.dart';
+//import 'package:easymotorbike/Placelist/drop_station_screen.dart';
+//import 'package:easymotorbike/Placelist/new_place.dart';
 import 'package:easymotorbike/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -65,13 +65,13 @@ class _SplashScreenState extends State<SplashScreen>
     if (vehicleno != null && vehicleno.isNotEmpty) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const MapScreen(),
+          builder: (context) => const Asplashscreen(),
         ),
       );
     } else if (bookingToken != null && bookingToken.isNotEmpty) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const DropStationsScreen(),
+          builder: (context) => const Asplashscreen(),
         ),
       );
       if (mounted) {

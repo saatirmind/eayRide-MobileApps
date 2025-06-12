@@ -17,16 +17,16 @@ class EasyrideColors {
   static const Color pureWhite = Color(0xFFFFFFFF); // Contrast Background
 
   static const Color background = Color(0xFFf2f6ff);
-  static const Color buttonColor = Color.fromARGB(255, 11, 155, 11);
-  static const Color buttontextColor = Color.fromARGB(255, 248, 249, 250);
+  static const Color buttonColor = Color(0xFF22B14D);
+  static const Color buttontextColor = Color(0xFFFFFFFF);
   static const Color successSnak = Color.fromARGB(255, 54, 127, 69);
   static const Color Alertsank = Color(0xFFE74C3C);
-  static const Color Drawerbackground = Color(0xFFf2f6ff);
-  static const Color Drawerheaderbackground = Color.fromARGB(255, 11, 155, 11);
-  static const Color Drawerheadertext = Color(0xFFf2f6ff);
+  static const Color Drawerbackground = Color(0xFFFFFFFF);
+  static const Color Drawerheaderbackground = Color(0xFF22B14D);
+  static const Color Drawerheadertext = Color(0xFFFFFFFF);
   static const Color Drawertext = Color.fromARGB(193, 1, 5, 9);
   static const Color Drawericon = Color.fromARGB(255, 34, 97, 160);
-  static const Color Pramotionbannertext = Color.fromARGB(255, 248, 249, 250);
+  static const Color Pramotionbannertext = Color(0xFFFFFFFF);
   static const Color Dropertext = Color.fromARGB(255, 248, 249, 250);
   static const Color Scannerframe = Color.fromARGB(255, 11, 155, 11);
 }
