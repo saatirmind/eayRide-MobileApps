@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:easymotorbike/AppColors.dart/profile_completion_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -9,8 +9,8 @@ import 'package:easymotorbike/AppColors.dart/userprovider.dart';
 import '../AppColors.dart/walletapi.dart';
 import '../Drawer/drawer.dart';
 import '../DrawerWidget/healp.dart';
+import '../DrawerWidget/updateprofile.dart';
 import '../Payment/dummypayment.dart';
-import '../Screen/Qrscannerscreen.dart';
 import '../Dummyscreen/dummyhome.dart';
 import '../Screen/homescreen.dart';
 
@@ -30,19 +30,25 @@ class _MainScreenState extends State<MainScreen> {
       Token: '',
       registered_date: '',
     ),
-    const HelpScreen(),
     const Drawerscreen(),
+    const HelpScreen(),
   ];
 
   @override
   void initState() {
     super.initState();
     GetProfile(context);
+    loadProfileCompletion();
     Provider.of<WalletProvider>(context, listen: false)
         .fetchWalletHistory(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchAndShowMonthlyPass();
     });
+  }
+
+  void loadProfileCompletion() async {
+    Provider.of<ProfileCompletionProvider>(context, listen: false)
+        .fetchProfileCompletion();
   }
 
   Future<void> _fetchAndShowMonthlyPass() async {
@@ -96,8 +102,8 @@ class _MainScreenState extends State<MainScreen> {
           TabItem(icon: Icons.home, title: 'Home'),
           TabItem(icon: Icons.account_balance_wallet, title: 'Payments'),
           TabItem(icon: Icons.qr_code_scanner),
-          TabItem(icon: Icons.support, title: 'Support'),
           TabItem(icon: Icons.menu, title: 'Menu'),
+          TabItem(icon: Icons.support, title: 'Support'),
         ],
         onTap: (int index) {
           setState(() {
@@ -123,6 +129,8 @@ class _MonthlyPassDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       backgroundColor: Colors.transparent,
       child: Container(
+        height: MediaQuery.sizeOf(context).height * 0.4,
+        width: MediaQuery.sizeOf(context).width * 0.55,
         decoration: BoxDecoration(
           color: EasyrideColors.pureWhite,
           borderRadius: BorderRadius.circular(20),
@@ -134,8 +142,23 @@ class _MonthlyPassDialog extends StatelessWidget {
               child: Image.network(
                 data.imageUrl,
                 fit: BoxFit.fill,
-                height: MediaQuery.sizeOf(context).height * 0.45,
-                width: MediaQuery.sizeOf(context).width * 0.7,
+                height: double.infinity,
+                width: double.infinity,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+
+                  return Container(
+                    color: Colors.grey.shade200,
+                    alignment: Alignment.center,
+                    child: const CircularProgressIndicator(),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(
+                    child:
+                        Icon(Icons.broken_image, color: Colors.grey, size: 40),
+                  );
+                },
               ),
             ),
 
@@ -165,6 +188,12 @@ class _MonthlyPassDialog extends StatelessWidget {
                 onTap: () {
                   Navigator.pop(context);
                   // Navigation to purchase screen if needed
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProfileScreen(),
+                    ),
+                  );
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -175,7 +204,7 @@ class _MonthlyPassDialog extends StatelessWidget {
                   ),
                   alignment: Alignment.center,
                   child: const Text(
-                    'Buy Pass',
+                    'Update Profile',
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),

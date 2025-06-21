@@ -151,7 +151,7 @@ class _HomeScreen9State extends State<HomeScreen9> {
                       child: const InfoCard(
                         title: "Plans available",
                         subtitle: "View plans",
-                        iconData: Icons.card_membership, // 👈 your desired icon
+                        iconData: Icons.card_membership,
                       ),
                     ),
                     const InfoCard(
@@ -169,6 +169,16 @@ class _HomeScreen9State extends State<HomeScreen9> {
                       subtitle: "Secure a ride",
                       iconData: Icons.schedule_send,
                     ),
+                    const InfoCard(
+                      title: "How to Ride",
+                      subtitle: "Learn to ride",
+                      iconData: Icons.directions_bike,
+                    ),
+                    const InfoCard(
+                      title: "How to Park",
+                      subtitle: "Learn to park",
+                      iconData: Icons.local_parking,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 80),
@@ -184,7 +194,7 @@ class _HomeScreen9State extends State<HomeScreen9> {
 class InfoCard extends StatelessWidget {
   final String title;
   final String subtitle;
-  final IconData iconData; // 👈 imagePath ki jagah icon
+  final IconData iconData;
 
   const InfoCard({
     super.key,
@@ -231,7 +241,7 @@ class InfoCard extends StatelessWidget {
             child: Icon(
               iconData,
               size: 48,
-              color: Colors.deepPurple,
+              color: EasyrideColors.vibrantGreen,
             ),
           ),
           const SizedBox(height: 8),

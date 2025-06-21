@@ -105,7 +105,25 @@ class _BottomBarState extends State<BottomBar> {
     );
   }
 
-  void _handleStartButton() {
+  void _handleStartButton() async {
+    final prefs = await SharedPreferences.getInstance();
+    final pickupId = prefs.getString('pickupCityId');
+    final destinationId = prefs.getString('destinationCityId');
+
+    if (pickupId == null ||
+        pickupId.isEmpty ||
+        destinationId == null ||
+        destinationId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select Pickup and Destination Location first'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // ✅ Proceed if both IDs are present
     Navigator.push(
       context,
       MaterialPageRoute(

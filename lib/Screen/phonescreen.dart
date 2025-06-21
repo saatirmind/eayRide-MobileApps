@@ -61,10 +61,18 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
     return Scaffold(
       backgroundColor: EasyrideColors.background,
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: EasyrideColors.background,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding:
-              const EdgeInsets.only(top: 50, right: 16, left: 16, bottom: 0),
+          padding: const EdgeInsets.only(right: 16, left: 16, bottom: 0),
           child: Form(
             key: _formKey1,
             child: Column(
@@ -142,9 +150,9 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                   decoration: InputDecoration(
                     prefixIcon: const Padding(
                       padding: EdgeInsets.only(left: 30, right: 58),
-                      child: Icon(Icons.description),
+                      child: Icon(Icons.email),
                     ),
-                    hintText: 'Passport/NRIC Number'.tr(),
+                    hintText: 'Email',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: const BorderSide(
@@ -181,19 +189,19 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                       ),
                     ),
                     counterText: '',
-                    counter: const Text(
-                      '',
-                    ),
+                    counter: const Text(''),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Passport/NRIC Number is required';
-                    } else if (value.length < 3) {
-                      return 'Passport/NRIC Number must be at least 3 characters';
+                      return 'Email is required';
+                    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$')
+                        .hasMatch(value)) {
+                      return 'Enter a valid email address';
                     }
                     return null;
                   },
                 ),
+
                 TextFormField(
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
@@ -488,7 +496,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         'mobile': phoneNumber,
         'mobile_code': countryCode,
         'fullname': fullnameController.text,
-        'passport_or_nric_no': passportController.text,
+        'email': passportController.text,
       }),
     );
     final responseData = jsonDecode(response.body);

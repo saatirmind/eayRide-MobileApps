@@ -13,6 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../Screen/Complete.dart';
+
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
@@ -416,7 +418,7 @@ class _MapScreenState extends State<MapScreen> {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const DropStationsScreen(),
+                      builder: (context) => const CompleteRideScreen(),
                     ),
                     (Route<dynamic> route) => false,
                   );

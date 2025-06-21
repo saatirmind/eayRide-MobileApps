@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
+import 'package:easymotorbike/AppColors.dart/profile_completion_provider.dart';
 import 'package:easymotorbike/AppColors.dart/webview.dart';
 //import 'package:easymotorbike/AppColors.dart/webview.dart';
 import 'package:easymotorbike/DrawerWidget/Logoutfunction.dart';
@@ -14,6 +15,7 @@ import 'package:easymotorbike/DrawerWidget/updateprofile.dart';
 import 'package:easymotorbike/Payment/Easyridecredits.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -452,6 +454,7 @@ class _DrawerscreenState extends State<Drawerscreen> {
     loadAppVersion();
   }
 
+  // double? profilePercent;
   Future<void> loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -471,6 +474,7 @@ class _DrawerscreenState extends State<Drawerscreen> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    final profileProvider = Provider.of<ProfileCompletionProvider>(context);
 
     return Scaffold(
       backgroundColor: EasyrideColors.Drawerbackground,
@@ -485,11 +489,7 @@ class _DrawerscreenState extends State<Drawerscreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProfileScreen(
-                          Mobile: mobile ?? '',
-                          Token: token ?? '',
-                          registered_date: registeredDate ?? '',
-                        ),
+                        builder: (context) => ProfileScreen(),
                       ),
                     );
                   },
@@ -500,11 +500,26 @@ class _DrawerscreenState extends State<Drawerscreen> {
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.account_circle,
-                          color: EasyrideColors.Drawerheadertext,
-                          size: 40,
-                        ),
+                        profileProvider.profilePercent != null
+                            ? CircularPercentIndicator(
+                                radius: 30.0,
+                                lineWidth: 5.0,
+                                animation: true,
+                                percent:
+                                    (profileProvider.profilePercent! / 100),
+                                center: Text(
+                                  "${profileProvider.profilePercent!.toInt()}%",
+                                  style: const TextStyle(
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: EasyrideColors.Drawerheadertext,
+                                  ),
+                                ),
+                                progressColor: Colors.blue,
+                                backgroundColor: Colors.grey.shade300,
+                                circularStrokeCap: CircularStrokeCap.round,
+                              )
+                            : const CircularProgressIndicator(),
                         const SizedBox(width: 10),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -660,13 +675,14 @@ class _DrawerscreenState extends State<Drawerscreen> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      backgroundColor: EasyrideColors.Drawerheaderbackground,
+                      backgroundColor: EasyrideColors.pureWhite,
                       title: const Center(
-                        child: Icon(Icons.logout, size: 64, color: Colors.red),
+                        child:
+                            Icon(Icons.logout, size: 64, color: Colors.black),
                       ),
                       content: const Text(
                         'Are you sure you want to log out?',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        style: TextStyle(fontSize: 16, color: Colors.black),
                         textAlign: TextAlign.center,
                       ),
                       actionsAlignment: MainAxisAlignment.spaceEvenly,
@@ -675,24 +691,25 @@ class _DrawerscreenState extends State<Drawerscreen> {
                           width: MediaQuery.of(context).size.width * 0.3,
                           child: TextButton(
                             style: TextButton.styleFrom(
-                                backgroundColor: Colors.blue),
+                                backgroundColor: Colors.greenAccent),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
                             child: const Text('No',
-                                style: TextStyle(color: Colors.white)),
+                                style: TextStyle(color: Colors.black)),
                           ),
                         ),
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.3,
                           child: TextButton(
                             style: TextButton.styleFrom(
-                                backgroundColor: Colors.red),
+                                backgroundColor:
+                                    EasyrideColors.Drawerheaderbackground),
                             onPressed: () {
                               logout(context);
                             },
                             child: const Text('Yes',
-                                style: TextStyle(color: Colors.white)),
+                                style: TextStyle(color: Colors.black)),
                           ),
                         ),
                       ],

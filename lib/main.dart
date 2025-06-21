@@ -6,6 +6,7 @@ import 'package:easymotorbike/AppColors.dart/VehicleLocationProvider.dart';
 import 'package:easymotorbike/AppColors.dart/currentlocationprovide.dart';
 import 'package:easymotorbike/AppColors.dart/drop_station_provider.dart';
 import 'package:easymotorbike/AppColors.dart/polyline_provider.dart';
+import 'package:easymotorbike/AppColors.dart/profile_completion_provider.dart';
 import 'package:easymotorbike/AppColors.dart/stationprovider.dart';
 import 'package:easymotorbike/AppColors.dart/tripprovide.dart';
 import 'package:easymotorbike/AppColors.dart/userprovider.dart';
@@ -57,6 +58,7 @@ Future<void> main() async {
           ChangeNotifierProvider(create: (_) => DropStationProvider()),
           ChangeNotifierProvider(create: (_) => VehicleVisibilityProvider()),
           ChangeNotifierProvider(create: (_) => PolylineProvider()),
+          ChangeNotifierProvider(create: (_) => ProfileCompletionProvider()),
           ChangeNotifierProvider(
               create: (context) => LocationTrackingProvider()),
           ChangeNotifierProvider(

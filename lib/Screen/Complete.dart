@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:easymotorbike/AppColors.dart/VehicleLocationProvider.dart';
 import 'package:easymotorbike/AppColors.dart/currentlocationprovide.dart';
-import 'package:easymotorbike/AppColors.dart/drop_station_provider.dart';
+//import 'package:easymotorbike/AppColors.dart/drop_station_provider.dart';
 import 'package:easymotorbike/AppColors.dart/walletapi.dart';
 import 'package:easymotorbike/Payment/InsufficientAmount.dart';
 import 'package:easymotorbike/Screen/asplashscreen.dart';
@@ -120,7 +120,8 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
         });
         return;
       }
-
+      final prefs = await SharedPreferences.getInstance();
+      final destinationId = prefs.getString('destinationCityId');
       if (_selectedPhoto == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -140,20 +141,20 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
       final vehicleProvider =
           Provider.of<VehicleLocationProvider>(context, listen: false);
       await vehicleProvider.fetchVehicleLocation();
-      final dropprovider =
-          Provider.of<DropStationProvider>(context, listen: false);
+      //final dropprovider =
+      // Provider.of<DropStationProvider>(context, listen: false);
 
       print("🚀 Sending Data:");
       print("📍 Booking Token: $bookingToken");
       print("📍 Latitude: ${vehicleProvider.latitude}");
       print("📍 Longitude: ${vehicleProvider.longitude}");
-      print("📍 Drop ID: ${dropprovider.selectedStationId}");
+      print("📍 Drop ID: $destinationId");
       print("🖼️ Image Path: ${_selectedPhoto!.path}");
 
       request.fields['booking_token'] = bookingToken;
       request.fields['current_lat'] = vehicleProvider.latitude.toString();
       request.fields['current_long'] = vehicleProvider.longitude.toString();
-      request.fields['drop_id'] = dropprovider.selectedStationId.toString();
+      request.fields['drop_id'] = destinationId ?? '';
       request.files.add(await http.MultipartFile.fromPath(
         'image',
         _selectedPhoto!.path,
@@ -164,7 +165,7 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
       if (response.statusCode == 201) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('booking_token');
-
+        await prefs.remove('destinationCityId');
         setState(() {
           _isLoading = false;
           _isSubmitted = true;

@@ -79,10 +79,10 @@ class _RidingstartState extends State<Ridingstart> {
                 ),
               ),
               const SizedBox(height: 10),
-              Text(
-                'Your ride will be charged at ${tripProvider.selectedTripPrice} per minute',
-                style: const TextStyle(fontSize: 16, color: Colors.black),
-              ),
+              // Text(
+              //   'Your ride will be charged at ${tripProvider.selectedTripPrice}',
+              //   style: const TextStyle(fontSize: 16, color: Colors.black),
+              // ),
               const SizedBox(height: 16),
               Text(
                 'Vehicle No. : ${widget.Vehicle_no}',
@@ -358,6 +358,9 @@ class _RidingstartState extends State<Ridingstart> {
     await providecity.fetchcityLocation();
 
     final token = await AppApi.getToken();
+    final prefs = await SharedPreferences.getInstance();
+    final pickupId = prefs.getString('pickupCityId');
+    final destinationId = prefs.getString('destinationCityId');
 
     if (token == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -385,6 +388,8 @@ class _RidingstartState extends State<Ridingstart> {
           'current_long': widget.longitude,
           'trip_type': provider.selectedTripType,
           'city': providecity.cityName,
+          'pickup_id': pickupId,
+          'drop_id': destinationId
         }),
       );
       print("Response Data: ${response.body}");
@@ -402,6 +407,7 @@ class _RidingstartState extends State<Ridingstart> {
           await prefs.setString('booking_token', Bookingtoken);
           await prefs.setString('Messasge', Messasge);
           await prefs.setString('VehicleNo', widget.Vehicle_no);
+          await prefs.remove('pickupCityId');
 
           setState(() {
             _isLoading = false;

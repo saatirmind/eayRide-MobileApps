@@ -145,7 +145,7 @@ class _AsplashscreenState extends State<Asplashscreen> {
           // 🔹 Background Image - full screen
           SizedBox.expand(
             child: Image.asset(
-              'assets/splash.png',
+              'assets/splsh1.jpg',
               fit: BoxFit.fill,
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -156,7 +156,7 @@ class _AsplashscreenState extends State<Asplashscreen> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Spacer(),
+              const Spacer(),
 
               const Column(
                 children: [
@@ -170,7 +170,7 @@ class _AsplashscreenState extends State<Asplashscreen> {
                   ),
                   Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 24.0, vertical: 12),
+                        EdgeInsets.symmetric(horizontal: 24.0, vertical: 1),
                     child: Text(
                       'Join now for the most fun, affordable and eco-friendly way to get around town.',
                       textAlign: TextAlign.center,

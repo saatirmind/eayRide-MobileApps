@@ -8,24 +8,34 @@ import 'package:easymotorbike/DrawerWidget/DateInputFormatter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/gestures.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../AppColors.dart/profile_completion_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final String Mobile;
-  final String registered_date;
-
-  final String Token;
-
-  const ProfileScreen(
-      {super.key,
-      required this.Mobile,
-      required this.Token,
-      required this.registered_date});
+  const ProfileScreen({
+    super.key,
+  });
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  String? mobile;
+  String? token;
+  String? registeredDate;
+
+  Future<void> loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      mobile = prefs.getString('mobileno');
+      token = prefs.getString('token');
+      registeredDate = prefs.getString('registereddate');
+    });
+  }
+
   String? profileImage;
   bool promotionalEmails = false;
   final _dobController = TextEditingController();
@@ -34,6 +44,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _emailController = TextEditingController();
   final _nationalityController = TextEditingController();
   final _emergencyController = TextEditingController();
+  final _passportNumber = TextEditingController();
+
   final _emergencyrelationController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
@@ -45,6 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _familyNameController.dispose();
     _nationalityController.dispose();
     _emergencyController.dispose();
+    _passportNumber.dispose();
     _emergencyrelationController.dispose();
 
     _emailController.dispose();
@@ -124,14 +137,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(widget.Mobile),
+                        child: Text(mobile!),
                       ),
                     ),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          widget.registered_date,
+                          registeredDate ?? '',
                           style: const TextStyle(
                               color: Colors.green, fontWeight: FontWeight.w500),
                         ),
@@ -209,7 +222,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const Row(
                       children: [
                         Text(
-                          'Given Name',
+                          'Full Name',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -247,50 +260,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Row(
-                      children: [
-                        Text(
-                          'Family Name',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          '*',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 1),
-                    TextFormField(
-                      controller: _familyNameController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        prefixIcon: const Icon(Icons.edit),
-                        counter: const Text(
-                          '',
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your Family name';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ),
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     const Row(
+                //       children: [
+                //         Text(
+                //           'Family Name',
+                //           style: TextStyle(
+                //             fontSize: 16,
+                //             fontWeight: FontWeight.bold,
+                //           ),
+                //         ),
+                //         SizedBox(width: 4),
+                //         Text(
+                //           '*',
+                //           style: TextStyle(
+                //             color: Colors.red,
+                //             fontSize: 16,
+                //             fontWeight: FontWeight.bold,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //     const SizedBox(height: 1),
+                //     TextFormField(
+                //       controller: _familyNameController,
+                //       decoration: InputDecoration(
+                //         border: OutlineInputBorder(
+                //           borderRadius: BorderRadius.circular(10),
+                //         ),
+                //         prefixIcon: const Icon(Icons.edit),
+                //         counter: const Text(
+                //           '',
+                //         ),
+                //       ),
+                //       validator: (value) {
+                //         if (value == null || value.isEmpty) {
+                //           return 'Please enter your Family name';
+                //         }
+                //         return null;
+                //       },
+                //     ),
+                //   ],
+                // ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -388,6 +401,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const Row(
                       children: [
                         Text(
+                          'Passport/NRIC Number',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          '*',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 1),
+                    TextFormField(
+                      controller: _passportNumber,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: const Icon(Icons.badge),
+                        counter: const Text(
+                          '',
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Passport/NRIC Number';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        Text(
                           'Emergency Number',
                           style: TextStyle(
                             fontSize: 16,
@@ -421,44 +478,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Row(
-                      children: [
-                        Text(
-                          'Emergency Relation',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          '(Optional)',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 1),
-                    TextFormField(
-                      controller: _emergencyrelationController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        prefixIcon: const Icon(Icons.group),
-                        counter: const Text(
-                          '',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     const Row(
+                //       children: [
+                //         Text(
+                //           'Emergency Relation',
+                //           style: TextStyle(
+                //             fontSize: 16,
+                //             fontWeight: FontWeight.bold,
+                //           ),
+                //         ),
+                //         SizedBox(width: 4),
+                //         Text(
+                //           '(Optional)',
+                //           style: TextStyle(
+                //             color: Colors.grey,
+                //             fontSize: 14,
+                //             fontWeight: FontWeight.w500,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //     const SizedBox(height: 1),
+                //     TextFormField(
+                //       controller: _emergencyrelationController,
+                //       decoration: InputDecoration(
+                //         border: OutlineInputBorder(
+                //           borderRadius: BorderRadius.circular(10),
+                //         ),
+                //         prefixIcon: const Icon(Icons.group),
+                //         counter: const Text(
+                //           '',
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -682,6 +739,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           'nationality': _nationalityController.text,
           'family_name': _familyNameController.text,
           'emergency_contact': _emergencyController.text,
+          'passport_or_nric_no': _passportNumber.text,
           'emergency_relation': _emergencyrelationController.text,
         }),
       );
@@ -698,6 +756,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
 
           GetProfile(context);
+          Provider.of<ProfileCompletionProvider>(context, listen: false)
+              .fetchProfileCompletion();
           Navigator.pop(context);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -731,6 +791,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     fetchProfile();
+    loadUserData();
   }
 
   Future<void> fetchProfile() async {
@@ -756,7 +817,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
+        print(data);
         if (data['status'] == true) {
           final userInfo = data['data']['user_info'];
 

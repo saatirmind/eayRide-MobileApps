@@ -1229,7 +1229,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final tripProvider = Provider.of<TripProvider>(context);
-    //final userProvider = Provider.of<UserProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     return SafeArea(
       child: Scaffold(
           drawer: Drawerscreen(),
@@ -1305,7 +1305,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             //   ),
             // ),
             Positioned(
-              bottom: MediaQuery.of(context).padding.bottom + 10,
+              bottom: MediaQuery.of(context).padding.bottom + 25,
               left: 0,
               right: 0,
               child: const BottomBar(),
@@ -1371,7 +1371,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
 
             Positioned(
-              top: MediaQuery.of(context).padding.top + 124,
+              top: MediaQuery.of(context).padding.top + 130,
               left: 0,
               right: 0,
               child: Padding(
@@ -1379,7 +1379,6 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   horizontal: 18.0,
                 ),
                 child: Container(
-                  height: 110,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(15),
@@ -1396,52 +1395,52 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       ? const Center(child: CircularProgressIndicator())
                       : Column(
                           children: [
-                            ...List.generate(
-                              (tripProvider.tripTypes.length / 2).ceil(),
-                              (index) {
-                                int firstIndex = index * 2;
-                                int secondIndex = firstIndex + 1;
-                                return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Expanded(
-                                      child: RadioListTile<String>(
-                                        title: Text(tripProvider
-                                            .tripTypes[firstIndex]["name"]),
-                                        value: tripProvider
-                                            .tripTypes[firstIndex]["id"]
-                                            .toString(),
-                                        groupValue:
-                                            tripProvider.selectedTripType,
-                                        onChanged: (value) {
-                                          tripProvider
-                                              .setSelectedTripType(value!);
-                                        },
-                                      ),
-                                    ),
-                                    if (secondIndex <
-                                        tripProvider.tripTypes.length)
-                                      Expanded(
-                                        child: RadioListTile<String>(
-                                          title: Text(tripProvider
-                                              .tripTypes[secondIndex]["name"]),
-                                          value: tripProvider
-                                              .tripTypes[secondIndex]["id"]
-                                              .toString(),
-                                          groupValue:
-                                              tripProvider.selectedTripType,
-                                          onChanged: (value) {
-                                            tripProvider
-                                                .setSelectedTripType(value!);
-                                          },
-                                        ),
-                                      ),
-                                  ],
-                                );
-                              },
-                            ),
-                            const Divider(height: 1),
+                            // ...List.generate(
+                            //   (tripProvider.tripTypes.length / 2).ceil(),
+                            //   (index) {
+                            //     int firstIndex = index * 2;
+                            //     int secondIndex = firstIndex + 1;
+                            //     return Row(
+                            //       mainAxisAlignment:
+                            //           MainAxisAlignment.spaceEvenly,
+                            //       children: [
+                            //         Expanded(
+                            //           child: RadioListTile<String>(
+                            //             title: Text(tripProvider
+                            //                 .tripTypes[firstIndex]["name"]),
+                            //             value: tripProvider
+                            //                 .tripTypes[firstIndex]["id"]
+                            //                 .toString(),
+                            //             groupValue:
+                            //                 tripProvider.selectedTripType,
+                            //             onChanged: (value) {
+                            //               tripProvider
+                            //                   .setSelectedTripType(value!);
+                            //             },
+                            //           ),
+                            //         ),
+                            //         if (secondIndex <
+                            //             tripProvider.tripTypes.length)
+                            //           Expanded(
+                            //             child: RadioListTile<String>(
+                            //               title: Text(tripProvider
+                            //                   .tripTypes[secondIndex]["name"]),
+                            //               value: tripProvider
+                            //                   .tripTypes[secondIndex]["id"]
+                            //                   .toString(),
+                            //               groupValue:
+                            //                   tripProvider.selectedTripType,
+                            //               onChanged: (value) {
+                            //                 tripProvider
+                            //                     .setSelectedTripType(value!);
+                            //               },
+                            //             ),
+                            //           ),
+                            //       ],
+                            //     );
+                            //   },
+                            // ),
+
                             Builder(
                               builder: (context) {
                                 final selectedTrip =
@@ -1458,37 +1457,16 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Text(
-                                              "Rent: ${selectedTrip["price_label"]} Per Minute"),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
+                                              "${selectedTrip["price_label"]} Per KM"),
+                                          // 'RM 0.80 Per KM'),
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
                                                 horizontal: 10, vertical: 6),
                                             child: Row(
                                               children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            TouristScreen(),
-                                                      ),
-                                                    );
-                                                  },
-                                                  child: const Row(
-                                                    children: [
-                                                      Icon(Icons.place,
-                                                          color: Colors.blue),
-                                                      SizedBox(width: 4),
-                                                      Text(
-                                                        "Tourist Attractions",
-                                                        style: TextStyle(
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
+                                                Text(
+                                                  "Min RM 25 to start the ride",
+                                                  style: TextStyle(),
                                                 ),
                                               ],
                                             ),
@@ -1504,146 +1482,167 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               ),
             ),
             Positioned(
-              top: MediaQuery.of(context).padding.top + 240,
+              top: MediaQuery.of(context).padding.top + 160,
               left: 10,
               right: 10,
-              child: Column(
-                children: [
-                  // ----------- Pickup Dropdown -------------
-                  PopupMenuButton<String>(
-                    onSelected: (value) async {
-                      final parts = value.split('(ID:');
-                      setState(() {
-                        _pickupCity = parts[0].trim();
-                        _pickupId = parts.length > 1
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    // ----------- Pickup Dropdown -------------
+                    PopupMenuButton<String>(
+                      onSelected: (value) async {
+                        final parts = value.split('(ID:');
+                        setState(() {
+                          _pickupCity = parts[0].trim();
+                          _pickupId = parts.length > 1
+                              ? parts[1].replaceAll(')', '').trim()
+                              : null;
+                          _dropCity = null;
+                          _dropLocationapi.clear();
+                        });
+
+                        // ✅ Save to SharedPreferences
+                        if (_pickupId != null) {
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('pickupCityId', _pickupId!);
+                        }
+
+                        if (_pickupId != null) {
+                          final dropList =
+                              await fetchDropLocationByPickupId(_pickupId!);
+                          setState(() {
+                            _dropLocationapi = dropList
+                                .map((e) => '${e.name} (ID: ${e.id})')
+                                .toList();
+                          });
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return locations.map((location) {
+                          return PopupMenuItem<String>(
+                            value: '${location.name} (ID: ${location.id})',
+                            child: Text(location.name),
+                          );
+                        }).toList();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.location_on),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _pickupCity ?? "Select Pickup Location",
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            const Icon(Icons.keyboard_arrow_down),
+                          ],
+                        ),
+                      ),
+                      offset: const Offset(0, 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      color: Colors.white,
+                    ),
+
+                    const SizedBox(height: 5),
+
+                    // ---------- Destination Dropdown ------------
+                    PopupMenuButton<String>(
+                      onSelected: (value) {
+                        final parts = value.split('(ID:');
+                        final selectedName = parts[0].trim();
+                        final selectedId = parts.length > 1
                             ? parts[1].replaceAll(')', '').trim()
                             : null;
-                        _dropCity = null;
-                        _dropLocationapi.clear();
-                      });
-                      if (_pickupId != null) {
-                        final dropList =
-                            await fetchDropLocationByPickupId(_pickupId!);
-                        setState(() {
-                          _dropLocationapi = dropList
-                              .map((e) => '${e.name} (ID: ${e.id})')
-                              .toList();
-                        });
-                      }
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return locations.map((location) {
-                        return PopupMenuItem<String>(
-                          value: '${location.name} (ID: ${location.id})',
-                          child: Text(location.name),
-                        );
-                      }).toList();
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 1,
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.location_on),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              _pickupCity ?? "Select Pickup Location",
-                              style: const TextStyle(fontSize: 16),
+
+                        if (_pickupCity == selectedName) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  "Pickup and Destination cannot be the same!"),
+                              backgroundColor: Colors.red,
                             ),
-                          ),
-                          const Icon(Icons.keyboard_arrow_down),
-                        ],
-                      ),
-                    ),
-                    offset: const Offset(0, 40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    color: Colors.white,
-                  ),
-
-                  const SizedBox(height: 5),
-
-                  // ---------- Destination Dropdown ------------
-                  PopupMenuButton<String>(
-                    onSelected: (value) {
-                      final parts = value.split('(ID:');
-                      final selectedName = parts[0].trim();
-
-                      if (_pickupCity == selectedName) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                                "Pickup and Destination cannot be the same!"),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        setState(() {
-                          _dropCity = null;
-                        });
-                      } else {
-                        setState(() {
-                          _dropCity = selectedName;
-                        });
-                      }
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return _dropLocationapi.map((location) {
-                        return PopupMenuItem<String>(
-                          value: location,
-                          child: Text(location.split('(ID:')[0]),
-                        );
-                      }).toList();
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 1,
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.location_on),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              _dropCity ?? "Select Destination Location",
-                              style: const TextStyle(fontSize: 16),
+                          );
+                          setState(() {
+                            _dropCity = null;
+                          });
+                        } else {
+                          setState(() {
+                            _dropCity = selectedName;
+                          });
+                          if (selectedId != null) {
+                            () async {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString(
+                                  'destinationCityId', selectedId);
+                            }();
+                          }
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return _dropLocationapi.map((location) {
+                          return PopupMenuItem<String>(
+                            value: location,
+                            child: Text(location.split('(ID:')[0]),
+                          );
+                        }).toList();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
                             ),
-                          ),
-                          const Icon(Icons.keyboard_arrow_down),
-                        ],
+                          ],
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.location_on),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _dropCity ?? "Select Destination Location",
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            const Icon(Icons.keyboard_arrow_down),
+                          ],
+                        ),
                       ),
+                      offset: const Offset(0, 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      color: Colors.white,
                     ),
-                    offset: const Offset(0, 40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    color: Colors.white,
-                  ),
-                ],
+                  ],
+                ),
               ),
             )
           ])),
