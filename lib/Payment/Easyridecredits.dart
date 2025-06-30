@@ -71,17 +71,19 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                   Expanded(
-                    child: TextField(
-                      decoration: const InputDecoration(hintText: 'Min.RM10'),
-                      textAlign: TextAlign.center,
-                      controller: _reloadController,
-                      readOnly: false,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                    ),
-                  ),
+                      child: TextField(
+                    decoration: const InputDecoration(hintText: 'Min.RM10'),
+                    textAlign: TextAlign.center,
+                    controller: _reloadController,
+                    readOnly: false,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,2}'),
+                      ),
+                    ],
+                  )),
                 ],
               ),
             ),

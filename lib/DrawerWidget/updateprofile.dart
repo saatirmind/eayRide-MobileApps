@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../AppColors.dart/profile_completion_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -23,20 +22,21 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String? mobile;
-  String? token;
-  String? registeredDate;
+  String mobile = '';
+  String token = '';
+  String registeredDate = '';
+  String? profileImage;
+  String passportNo = '';
 
   Future<void> loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      mobile = prefs.getString('mobileno');
-      token = prefs.getString('token');
-      registeredDate = prefs.getString('registereddate');
+      mobile = prefs.getString('mobileno') ?? 'Unavilable Mobile no.';
+      token = prefs.getString('token') ?? '';
+      registeredDate = prefs.getString('registereddate') ?? '';
     });
   }
 
-  String? profileImage;
   bool promotionalEmails = false;
   final _dobController = TextEditingController();
   final _givenNameController = TextEditingController();
@@ -137,14 +137,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(mobile!),
+                        child: Text(mobile),
                       ),
                     ),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          registeredDate ?? '',
+                          registeredDate,
                           style: const TextStyle(
                               color: Colors.green, fontWeight: FontWeight.w500),
                         ),
@@ -820,15 +820,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
         print(data);
         if (data['status'] == true) {
           final userInfo = data['data']['user_info'];
+          final latestDoc = data['data']['latest_document'];
+          final docsList = userInfo?['documents'] as List?;
 
-          _dobController.text = userInfo['dateofbirth'] ?? '';
-          _givenNameController.text = userInfo['firstname'] ?? '';
-          _familyNameController.text = userInfo['family_name'] ?? '';
-          _emailController.text = userInfo['email'] ?? '';
-          _nationalityController.text = userInfo['nationality'] ?? '';
-          _emergencyController.text = userInfo['emergency_contact'] ?? '';
+          _dobController.text = userInfo['dateofbirth']?.toString() ?? '';
+          _givenNameController.text = userInfo['firstname']?.toString() ?? '';
+          _familyNameController.text =
+              userInfo['family_name']?.toString() ?? '';
+          _emailController.text = userInfo['email']?.toString() ?? '';
+          _nationalityController.text =
+              userInfo['nationality']?.toString() ?? '';
+          _emergencyController.text =
+              userInfo['emergency_contact']?.toString() ?? '';
           _emergencyrelationController.text =
-              userInfo['emergency_relation'] ?? '';
+              userInfo['emergency_relation']?.toString() ?? '';
+          if (latestDoc != null && latestDoc['passport_or_nric_no'] != null) {
+            passportNo = latestDoc['passport_or_nric_no'] as String;
+          }
+          if (passportNo.isEmpty && docsList != null && docsList.isNotEmpty) {
+            for (var doc in docsList) {
+              if (doc['passport_or_nric_no'] != null) {
+                passportNo = doc['passport_or_nric_no'] as String;
+                break;
+              }
+            }
+          }
+
+          _passportNumber.text = passportNo;
           setState(() {
             profileImage = userInfo['userImage'];
           });

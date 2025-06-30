@@ -120,8 +120,6 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
         });
         return;
       }
-      final prefs = await SharedPreferences.getInstance();
-      final destinationId = prefs.getString('destinationCityId');
       if (_selectedPhoto == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -148,13 +146,11 @@ class _CompleteRideScreenState extends State<CompleteRideScreen>
       print("📍 Booking Token: $bookingToken");
       print("📍 Latitude: ${vehicleProvider.latitude}");
       print("📍 Longitude: ${vehicleProvider.longitude}");
-      print("📍 Drop ID: $destinationId");
       print("🖼️ Image Path: ${_selectedPhoto!.path}");
 
       request.fields['booking_token'] = bookingToken;
       request.fields['current_lat'] = vehicleProvider.latitude.toString();
       request.fields['current_long'] = vehicleProvider.longitude.toString();
-      request.fields['drop_id'] = destinationId ?? '';
       request.files.add(await http.MultipartFile.fromPath(
         'image',
         _selectedPhoto!.path,

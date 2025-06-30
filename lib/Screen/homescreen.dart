@@ -1465,7 +1465,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                             child: Row(
                                               children: [
                                                 Text(
-                                                  "Min RM 25 to start the ride",
+                                                  "Min RM 20 to start the ride",
                                                   style: TextStyle(),
                                                 ),
                                               ],
@@ -1506,6 +1506,8 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         if (_pickupId != null) {
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.setString('pickupCityId', _pickupId!);
+                          // await prefs.setDouble('start_latitude', latitude!);
+                          // await prefs.setDouble('start_longitude', longitude!);
                         }
 
                         if (_pickupId != null) {
@@ -1594,6 +1596,9 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                   await SharedPreferences.getInstance();
                               await prefs.setString(
                                   'destinationCityId', selectedId);
+                              // await prefs.setDouble('end_latitude', latitude!);
+                              // await prefs.setDouble(
+                              //     'end_longitude', longitude!);
                             }();
                           }
                         }
@@ -1679,6 +1684,8 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   String? _pickupCity;
   String? _pickupId;
+  double? latitude;
+  double? longitude;
 
   String? _dropCity;
 

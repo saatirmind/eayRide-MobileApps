@@ -4,7 +4,9 @@ import 'package:http/http.dart' as http;
 
 Future<List<LocationdropModel>> fetchDropLocationByPickupId(
     String pickupId) async {
+  print("Step 1: Fetching token...");
   final token = await AppApi.getToken();
+  print("Token: $token");
 
   const url = AppApi.PickupDropLocation;
   final headers = {
@@ -18,18 +20,43 @@ Future<List<LocationdropModel>> fetchDropLocationByPickupId(
     "pickup_locaion": pickupId
   });
 
+  print("Step 2: Making POST request to $url");
+  print("Request Headers: $headers");
+  print("Request Body: $body");
+
   final response = await http.post(
     Uri.parse(url),
     headers: headers,
     body: body,
   );
 
-  if (response.statusCode == 200) {
-    final jsonData = jsonDecode(response.body);
-    final List<dynamic> locationList = jsonData['data']['pickup_locations'];
+  print("Step 3: Response received");
+  print("Status Code: ${response.statusCode}");
+  print("Response Body: ${response.body}");
 
-    return locationList.map((e) => LocationdropModel.fromJson(e)).toList();
+  if (response.statusCode == 200) {
+    try {
+      final jsonData = jsonDecode(response.body);
+      print("Step 4: JSON decoded");
+
+      final List<dynamic> locationList = jsonData['data']['pickup_locations'];
+      print("Step 5: Locations fetched, count = ${locationList.length}");
+
+      final result = locationList.map((e) {
+        final model = LocationdropModel.fromJson(e);
+        print("Parsed Location: $model");
+        return model;
+      }).toList();
+
+      print("Step 6: Returning result list...");
+      return result;
+    } catch (e) {
+      print("Error while decoding response: $e");
+      throw Exception("Failed to parse locations");
+    }
   } else {
+    print(
+        "Error: Failed to load locations. Status Code: ${response.statusCode}");
     throw Exception("Failed to load locations");
   }
 }
@@ -54,5 +81,10 @@ class LocationdropModel {
       name: json['name'],
       status: int.parse(json['status'].toString()),
     );
+  }
+
+  @override
+  String toString() {
+    return 'LocationdropModel(id: $id, name: $name, state: $state, status: $status)';
   }
 }

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void launchWhatsApp(BuildContext context) async {
-  final Uri whatsappUrl = Uri.parse("https://wa.me/916397937624");
+  final Uri whatsappUrl = Uri.parse("https://wa.me/60122870889");
   try {
     if (await canLaunchUrl(whatsappUrl)) {
       await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
     } else {
-      final Uri browserUrl = Uri.parse("https://wa.me/916397937624");
+      final Uri browserUrl = Uri.parse("https://wa.me/60122870889");
       if (await canLaunchUrl(browserUrl)) {
         await launchUrl(browserUrl, mode: LaunchMode.externalApplication);
       } else {

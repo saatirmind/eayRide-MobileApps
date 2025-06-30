@@ -34,9 +34,57 @@ class Ridingstart extends StatefulWidget {
 
 class _RidingstartState extends State<Ridingstart> {
   @override
+  void initState() {
+    super.initState();
+    _fetchFinalAmount();
+  }
+
+  String? amount;
+  String? perKmPrice;
+  String? distance;
+  String? from;
+  String? to;
+  Future<void> _fetchFinalAmount() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = await AppApi.getToken();
+    final tripProvider = Provider.of<TripProvider>(context, listen: false);
+    final pickupId = prefs.getString('pickupCityId') ?? '';
+    final dropId = prefs.getString('destinationCityId') ?? '';
+
+    if (token == null || pickupId.isEmpty || dropId.isEmpty) return;
+
+    try {
+      final response = await http.post(
+        Uri.parse('https://easymotorbike.asia/api/v1/check-final-amount'),
+        headers: {
+          'token': token,
+        },
+        body: {
+          'trip_type': tripProvider.selectedTripType,
+          'pickup_id': pickupId,
+          'drop_id': dropId,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body)['data'];
+        setState(() {
+          amount = data['amount'];
+          perKmPrice = data['per_km_price'];
+          distance = data['destination'];
+          from = data['from'];
+          to = data['to'];
+        });
+      }
+    } catch (e) {
+      print('Fetch amount error: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final tripProvider = Provider.of<TripProvider>(context);
     final walletProvider = Provider.of<WalletProvider>(context);
+
     return WillPopScope(
       onWillPop: () async {
         Navigator.pop(context, true);
@@ -47,12 +95,10 @@ class _RidingstartState extends State<Ridingstart> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
+            onPressed: () => Navigator.pop(context, true),
           ),
           title: const Text(
-            'Payment Screen',
+            'Payment Summary',
             style: TextStyle(color: Colors.black),
           ),
           backgroundColor: Colors.white,
@@ -69,7 +115,6 @@ class _RidingstartState extends State<Ridingstart> {
                 'Current Balance:',
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
               ),
-
               Text(
                 walletProvider.walletAmount,
                 style: const TextStyle(
@@ -78,24 +123,115 @@ class _RidingstartState extends State<Ridingstart> {
                   color: Colors.green,
                 ),
               ),
-              const SizedBox(height: 10),
-              // Text(
-              //   'Your ride will be charged at ${tripProvider.selectedTripPrice}',
-              //   style: const TextStyle(fontSize: 16, color: Colors.black),
+              const SizedBox(height: 20),
+              if (from != null && to != null)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.location_on, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'From: $from',
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.flag, color: Colors.green),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'To: $to',
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Divider(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Distance:",
+                              style: TextStyle(fontSize: 16)),
+                          Text(distance ?? '',
+                              style: const TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Per KM Price:",
+                              style: TextStyle(fontSize: 16)),
+                          Text(perKmPrice ?? '',
+                              style: const TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      const Divider(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Total Fare:",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          Text(amount ?? '',
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+              const Divider(height: 20),
+              Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 12),
+                    child: Text(
+                      'Vehicle No. : ',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: Text(
+                      widget.Vehicle_no,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const Spacer(),
+              // Lottie.asset(
+              //   'assets/lang/walletfound.json',
+              //   width: MediaQuery.of(context).size.width * 0.8,
+              //   height: MediaQuery.of(context).size.width * 0.550,
+              //   fit: BoxFit.contain,
               // ),
-              const SizedBox(height: 16),
-              Text(
-                'Vehicle No. : ${widget.Vehicle_no}',
-                style: const TextStyle(fontSize: 19, color: Colors.black),
-              ),
-              const Spacer(),
-              Lottie.asset(
-                'assets/lang/walletfound.json',
-                width: MediaQuery.of(context).size.width * 0.8,
-                height: MediaQuery.of(context).size.width * 0.550,
-                fit: BoxFit.contain,
-              ),
-              const Spacer(),
+
               GestureDetector(
                 onTap: () async {
                   await Navigator.push(
@@ -407,7 +543,6 @@ class _RidingstartState extends State<Ridingstart> {
           await prefs.setString('booking_token', Bookingtoken);
           await prefs.setString('Messasge', Messasge);
           await prefs.setString('VehicleNo', widget.Vehicle_no);
-          await prefs.remove('pickupCityId');
 
           setState(() {
             _isLoading = false;

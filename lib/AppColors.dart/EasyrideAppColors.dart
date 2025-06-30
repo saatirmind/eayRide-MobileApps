@@ -55,7 +55,10 @@ class AppApi {
   static const String startRide = '$baseUrl/start-ride';
   static const String walletactivity = '$baseUrl/wallet-activity';
   static const String Updateprofile = '$baseUrl/update';
-  static const String Couponslist = '$baseUrl/get-coupon-list';
+  static const String Couponslist =
+      '$baseUrl/get-coupon-list?coupon_type=coupon';
+  static const String planelist =
+      '$baseUrl/get-coupon-list?coupon_type=promotion';
   static const String CouponsApply = '$baseUrl/apply-coupon';
   static const String AppliedCoupons = '$baseUrl/applied-coupon-history';
   static const String Finishride = '$baseUrl/ride-finish';

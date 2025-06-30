@@ -1,10 +1,13 @@
 // ignore_for_file: file_names, use_build_context_synchronously
+import 'dart:convert';
+
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/AppColors.dart/walletapi.dart';
 import 'package:easymotorbike/Payment/cardscreen.dart';
 import 'package:easymotorbike/Payment/nextscreen.dart';
 import 'package:easymotorbike/Screen/Qrscannerscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -123,13 +126,64 @@ class _BottomBarState extends State<BottomBar> {
       return;
     }
 
-    // ✅ Proceed if both IDs are present
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const QRScannerScreen(),
-      ),
-    );
+    // 🔁 Token lena
+    final token = await AppApi.getToken();
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Token missing. Please log in again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('https://easymotorbike.asia/api/v1/check-wallet-amount'),
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final bool status = data['status'] ?? false;
+        final String message = data['message']?[0] ?? 'Something went wrong';
+
+        if (status == true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const QRScannerScreen(),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text('Failed to validate wallet. (${response.statusCode})'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _handleGroupButton() {

@@ -1,10 +1,12 @@
 // ignore_for_file: use_build_context_synchronously, file_names, avoid_print, empty_catches
 import 'dart:convert';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
-import 'package:easymotorbike/NewScreen/login.dart';
+//import 'package:easymotorbike/NewScreen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+//import '../Screen/asplashscreen.dart';
+import '../Screen/beforelogin.dart';
 
 Future<void> logout(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -52,7 +54,7 @@ Future<void> logout(BuildContext context) async {
         print("All SharedPreferences data cleared except 'BannerImageBase64'!");
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const Login()),
+          MaterialPageRoute(builder: (context) => const BeamLoginScreen()),
           (route) => false,
         );
       } else {
@@ -81,7 +83,7 @@ Future<void> logout(BuildContext context) async {
       print("All SharedPreferences data cleared except 'BannerImageBase64'!");
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const Login()),
+        MaterialPageRoute(builder: (context) => const BeamLoginScreen()),
         (route) => false,
       );
     }

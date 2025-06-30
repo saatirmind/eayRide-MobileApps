@@ -1,4 +1,5 @@
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
+import 'package:easymotorbike/Payment/creditpack.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../AppColors.dart/walletapi.dart';
@@ -30,14 +31,14 @@ class PaymentsScreen4 extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Row(
-              children: [
-                Image.asset('assets/visacardlogo.webp', height: 24),
-                const SizedBox(width: 8),
-                Image.asset('assets/mastercardlogo.png', height: 24),
-                const SizedBox(width: 8),
-                Image.asset('assets/touchngo_logo.png', height: 24),
-              ],
-            ),
+                // children: [
+                //   Image.asset('assets/visacardlogo.webp', height: 24),
+                //   const SizedBox(width: 8),
+                //   Image.asset('assets/mastercardlogo.png', height: 24),
+                //   const SizedBox(width: 8),
+                //   Image.asset('assets/touchngo_logo.png', height: 24),
+                // ],
+                ),
             const SizedBox(height: 8),
             const Text(
               "You can also add a payment method to pay for every ride.",
@@ -93,11 +94,11 @@ class PaymentsScreen4 extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Image.asset('assets/visacardlogo.webp', height: 24),
-              const SizedBox(width: 8),
-              Image.asset('assets/mastercardlogo.png', height: 24),
-              const SizedBox(width: 8),
-              Image.asset('assets/touchngo_logo.png', height: 24),
+              // Image.asset('assets/visacardlogo.webp', height: 24),
+              // const SizedBox(width: 8),
+              // Image.asset('assets/mastercardlogo.png', height: 24),
+              // const SizedBox(width: 8),
+              // Image.asset('assets/touchngo_logo.png', height: 24),
             ],
           ),
           const SizedBox(height: 16),
@@ -107,7 +108,7 @@ class PaymentsScreen4 extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const CreditsReloadScreen(),
+                    builder: (context) => const CreditPackScreen(),
                   ),
                 );
               },

@@ -556,21 +556,21 @@ class _DrawerscreenState extends State<Drawerscreen> {
                     ),
                   ),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.wallet,
-                      color: EasyrideColors.Drawericon),
-                  trailing: const Icon(Icons.arrow_forward_ios,
-                      color: EasyrideColors.Drawericon),
-                  title: Text('Wallet'.tr(),
-                      style: const TextStyle(color: EasyrideColors.Drawertext)),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CreditsReloadScreen()),
-                    );
-                  },
-                ),
+                // ListTile(
+                //   leading: const Icon(Icons.wallet,
+                //       color: EasyrideColors.Drawericon),
+                //   trailing: const Icon(Icons.arrow_forward_ios,
+                //       color: EasyrideColors.Drawericon),
+                //   title: Text('Wallet'.tr(),
+                //       style: const TextStyle(color: EasyrideColors.Drawertext)),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => const CreditsReloadScreen()),
+                //     );
+                //   },
+                // ),
                 ListTile(
                   leading: const Icon(Icons.local_offer_outlined,
                       color: EasyrideColors.Drawericon),

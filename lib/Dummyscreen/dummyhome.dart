@@ -1,9 +1,12 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+import 'dart:convert';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:easymotorbike/Screen/homescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-
+import 'package:http/http.dart' as http;
 import '../HomeScreenWidget/dummysubscrabstion.dart';
 
 class HomeScreen9 extends StatefulWidget {
@@ -69,7 +72,6 @@ class _HomeScreen9State extends State<HomeScreen9> {
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    // 1️⃣ Google Map sabse neeche
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: SizedBox(
@@ -91,7 +93,6 @@ class _HomeScreen9State extends State<HomeScreen9> {
                       ),
                     ),
 
-                    // 2️⃣ Tap detector transparent area
                     Positioned.fill(
                       child: Material(
                         color: Colors.transparent,
@@ -169,15 +170,25 @@ class _HomeScreen9State extends State<HomeScreen9> {
                       subtitle: "Secure a ride",
                       iconData: Icons.schedule_send,
                     ),
-                    const InfoCard(
-                      title: "How to Ride",
-                      subtitle: "Learn to ride",
-                      iconData: Icons.directions_bike,
+                    InkWell(
+                      onTap: () {
+                        fetchAndShowBanner(context, 'ride');
+                      },
+                      child: const InfoCard(
+                        title: "How to Ride",
+                        subtitle: "Learn to ride",
+                        iconData: Icons.directions_bike,
+                      ),
                     ),
-                    const InfoCard(
-                      title: "How to Park",
-                      subtitle: "Learn to park",
-                      iconData: Icons.local_parking,
+                    InkWell(
+                      onTap: () {
+                        fetchAndShowBanner(context, 'park');
+                      },
+                      child: const InfoCard(
+                        title: "How to Park",
+                        subtitle: "Learn to park",
+                        iconData: Icons.local_parking,
+                      ),
                     ),
                   ],
                 ),
@@ -245,6 +256,131 @@ class InfoCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+}
+
+Future<void> fetchAndShowBanner(BuildContext context, String type) async {
+  try {
+    final response = await http.get(
+      Uri.parse('https://easymotorbike.asia/api/v1/park-or-ride?type=$type'),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      if (data['status'] == true &&
+          data['data'] != null &&
+          data['data']['banners'] != null &&
+          data['data']['banners'].isNotEmpty) {
+        final bannerList = data['data']['banners'] as List;
+        final imageUrls = bannerList.map((e) => e['image'].toString()).toList();
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => FullScreenImageScreen(imageUrls: imageUrls),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No banner found.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${response.statusCode}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Exception: $e'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
+
+class FullScreenImageScreen extends StatefulWidget {
+  final List<String> imageUrls;
+
+  const FullScreenImageScreen({super.key, required this.imageUrls});
+
+  @override
+  State<FullScreenImageScreen> createState() => _FullScreenImageScreenState();
+}
+
+class _FullScreenImageScreenState extends State<FullScreenImageScreen> {
+  int currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          CarouselSlider.builder(
+            itemCount: widget.imageUrls.length,
+            itemBuilder: (context, index, realIndex) {
+              return GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Center(
+                  child: Image.network(
+                    widget.imageUrls[index],
+                    fit: BoxFit.fill,
+                    loadingBuilder: (context, child, progress) {
+                      if (progress == null) return child;
+                      return const CircularProgressIndicator(
+                          color: Colors.white);
+                    },
+                  ),
+                ),
+              );
+            },
+            options: CarouselOptions(
+              height: double.infinity,
+              viewportFraction: 1.0,
+              enableInfiniteScroll: true,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 3),
+              onPageChanged: (index, reason) {
+                setState(() {
+                  currentIndex = index;
+                });
+              },
+            ),
+          ),
+          Positioned(
+            bottom: 20,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: widget.imageUrls.asMap().entries.map((entry) {
+                final isActive = currentIndex == entry.key;
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  width: isActive ? 12 : 8,
+                  height: isActive ? 12 : 8,
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: currentIndex == entry.key
+                        ? Colors.black
+                        : Colors.black.withOpacity(0.5),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
         ],
       ),
     );
