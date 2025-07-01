@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
 class CreditsReloadScreen extends StatefulWidget {
   const CreditsReloadScreen({super.key});
@@ -72,7 +72,7 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
                   ),
                   Expanded(
                       child: TextField(
-                    decoration: const InputDecoration(hintText: 'Min.RM10'),
+                    decoration: const InputDecoration(hintText: 'Min.RM1'),
                     textAlign: TextAlign.center,
                     controller: _reloadController,
                     readOnly: false,
@@ -87,16 +87,16 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildReloadButton('25'),
-                _buildReloadButton('30'),
-                _buildReloadButton('50'),
-              ],
-            ),
-            SizedBox(height: 16),
+            // const SizedBox(height: 12),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //   children: [
+            //     _buildReloadButton('25'),
+            //     _buildReloadButton('30'),
+            //     _buildReloadButton('50'),
+            //   ],
+            // ),
+            // SizedBox(height: 16),
             Lottie.asset(
               'assets/lang/walletfound.json',
               width: MediaQuery.of(context).size.width * 1,
@@ -198,27 +198,15 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
                       });
 
                       try {
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        String? userId = prefs.getString('user_id');
+                        final requestId = await getPaymentToken(amount);
 
-                        if (userId == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("User ID not found")),
-                          );
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          return;
-                        }
-
-                        String url =
-                            'https://easymotorbike.asia/payment/create-payment?request_id=$userId&amount=$amount';
+                        final paymentUrl =
+                            'https://easymotorbike.asia/payment/create-payment?request_id=$requestId';
 
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => WebViewPage2(url: url),
+                            builder: (context) => WebViewPage2(url: paymentUrl),
                           ),
                         );
                       } catch (e) {
@@ -283,6 +271,66 @@ class _CreditsReloadScreenState extends State<CreditsReloadScreen> {
         ),
       ),
     );
+  }
+
+  Future<String> getPaymentToken(String amount) async {
+    print("🚀 Step 1: Getting app token...");
+    final token = await AppApi.getToken();
+
+    if (token == null || token.isEmpty) {
+      print("❌ Error: Token is null or empty!");
+      throw Exception("Auth token missing");
+    }
+
+    print("✅ App Token: $token");
+
+    const url = 'https://easymotorbike.asia/api/v1/get-payment-token';
+
+    final headers = {
+      'token': token,
+    };
+
+    final request = http.MultipartRequest('POST', Uri.parse(url));
+    request.headers.addAll(headers);
+
+    request.fields['amount'] = amount;
+
+    print("📡 Step 2: Sending payment token request...");
+    print("➡️ URL: $url");
+    print("➡️ Headers: $headers");
+    print("➡️ Fields: ${request.fields}");
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    print("📥 Step 3: Response received");
+    print("📄 Status Code: ${response.statusCode}");
+    print("📄 Body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      try {
+        final jsonData = jsonDecode(response.body);
+
+        print("✅ JSON Decoded: $jsonData");
+
+        if (jsonData['data'] == null || jsonData['data']['token'] == null) {
+          print("❌ Error: Token not found in response data");
+          throw Exception("Invalid response structure");
+        }
+
+        final paymentToken = jsonData['data']['token'];
+        print("🎯 Step 4: Received Payment Token: $paymentToken");
+
+        return paymentToken;
+      } catch (e) {
+        print("❌ Error parsing response: $e");
+        throw Exception("Error decoding payment token");
+      }
+    } else {
+      print("❌ Step 5: Failed to get payment token");
+      throw Exception(
+          "Failed to get payment token - Status Code: ${response.statusCode}");
+    }
   }
 
   bool _isLoading = false;
@@ -502,14 +550,14 @@ class _CreditsReloadScreen2State extends State<CreditsReloadScreen2> {
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildReloadButton('30'),
-                _buildReloadButton('50'),
-                _buildReloadButton('100'),
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //   children: [
+            //     _buildReloadButton('30'),
+            //     _buildReloadButton('50'),
+            //     _buildReloadButton('100'),
+            //   ],
+            // ),
             const Spacer(),
             GestureDetector(
               onTap: () {
@@ -605,27 +653,17 @@ class _CreditsReloadScreen2State extends State<CreditsReloadScreen2> {
                       });
 
                       try {
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        String? userId = prefs.getString('user_id');
+                        final requestId = await getPaymentToken(amount);
 
-                        if (userId == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("User ID not found")),
-                          );
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          return;
-                        }
+                        final paymentUrl =
+                            'https://easymotorbike.asia/payment/create-payment?request_id=$requestId';
 
-                        String url =
-                            'https://easymotorbike.asia/payment/create-payment?request_id=$userId&amount=$amount';
+                        print("Navigating to WebView with URL: $paymentUrl");
 
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => WebViewPage2(url: url),
+                            builder: (context) => WebViewPage2(url: paymentUrl),
                           ),
                         );
                       } catch (e) {
@@ -673,6 +711,7 @@ class _CreditsReloadScreen2State extends State<CreditsReloadScreen2> {
                 ),
               ),
             ),
+
             const SizedBox(height: 30),
             GestureDetector(
               onTap: () {},
@@ -804,6 +843,66 @@ class _CreditsReloadScreen2State extends State<CreditsReloadScreen2> {
           backgroundColor: Colors.red,
         ),
       );
+    }
+  }
+
+  Future<String> getPaymentToken(String amount) async {
+    print("🚀 Step 1: Getting app token...");
+    final token = await AppApi.getToken();
+
+    if (token == null || token.isEmpty) {
+      print("❌ Error: Token is null or empty!");
+      throw Exception("Auth token missing");
+    }
+
+    print("✅ App Token: $token");
+
+    const url = 'https://easymotorbike.asia/api/v1/get-payment-token';
+
+    final headers = {
+      'token': token,
+    };
+
+    final request = http.MultipartRequest('POST', Uri.parse(url));
+    request.headers.addAll(headers);
+
+    request.fields['amount'] = amount;
+
+    print("📡 Step 2: Sending payment token request...");
+    print("➡️ URL: $url");
+    print("➡️ Headers: $headers");
+    print("➡️ Fields: ${request.fields}");
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    print("📥 Step 3: Response received");
+    print("📄 Status Code: ${response.statusCode}");
+    print("📄 Body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      try {
+        final jsonData = jsonDecode(response.body);
+
+        print("✅ JSON Decoded: $jsonData");
+
+        if (jsonData['data'] == null || jsonData['data']['token'] == null) {
+          print("❌ Error: Token not found in response data");
+          throw Exception("Invalid response structure");
+        }
+
+        final paymentToken = jsonData['data']['token'];
+        print("🎯 Step 4: Received Payment Token: $paymentToken");
+
+        return paymentToken;
+      } catch (e) {
+        print("❌ Error parsing response: $e");
+        throw Exception("Error decoding payment token");
+      }
+    } else {
+      print("❌ Step 5: Failed to get payment token");
+      throw Exception(
+          "Failed to get payment token - Status Code: ${response.statusCode}");
     }
   }
 }

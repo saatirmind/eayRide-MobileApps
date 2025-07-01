@@ -6,12 +6,18 @@ import 'package:easymotorbike/AppColors.dart/webview.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 import 'Easyridecredits.dart';
 
-class CreditPackScreen extends StatelessWidget {
+class CreditPackScreen extends StatefulWidget {
   const CreditPackScreen({super.key});
 
+  @override
+  State<CreditPackScreen> createState() => _CreditPackScreenState();
+}
+
+class _CreditPackScreenState extends State<CreditPackScreen> {
+  final TextEditingController _reloadController = TextEditingController();
   Future<List<Coupon>> _loadCoupons() async {
     final api = ApiService();
     return await api.fetchplanlist();
@@ -61,23 +67,13 @@ class CreditPackScreen extends StatelessWidget {
               ...couponList.map((pack) => GestureDetector(
                     onTap: () async {
                       try {
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        String? userId = prefs.getString('user_id');
-
-                        if (userId == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("User ID not found")),
-                          );
-                          return;
-                        }
-
-                        // 🔄 Clean RM from amount
                         String cleanAmount = pack.discountedAmount
                             .replaceAll(RegExp(r'[^\d.]'), '');
 
+                        final requestId = await getPaymentToken(cleanAmount);
+
                         String url =
-                            'https://easymotorbike.asia/payment/create-payment?request_id=$userId&amount=$cleanAmount';
+                            'https://easymotorbike.asia/payment/create-payment?request_id=$requestId';
 
                         Navigator.push(
                           context,
@@ -146,15 +142,34 @@ class CreditPackScreen extends StatelessWidget {
                     ),
                   )),
               const Spacer(),
-
-              // const SizedBox(height: 10),
-              // const Divider(thickness: 1, color: Colors.grey),
-              // const SizedBox(height: 10),
-              // const Text(
-              //   'Credits are valid for 3 years from the date of purchase',
-              //   style: TextStyle(fontSize: 14, color: Colors.grey),
-              // ),
-              // Spacer(),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Reload Amount:',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                    Expanded(
+                        child: TextField(
+                      decoration: const InputDecoration(hintText: 'Min.RM1'),
+                      textAlign: TextAlign.center,
+                      controller: _reloadController,
+                      readOnly: false,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d*\.?\d{0,2}'),
+                        ),
+                      ],
+                    )),
+                  ],
+                ),
+              ),
+              const Spacer(),
               Container(
                 padding: const EdgeInsets.all(16),
                 color: Colors.white,
@@ -165,28 +180,82 @@ class CreditPackScreen extends StatelessWidget {
                       style: TextStyle(fontSize: 13, color: Colors.grey),
                     ),
                     const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              EasyrideColors.Drawerheaderbackground,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                    GestureDetector(
+                      onTap: _isLoading
+                          ? null
+                          : () async {
+                              final amount = _reloadController.text.trim();
+
+                              if (amount.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text("Please enter amount first")),
+                                );
+                                return;
+                              }
+
+                              setState(() {
+                                _isLoading = true;
+                              });
+
+                              try {
+                                final requestId = await getPaymentToken(amount);
+
+                                final paymentUrl =
+                                    'https://easymotorbike.asia/payment/create-payment?request_id=$requestId';
+
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        WebViewPage2(url: paymentUrl),
+                                  ),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Error: $e")),
+                                );
+                              } finally {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              }
+                            },
+                      child: IgnorePointer(
+                        ignoring: _isLoading,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          decoration: BoxDecoration(
+                            color: EasyrideColors.buttonColor,
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const CreditsReloadScreen(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Proceed to payment',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _isLoading
+                                  ? const CircularProgressIndicator(
+                                      color: EasyrideColors.buttontextColor,
+                                    )
+                                  : const Row(
+                                      children: [
+                                        Icon(Icons.wallet,
+                                            size: 24,
+                                            color: EasyrideColors.Drawericon),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Proceed to Payment',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: EasyrideColors
+                                                  .buttontextColor),
+                                        ),
+                                      ],
+                                    )
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -198,6 +267,67 @@ class CreditPackScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  bool _isLoading = false;
+  Future<String> getPaymentToken(String amount) async {
+    print("🚀 Step 1: Getting app token...");
+    final token = await AppApi.getToken();
+
+    if (token == null || token.isEmpty) {
+      print("❌ Error: Token is null or empty!");
+      throw Exception("Auth token missing");
+    }
+
+    print("✅ App Token: $token");
+
+    const url = 'https://easymotorbike.asia/api/v1/get-payment-token';
+
+    final headers = {
+      'token': token,
+    };
+
+    final request = http.MultipartRequest('POST', Uri.parse(url));
+    request.headers.addAll(headers);
+
+    request.fields['amount'] = amount;
+
+    print("📡 Step 2: Sending payment token request...");
+    print("➡️ URL: $url");
+    print("➡️ Headers: $headers");
+    print("➡️ Fields: ${request.fields}");
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    print("📥 Step 3: Response received");
+    print("📄 Status Code: ${response.statusCode}");
+    print("📄 Body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      try {
+        final jsonData = jsonDecode(response.body);
+
+        print("✅ JSON Decoded: $jsonData");
+
+        if (jsonData['data'] == null || jsonData['data']['token'] == null) {
+          print("❌ Error: Token not found in response data");
+          throw Exception("Invalid response structure");
+        }
+
+        final paymentToken = jsonData['data']['token'];
+        print("🎯 Step 4: Received Payment Token: $paymentToken");
+
+        return paymentToken;
+      } catch (e) {
+        print("❌ Error parsing response: $e");
+        throw Exception("Error decoding payment token");
+      }
+    } else {
+      print("❌ Step 5: Failed to get payment token");
+      throw Exception(
+          "Failed to get payment token - Status Code: ${response.statusCode}");
+    }
   }
 }
 

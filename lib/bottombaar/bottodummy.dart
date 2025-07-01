@@ -233,3 +233,64 @@ class MonthlyPassModel {
     );
   }
 }
+
+class MainScreen2 extends StatefulWidget {
+  @override
+  State<MainScreen2> createState() => _MainScreen2State();
+}
+
+class _MainScreen2State extends State<MainScreen2> {
+  int _selectedIndex = 1;
+
+  final List<Widget> _screens = [
+    const HomeScreen9(),
+    const PaymentsScreen4(),
+    const HomeScreen(
+      Mobile: '',
+      Token: '',
+      registered_date: '',
+    ),
+    const Drawerscreen(),
+    const HelpScreen(),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    GetProfile(context);
+    loadProfileCompletion();
+    Provider.of<WalletProvider>(context, listen: false)
+        .fetchWalletHistory(context);
+  }
+
+  void loadProfileCompletion() async {
+    Provider.of<ProfileCompletionProvider>(context, listen: false)
+        .fetchProfileCompletion();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: ConvexAppBar(
+        style: TabStyle.fixedCircle,
+        backgroundColor: Colors.white,
+        activeColor: EasyrideColors.vibrantGreen,
+        color: Colors.grey,
+        initialActiveIndex: 1,
+        items: const [
+          TabItem(icon: Icons.home, title: 'Home'),
+          TabItem(icon: Icons.account_balance_wallet, title: 'Payments'),
+          TabItem(icon: Icons.qr_code_scanner),
+          TabItem(icon: Icons.menu, title: 'Menu'),
+          TabItem(icon: Icons.support, title: 'Support'),
+        ],
+        onTap: (int index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+      ),
+    );
+  }
+}

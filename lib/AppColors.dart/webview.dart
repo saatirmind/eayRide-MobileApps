@@ -1,9 +1,11 @@
 // ignore_for_file: deprecated_member_use
 import 'package:easymotorbike/AppColors.dart/walletapi.dart';
-import 'package:easymotorbike/Payment/Easyridecredits.dart';
+//import 'package:easymotorbike/Payment/Easyridecredits.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import '../bottombaar/bottodummy.dart';
 
 class WebViewPage extends StatefulWidget {
   final String url;
@@ -94,12 +96,16 @@ class _WebViewPage2State extends State<WebViewPage2> {
             });
 
             if (url == 'https://easymotorbike.asia/api/v1/payment/callback') {
-              print("✅ Callback URL detected, closing WebView...");
-              Navigator.pushReplacement(
+              print(
+                  "✅ Callback URL detected, closing WebView and resetting stack...");
+
+              Provider.of<WalletProvider>(context, listen: false)
+                  .fetchWalletHistory(context);
+
+              Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const CreditsReloadScreen2(),
-                ),
+                MaterialPageRoute(builder: (context) => MainScreen2()),
+                (Route<dynamic> route) => false,
               );
             }
           },
