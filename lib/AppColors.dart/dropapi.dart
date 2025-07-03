@@ -38,6 +38,7 @@ Future<List<LocationdropModel>> fetchDropLocationByPickupId(
     try {
       final jsonData = jsonDecode(response.body);
       print("Step 4: JSON decoded");
+      print(jsonData);
 
       final List<dynamic> locationList = jsonData['data']['pickup_locations'];
       print("Step 5: Locations fetched, count = ${locationList.length}");
@@ -66,25 +67,35 @@ class LocationdropModel {
   final int state;
   final String name;
   final int status;
+  final double? latitude;
+  final double? longitude;
 
   LocationdropModel({
     required this.id,
     required this.state,
     required this.name,
     required this.status,
+    this.latitude,
+    this.longitude,
   });
 
-  factory LocationdropModel.fromJson(Map<String, dynamic> json) {
+  factory LocationdropModel.fromJson(Map<String, dynamic> jsonData) {
     return LocationdropModel(
-      id: json['id'],
-      state: int.parse(json['state'].toString()),
-      name: json['name'],
-      status: int.parse(json['status'].toString()),
+      id: jsonData['id'],
+      state: int.parse(jsonData['state'].toString()),
+      name: jsonData['name'],
+      status: int.parse(jsonData['status'].toString()),
+      latitude: jsonData['latitude'] != null
+          ? double.tryParse(jsonData['latitude'].toString())
+          : null,
+      longitude: jsonData['longitude'] != null
+          ? double.tryParse(jsonData['longitude'].toString())
+          : null,
     );
   }
 
   @override
   String toString() {
-    return 'LocationdropModel(id: $id, name: $name, state: $state, status: $status)';
+    return 'LocationdropModel(id: $id, name: $name, state: $state, status: $status, latitude: $latitude, longitude: $longitude)';
   }
 }

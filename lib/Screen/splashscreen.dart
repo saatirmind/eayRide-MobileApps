@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easymotorbike/Screen/asplashscreen.dart';
 
+import '../Placelist/new_place.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -21,7 +23,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  late AnimationController _animationController;
+  //late AnimationController _animationController;
   //late Animation<double> _animation;
 
   @override
@@ -30,10 +32,10 @@ class _SplashScreenState extends State<SplashScreen>
     WidgetsBinding.instance.addObserver(this);
     _loadBannerImage();
 
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    );
+    // _animationController = AnimationController(
+    //   vsync: this,
+    //   duration: const Duration(seconds: 3),
+    // );
 
     //  _animation = Tween<double>(begin: 0.3, end: 0.9).animate(
     //     CurvedAnimation(
@@ -42,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen>
     //     ),
     //   );
 
-    _animationController.forward();
+    // _animationController.forward();
 
     Future.delayed(const Duration(seconds: 3), () {
       _requestLocationPermission(context);
@@ -65,13 +67,13 @@ class _SplashScreenState extends State<SplashScreen>
     if (vehicleno != null && vehicleno.isNotEmpty) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const Asplashscreen(),
+          builder: (context) => const MapScreen(),
         ),
       );
     } else if (bookingToken != null && bookingToken.isNotEmpty) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const Asplashscreen(),
+          builder: (context) => const MapScreen(),
         ),
       );
       if (mounted) {
@@ -89,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
-    _animationController.dispose();
+    //_animationController.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }

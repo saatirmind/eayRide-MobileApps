@@ -24,8 +24,8 @@ class _Placelist2State extends State<Placelist2> {
 
   Future<LatLng?> getStartLocationFromSharedPreferences() async {
     final prefs = await SharedPreferences.getInstance();
-    final latitude = prefs.getDouble('start_latitude');
-    final longitude = prefs.getDouble('start_longitude');
+    final latitude = prefs.getDouble('pickup_latitude');
+    final longitude = prefs.getDouble('pickup_longitude');
     return (latitude != null && longitude != null)
         ? LatLng(latitude, longitude)
         : null;

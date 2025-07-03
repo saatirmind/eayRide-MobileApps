@@ -146,7 +146,8 @@ class _BottomBarState extends State<BottomBar> {
           'token': token,
         },
       );
-
+      final data = jsonDecode(response.body);
+      final String message = data['message']?[0] ?? 'Something went wrong';
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final bool status = data['status'] ?? false;
@@ -170,8 +171,7 @@ class _BottomBarState extends State<BottomBar> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('Failed to validate wallet. (${response.statusCode})'),
+            content: Text('$message'),
             backgroundColor: Colors.red,
           ),
         );

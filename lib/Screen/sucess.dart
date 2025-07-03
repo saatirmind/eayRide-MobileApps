@@ -34,7 +34,7 @@ class _SuccessScreenState extends State<SuccessScreen>
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const PlaceList()),
+        MaterialPageRoute(builder: (context) => const MapScreen()),
         (Route<dynamic> route) => false,
       );
     });

@@ -5,6 +5,7 @@ import 'dart:io';
 //import 'package:easymotorbike/NewScreen/homenew.dart';
 //import 'package:easymotorbike/NewScreen/login.dart';
 import 'package:easymotorbike/Screen/beforelogin.dart';
+import 'package:easymotorbike/bottombaar/bottodummy.dart';
 import 'package:easymotorbike/notification/notification_service.dart';
 //import 'package:easymotorbike/settings/setting.dart';
 import 'package:http/http.dart' as http;
@@ -13,6 +14,8 @@ import 'package:easymotorbike/AppColors.dart/EasyrideAppColors.dart';
 import 'package:flutter/material.dart';
 //import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../HomeScreenWidget/BottomBar.dart';
 
 class Asplashscreen extends StatefulWidget {
   const Asplashscreen({super.key});
@@ -229,6 +232,9 @@ class _AsplashscreenState extends State<Asplashscreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkUserLoggedIn();
+    });
     if (Platform.isAndroid) {
       notificationService.firebaseInit();
       notificationService.requestNotificationPermissions();
@@ -272,25 +278,18 @@ class _AsplashscreenState extends State<Asplashscreen> {
   Future<void> _checkUserLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? mobile = prefs.getString('mobile');
     String? registeredDate = prefs.getString('registered_date');
 
-    if (token != null && mobile != null && registeredDate != null) {
+    if (token != null && registeredDate != null) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => BeamLoginScreen(
-              // Mobile: mobile,
-              // Token: token,
-              // registered_date: registeredDate,
-              ),
-        ),
+        MaterialPageRoute(builder: (context) => MainScreen()),
       );
-    } else if (token != null && mobile != null) {
+    } else if (token != null) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const BeamLoginScreen(),
+          builder: (context) => MainScreen(),
         ),
       );
     } else {

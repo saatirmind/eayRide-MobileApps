@@ -7,12 +7,16 @@ class LocationModel {
   final int state;
   final String name;
   final int status;
+  final double latitude;
+  final double longitude;
 
   LocationModel({
     required this.id,
     required this.state,
     required this.name,
     required this.status,
+    required this.latitude,
+    required this.longitude,
   });
 
   factory LocationModel.fromJson(Map<String, dynamic> json) {
@@ -21,12 +25,14 @@ class LocationModel {
       state: int.parse(json['state'].toString()),
       name: json['name'],
       status: int.parse(json['status'].toString()),
+      latitude: double.parse(json['latitude'].toString()),
+      longitude: double.parse(json['longitude'].toString()),
     );
   }
 
   @override
   String toString() {
-    return 'LocationModel(id: $id, name: $name, state: $state, status: $status)';
+    return 'LocationModel(id: $id, name: $name, state: $state, status: $status, latitude: $latitude, longitude: $longitude)';
   }
 }
 

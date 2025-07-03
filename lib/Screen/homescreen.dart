@@ -1505,15 +1505,36 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         // ✅ Save to SharedPreferences
                         if (_pickupId != null) {
                           final prefs = await SharedPreferences.getInstance();
+
+                          // ✅ Find the selected model by ID
+                          final selectedPickupModel = locations.firstWhere(
+                            (model) => model.id.toString() == _pickupId,
+                            orElse: () => LocationModel(
+                              id: 0,
+                              name: '',
+                              state: 0,
+                              status: 0,
+                              latitude: 0.0,
+                              longitude: 0.0,
+                            ),
+                          );
+
+                          // ✅ Save to SharedPreferences
                           await prefs.setString('pickupCityId', _pickupId!);
-                          // await prefs.setDouble('start_latitude', latitude!);
-                          // await prefs.setDouble('start_longitude', longitude!);
+                          await prefs.setDouble(
+                              'pickup_latitude', selectedPickupModel.latitude);
+                          await prefs.setDouble('pickup_longitude',
+                              selectedPickupModel.longitude);
+
+                          print(
+                              '✅ Saved Pickup Location: ${selectedPickupModel.latitude}, ${selectedPickupModel.longitude}');
                         }
 
                         if (_pickupId != null) {
                           final dropList =
                               await fetchDropLocationByPickupId(_pickupId!);
                           setState(() {
+                            _dropLocationModelList = dropList;
                             _dropLocationapi = dropList
                                 .map((e) => '${e.name} (ID: ${e.id})')
                                 .toList();
@@ -1568,7 +1589,7 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
                     // ---------- Destination Dropdown ------------
                     PopupMenuButton<String>(
-                      onSelected: (value) {
+                      onSelected: (value) async {
                         final parts = value.split('(ID:');
                         final selectedName = parts[0].trim();
                         final selectedId = parts.length > 1
@@ -1590,16 +1611,40 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           setState(() {
                             _dropCity = selectedName;
                           });
+
                           if (selectedId != null) {
-                            () async {
+                            final selectedModel =
+                                _dropLocationModelList.firstWhere(
+                              (model) => model.id.toString() == selectedId,
+                              orElse: () => LocationdropModel(
+                                id: 0,
+                                state: 0,
+                                name: '',
+                                status: 0,
+                                latitude: 0.0,
+                                longitude: 0.0,
+                              ),
+                            );
+
+                            if (selectedModel.latitude != null &&
+                                selectedModel.longitude != null) {
                               final prefs =
                                   await SharedPreferences.getInstance();
                               await prefs.setString(
                                   'destinationCityId', selectedId);
-                              // await prefs.setDouble('end_latitude', latitude!);
-                              // await prefs.setDouble(
-                              //     'end_longitude', longitude!);
-                            }();
+                              await prefs.setDouble(
+                                  'end_latitude', selectedModel.latitude!);
+                              await prefs.setDouble(
+                                  'end_longitude', selectedModel.longitude!);
+
+                              print(
+                                  'Selected Destination: $selectedName (ID: $selectedId)');
+                              print(
+                                  'End Latitude: ${selectedModel.latitude}, End Longitude: ${selectedModel.longitude}');
+                            } else {
+                              print(
+                                  '❌ Latitude or Longitude is null for this drop location!');
+                            }
                           }
                         }
                       },
@@ -1684,14 +1729,13 @@ class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   String? _pickupCity;
   String? _pickupId;
-  double? latitude;
-  double? longitude;
 
   String? _dropCity;
 
   List<LocationModel> locations = [];
   List<LocationdropModel> dropLocations = [];
   List<String> _dropLocationapi = [];
+  List<LocationdropModel> _dropLocationModelList = [];
 
   @override
   void initState() {

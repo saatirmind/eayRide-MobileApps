@@ -58,9 +58,8 @@ Future<void> main() async {
           ChangeNotifierProvider(create: (_) => DropStationProvider()),
           ChangeNotifierProvider(create: (_) => VehicleVisibilityProvider()),
           ChangeNotifierProvider(create: (_) => PolylineProvider()),
+          ChangeNotifierProvider(create: (_) => LocationTrackingProvider()),
           ChangeNotifierProvider(create: (_) => ProfileCompletionProvider()),
-          ChangeNotifierProvider(
-              create: (context) => LocationTrackingProvider()),
           ChangeNotifierProvider(
               create: (context) => VehicleLocationProvider()),
         ],
